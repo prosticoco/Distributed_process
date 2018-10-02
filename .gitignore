@@ -35,3 +35,6 @@ tests
 
 # Test file
 tests.c
+
+# vscode settings
+.vscode/
