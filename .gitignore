@@ -32,3 +32,6 @@
 *.app
 da_proc
 tests
+
+# Test file
+tests.c
