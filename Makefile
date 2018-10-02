@@ -2,7 +2,7 @@ CC = gcc
 
 all: da_proc tests
 
-da_proc: da_proc.c
+da_proc: da_proc.c da_proc.h
 	$(CC) -Wall -o da_proc da_proc.c
 
 clean:
