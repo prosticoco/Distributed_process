@@ -1,7 +1,12 @@
-all: da_proc
+CC = gcc
+
+all: da_proc tests
 
 da_proc: da_proc.c
-	gcc -Wall -o da_proc da_proc.c
+	$(CC) -Wall -o da_proc da_proc.c
 
 clean:
 	rm da_proc
+
+tests:
+	$(CC) -Wall -o tests tests.c
