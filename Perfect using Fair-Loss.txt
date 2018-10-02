@@ -1,0 +1,33 @@
+Definitions:
+
+
+    Fair-loss link:
+        Fair-loss: if a msg is sent infinitely
+          often by pi to pj and none of them crashes
+          then the msg is delivered infinitely often to pj.
+        Finite duplication: if a msg m is sent a finite number
+          of times by pi to pj, then the msg is delivered a
+          finite number of times by pj.
+        No creation: no msg is delivered unless it was sent.
+
+
+    Reliable (Perfect) link:
+        Validity: if pi and pj are correct then every msg sent by
+          pi to pj is eventually delivered by pj
+        No duplication: No msg is delivered more than once
+        No creation
+------------------------------------------------------------------
+Algo:
+
+// NOT SURE
+implements: Perfect Links (pp2p)
+uses Fair Loss Links (flp2p)
+upon event <Init> do delivered = Null
+upon event <pp2pSend, dest, m> do
+  while (!delivered.contains(m))
+      trigger <flp2pSend, dest, m>
+      sleep <1000>
+upon event <flp2pDeliver, src, m> do
+  if (delivered.contains(m)) then
+      trigger <pp2pDeliver, src, m>
+      delivered.add(m)
