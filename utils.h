@@ -3,6 +3,10 @@
 
 #include "da_proc.h"
 
-int parse_membership_args(int argc, char** argv, int* total_process_number, da_process_t* this_process);
+int parse_membership_args(int argc, char** argv, int* total_process_number, int* total_msg_number, da_process_t* this_process);
+
+int initialize_ack_matrix(bool*** ack_matrix, int total_process_number, int total_msg_number);
+
+void free_ack_matrix(bool*** ack_matrix, int total_process_number, int total_msg_number);
 
 #endif

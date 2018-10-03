@@ -2,12 +2,11 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <time.h>
-<<<<<<< Updated upstream
 #include <string.h>
+#include <stdbool.h>
 
 #include "da_proc.h"
 #include "utils.h"
-=======
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -20,11 +19,14 @@ typedef struct{
 		int srcId;
 		char mtext[MESSAGE_LENGTH];
 }message;
->>>>>>> Stashed changes
 
 static int wait_for_start = 1;
 static int total_process_number = 0;
-static struct da_process this_process;
+static int total_msg_number = 0;
+static da_process_t this_process;
+// Matrix of acks from other processes
+static bool** ack_matrix = NULL;
+
 
 // function called when process recieves start signal
 // process will broadcast messages to other processes
@@ -37,17 +39,15 @@ static void start(int signum) {
 	// portno will have to be affiliated to the corresponding portnumbers in
 	// the membership file
 	int portno;
-+
+
 	// create a udp socket for the client side
 	cl_socketfd = socket(AF_INET,SOCK_DGRAM,0);
 	// reset the address structure
-	bzero(char*) &proc_addr, sizeof(proc_addr));
+	bzero((char*) &proc_addr, sizeof(proc_addr));
 	proc_addr.sin_family = AF_INET;
 	size_t num_proc = 0 ;
 
 	// prepare the message to be sent
-
-
 
 	// iterate on all the processes and broadcast the message
 
@@ -68,6 +68,9 @@ static void stop(int signum) {
 	// Write/flush output file if necessary
 	printf("Writing output.\n");
 
+	// Free resources
+	free_ack_matrix(&ack_matrix, total_process_number, total_msg_number);
+
 	// Exit directly from signal handler
 	exit(0);
 }
@@ -80,8 +83,15 @@ int main(int argc, char** argv) {
 	signal(SIGINT, stop);
 
 	// Parse arguments, including membership
-	int res = parse_membership_args(argc, argv, &total_process_number, &this_process);
+	int res = parse_membership_args(argc, argv, &total_process_number, &total_msg_number, &this_process);
 	if (res != 0) {
+		return res;
+	}
+
+	// Initialize ack matrix (N - 1) x M
+	res = initialize_ack_matrix(&ack_matrix, total_process_number, total_msg_number);
+	if (res != 0) {
+		free_ack_matrix(&ack_matrix, total_process_number, total_msg_number);
 		return res;
 	}
 
@@ -90,7 +100,7 @@ int main(int argc, char** argv) {
 	printf("Initializing.\n");
 
 
-	//wait until start signal
+	// Wait until start signal
 	while(wait_for_start) {
 		struct timespec sleep_time;
 		sleep_time.tv_sec = 0;
@@ -99,11 +109,11 @@ int main(int argc, char** argv) {
 	}
 
 
-	//broadcast messages
+	// Broadcast messages
 	printf("Broadcasting messages.\n");
 
 
-	//wait until stopped
+	// Wait until stopped
 	while(1) {
 		struct timespec sleep_time;
 		sleep_time.tv_sec = 1;
