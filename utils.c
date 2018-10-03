@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "utils.h"
 
@@ -37,7 +38,7 @@ int parse_membership_args(int argc, char** argv, int* total_process_number, da_p
 	*total_process_number = atoi(line);
 	printf("Total number of processes = %i\n", *total_process_number);
 
-	int found = 0;
+	bool found = false;
 
 	// Iterate over lines until we find the right line
 	while (fgets(line, sizeof(line), membership_file) != NULL) {
@@ -59,7 +60,7 @@ int parse_membership_args(int argc, char** argv, int* total_process_number, da_p
 			printf("Process IPv4 = %s\n", ipv4_addr_str);
 			printf("Process port number = %hu\n", this_process->port_num);
 
-			found = 1;
+			found = true;
 			break;
 		}
 	}
