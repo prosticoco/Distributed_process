@@ -14,29 +14,44 @@
 #include <string.h>
 
 
-
+// Program create 2 threads, 1 writer threads and 1 reader thread,
+// writer thread sends a message to reader thread
 
 static int ready_to_connect = 0;
 
-
+// CODE to send messages via udp
 void *writer1f(void *params){
+    // this structure represents the address
     struct sockaddr_in read_addr;
+    // integer representing the file descriptor of the socket
     int socketfdw1;
+    // create a socket (flags to indicate using ip address and UDP Datagrams)
     socketfdw1 = socket(AF_INET, SOCK_DGRAM,0);
     if(socketfdw1 < 0){
       printf("socket opening did not work\n");
       return NULL;
     }
+
+    // initialize the address field
     bzero((char*) &read_addr, sizeof(read_addr));
+
+      // same for any address
     read_addr.sin_family = AF_INET;
+    // portno converted from integer using htons() function
     read_addr.sin_port = htons(11001);
+    // converted IP Address String using inet_aton() function
     inet_aton("127.0.0.1", (struct in_addr *) &read_addr.sin_addr.s_addr);
+
+
+    // don't need to do this
     while(!ready_to_connect){
       sleep(1);
     }
 
+    // text to send
     char buffer[] = "Hello I am writer no 1";
     int n;
+    // send the message
     n = sendto(socketfdw1, (const char *) buffer,strlen(buffer),MSG_CONFIRM,
   (const struct sockaddr *) &read_addr, sizeof(read_addr));
     if(n < 0){
@@ -45,11 +60,9 @@ void *writer1f(void *params){
     }
 }
 
-void *writer2f(void *params){
-
-}
 
 void *readerf(void *params){
+  
   int sockr,clilen,newsockfd;
   char buffer[256];
   struct sockaddr_in my_addr,cli_addr;
@@ -81,7 +94,6 @@ void *readerf(void *params){
 int main(){
     int x = 0;
     pthread_t writer1;
-    pthread_t writer2;
     pthread_t reader;
     if(pthread_create(&reader,NULL, readerf, &x)){
       printf("error creating reader thread \n");
