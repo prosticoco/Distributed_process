@@ -26,6 +26,8 @@ static int total_msg_number = 0;
 static da_process_t this_process;
 // Matrix of acks from other processes
 static bool** ack_matrix = NULL;
+// Tells us if each sender thread has to send an ACK
+static bool* acks_to_send = NULL;
 
 
 // function called when process recieves start signal
@@ -69,7 +71,8 @@ static void stop(int signum) {
 	printf("Writing output.\n");
 
 	// Free resources
-	free_ack_matrix(&ack_matrix, total_process_number, total_msg_number);
+	free_ack_matrix(ack_matrix, total_process_number);
+	free_acks_to_send(acks_to_send);
 
 	// Exit directly from signal handler
 	exit(0);
@@ -91,7 +94,14 @@ int main(int argc, char** argv) {
 	// Initialize ack matrix (N - 1) x M
 	res = initialize_ack_matrix(&ack_matrix, total_process_number, total_msg_number);
 	if (res != 0) {
-		free_ack_matrix(&ack_matrix, total_process_number, total_msg_number);
+		free_ack_matrix(ack_matrix, total_process_number);
+		return res;
+	}
+
+	// Initialize acks-to-send array
+	res = initialize_acks_to_send(&acks_to_send, total_process_number);
+	if (res != 0) {
+		free_acks_to_send(acks_to_send);
 		return res;
 	}
 
