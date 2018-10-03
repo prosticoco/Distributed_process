@@ -2,13 +2,11 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <time.h>
-<<<<<<< Updated upstream
 #include <string.h>
 #include <stdbool.h>
 
 #include "da_proc.h"
 #include "utils.h"
-=======
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -21,7 +19,6 @@ typedef struct{
 		int srcId;
 		char mtext[MESSAGE_LENGTH];
 }message;
->>>>>>> Stashed changes
 
 static int wait_for_start = 1;
 static int total_process_number = 0;
@@ -42,17 +39,15 @@ static void start(int signum) {
 	// portno will have to be affiliated to the corresponding portnumbers in
 	// the membership file
 	int portno;
-+
+
 	// create a udp socket for the client side
 	cl_socketfd = socket(AF_INET,SOCK_DGRAM,0);
 	// reset the address structure
-	bzero(char*) &proc_addr, sizeof(proc_addr));
+	bzero((char*) &proc_addr, sizeof(proc_addr));
 	proc_addr.sin_family = AF_INET;
 	size_t num_proc = 0 ;
 
 	// prepare the message to be sent
-
-
 
 	// iterate on all the processes and broadcast the message
 
