@@ -3,13 +3,18 @@
 #include <signal.h>
 #include <time.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "da_proc.h"
 #include "utils.h"
 
 static int wait_for_start = 1;
 static int total_process_number = 0;
-static struct da_process this_process;
+static int total_msg_number = 0;
+static da_process_t this_process;
+// Matrix of acks from other processes
+static bool** ack_matrix = NULL;
+
 
 static void start(int signum) {
 	wait_for_start = 0;
@@ -26,6 +31,9 @@ static void stop(int signum) {
 	// Write/flush output file if necessary
 	printf("Writing output.\n");
 
+	// Free resources
+	free_ack_matrix(&ack_matrix, total_process_number, total_msg_number);
+
 	// Exit directly from signal handler
 	exit(0);
 }
@@ -38,8 +46,15 @@ int main(int argc, char** argv) {
 	signal(SIGINT, stop);
 
 	// Parse arguments, including membership
-	int res = parse_membership_args(argc, argv, &total_process_number, &this_process);
+	int res = parse_membership_args(argc, argv, &total_process_number, &total_msg_number, &this_process);
 	if (res != 0) {
+		return res;
+	}
+
+	// Initialize ack matrix (N - 1) x M
+	res = initialize_ack_matrix(&ack_matrix, total_process_number, total_msg_number);
+	if (res != 0) {
+		free_ack_matrix(&ack_matrix, total_process_number, total_msg_number);
 		return res;
 	}
 
@@ -48,7 +63,7 @@ int main(int argc, char** argv) {
 	printf("Initializing.\n");
 
 
-	//wait until start signal
+	// Wait until start signal
 	while(wait_for_start) {
 		struct timespec sleep_time;
 		sleep_time.tv_sec = 0;
@@ -57,11 +72,11 @@ int main(int argc, char** argv) {
 	}
 
 
-	//broadcast messages
+	// Broadcast messages
 	printf("Broadcasting messages.\n");
 
 
-	//wait until stopped
+	// Wait until stopped
 	while(1) {
 		struct timespec sleep_time;
 		sleep_time.tv_sec = 1;

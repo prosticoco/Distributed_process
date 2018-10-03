@@ -5,7 +5,7 @@
 
 #include "utils.h"
 
-int parse_membership_args(int argc, char** argv, int* total_process_number, da_process_t* this_process) {
+int parse_membership_args(int argc, char** argv, int* total_process_number, int* total_msg_number, da_process_t* this_process) {
     if (argc < 4) {
 		fprintf(stderr, "ERROR: not enough arguments.\n");
 		return 1;
@@ -18,8 +18,8 @@ int parse_membership_args(int argc, char** argv, int* total_process_number, da_p
 	const char* membership_filename = argv[2];
 	printf("Membership filename = \"%s\"\n", membership_filename);
 
-	int messages_to_broadcast = atoi(argv[3]);
-	printf("Number of messages to broadcast = %i\n", messages_to_broadcast);
+	*total_msg_number = atoi(argv[3]);
+	printf("Number of messages to broadcast = %i\n", *total_msg_number);
 
 	FILE* membership_file = fopen(membership_filename, "r");
 	if (membership_file == NULL) {
@@ -73,4 +73,37 @@ int parse_membership_args(int argc, char** argv, int* total_process_number, da_p
 
 	fclose(membership_file);
     return 0;
+}
+
+int initialize_ack_matrix(bool*** acks, int total_process_number, int total_msg_number) {
+	// Initialize 2-D acks array (N x M), where M = #processes - 1, M = #msg to send for this thread
+	bool** acks_tmp = calloc(total_process_number - 1, sizeof(bool*));
+	if (acks_tmp == NULL) {
+		fprintf(stderr, "ERROR: Could not initialize ack array.\n");
+		return 1;
+	}
+	for (size_t i = 0; i < total_process_number - 1; ++i) {
+		// Calloc should initialize everything to false.
+		acks_tmp[i] = calloc(total_msg_number, sizeof(bool));
+		if (acks_tmp[i] == NULL) {
+			fprintf(stderr, "ERROR: Could not initialize ack array.\n");
+			free(acks_tmp);
+			return 1;
+		}
+	}
+
+	*acks = acks_tmp;
+	return 0;
+}
+
+void free_ack_matrix(bool*** acks, int total_process_number, int total_msg_number) {
+	if (acks != NULL) {
+		bool** acks_tmp = *acks;
+		for (size_t i = 0; i < total_process_number - 1; ++i) {
+			if (acks_tmp[i] != NULL) {
+				free(acks_tmp[i]);
+			}
+		}
+		free(acks_tmp);
+	}
 }
