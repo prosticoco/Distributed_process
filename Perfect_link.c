@@ -64,8 +64,13 @@ def deliver(src, msg){
   //trigger <pp2pDeliver, src, m>
   //add message to delivered
   send(src, [[me, hash], 1]) //<<<<< ack
-}
 
+
+  //ack constructor
+}
+const Message* constr_ack(Message* msg){
+  return &Message(1, msg->msg_nr, MY_ID, NULL);
+}
 
 typedef struct{
   size_t msg_type; //if ack or not
