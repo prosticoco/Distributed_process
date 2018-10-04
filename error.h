@@ -1,6 +1,9 @@
-#include "structure.h";
+#ifndef ERROR_H
+#define ERROR_H
 
-#typedef enum{
+typedef enum {
   ERROR_MEMORY = -128
 
-}error_codes;
+} error_codes;
+
+#endif
