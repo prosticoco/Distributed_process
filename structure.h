@@ -74,7 +74,10 @@ typedef struct {
 
 // made a typedef for the address list, can be changed, I thought it might be useful
 // to create an interface for handling it
-typedef addr_entry_t* addr_book_t;
+typedef struct{
+  size_t size;
+  addr_entry_t* listaddr;
+}addr_book_t;
 
 // structure representing all the information a sender_tread will have access to
 typedef struct {
