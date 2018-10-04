@@ -11,14 +11,10 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include "structure.h"
+#include "error.h"
 
-#define MESSAGE_LENGTH 256
 
-typedef struct{
-		size_t msg_type;
-		int srcId;
-		char mtext[MESSAGE_LENGTH];
-}message;
 
 static int wait_for_start = 1;
 static int total_process_number = 0;
