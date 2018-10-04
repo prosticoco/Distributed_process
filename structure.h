@@ -1,3 +1,6 @@
+#ifndef STRUCTURE_H
+#define STRUCTURE_H
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,89 +16,103 @@
 //        we should agree on which way to signal the threads (static variable or pointer)
 
 // parameter to define maximum text message length
-#define MESSAGE_LENGTH 256
+#define MAX_MESSAGE_LENGTH 256
 /**
 
 structure defining a message to be sent via UDP
 */
-
-typedef unsigned int uint;
-typedef struct{
+typedef struct {
   size_t msg_type; //if ack or not
-  uint msg_nr;
-  uint srcId;
-  char mtext[MESSAGE_LENGTH];
-}Message;
+  unsigned int* msg_nr;
+  unsigned int* src_id;
+  char mtext[MAX_MESSAGE_LENGTH];
+} msg_t;
 
 // represents ACK Matrix (à changer si besoin @droz)
-typedef bool** Ack_matrix;
+typedef bool** ack_matrix_t;
 
-typedef uint* Ack_list;
+typedef bool* ack_list_t;
 
 // represents an element of the queue, will just be equal to the msg_nr
-typedef uint Queue_elem;
+typedef unsigned int* queue_elem_t;
 
 // structure representing a queue of messages to be sent. 1 per sender_thread
-typedef struct{
+typedef struct {
   // total number of elements in queue
   size_t no_elem;
   // maximum number of elements in queue allowed
   size_t max_elem;
   // pointer to front of queue
-  Queue_elem* front;
+  queue_elem_t* front;
   // pointer to back of queue
-  Queue_elem* back;
-}Msg_queue;
+  queue_elem_t* back;
+} msg_queue_t;
 
 // this structure is just used to associate a thread with its own message queue
-typedef struct{
+typedef struct {
   // the id of the sender_thread
-  uint thread_id;
+  unsigned int thread_id;
   // the msg queue associated with a thread
-  Msg_queue* queue;
-}Thread_msg_queue;
+  msg_queue_t* queue;
+} thread_msg_queue_t;
 
 // structure representing the list of message queues, 1 for all threads
-typedef struct{
+typedef struct {
   // total number of sender threads
   size_t no_sender;
-  Thread_msg_queue* queues;
-}Queue_list;
+  thread_msg_queue_t* queues;
+} queue_list_t;
 
 
 // structure to represent another process and its respective address
 // we still have to choose if we will just use a list or a structure for the address list
-typedef struct{
-  uint process_id;
+typedef struct {
+  unsigned int* process_id;
   // address structure for sending messages over UDP
   struct sockaddr_in* address;
-}Address_entry;
+} addr_entry_t;
 
 // made a typedef for the address list, can be changed, I thought it might be useful
 // to create an interface for handling it
-typedef Address_entry* Address_Book;
+typedef addr_entry_t* addr_book_t;
 
 // structure representing all the information a sender_tread will have access to
-typedef struct{
+typedef struct {
   // unique id for sender_thread (might be set as the same as process_id)
-  uint thread_id;
+  unsigned int* thread_id;
   // Address and unique id of the associated process
-  Address_entry* process_address;
+  addr_entry_t* process_address;
   // the sender_thread's msg queue
-  Thread_msg_queue* queue;
+  thread_msg_queue_t* queue;
   //pointer to the ack matrix
-  Ack_matrix* acks;
-}Sender_info;
+  ack_matrix_t* acks;
+} sender_info_t;
 
 
 // structure reprenting all info a receiver thread needs, might be subject to change
 // in the case where we add a new thread responsible for sending acks
-typedef struct{
+typedef struct {
   // pointer to the address book of other processes
-  Address_Book* addresses;
+  addr_book_t* addresses;
   // pointer to the list of thread queues
-  Queue_list* thread_queues;
+  queue_list_t* thread_queues;
   // pointer to ack matrix
-  Ack_matrix* ack_matrix;
+  ack_matrix_t* ack_matrix;
 
-}Receiver_info;
+} receiver_info_t;
+
+/**
+ * @brief Structure defining a process. Either the current one, or one to which we want
+ *        to send data.
+ *
+ */
+typedef struct da_process {
+    // Unique process identifier for our program
+    int uid;
+    // 4 bytes, 1 byte per element of the address
+    struct in_addr ipv4_addr;
+    // Port number on which the process listens for incoming messages
+    in_port_t port_num;
+} da_process_t;
+
+#endif
