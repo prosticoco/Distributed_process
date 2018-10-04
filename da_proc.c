@@ -12,6 +12,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include "structure.h"
+#include "error.h"
 
 
 

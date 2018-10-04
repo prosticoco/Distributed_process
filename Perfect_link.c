@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include "structure.h"
 
 
 //2 functions (send, deliver) which use fair-loss (UDP) and gives perfect Links
@@ -71,10 +72,3 @@ def deliver(src, msg){
 const Message* constr_ack(Message* msg){
   return &Message(1, msg->msg_nr, MY_ID, NULL);
 }
-
-typedef struct{
-  size_t msg_type; //if ack or not
-  uint msg_nr;
-  uint srcId;
-  char mtext[256];
-}Message;
