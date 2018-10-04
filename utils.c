@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <arpa/inet.h>
 
 #include "utils.h"
 
@@ -93,7 +94,7 @@ int parse_membership_args(int argc, char** argv, int* total_process_number, int*
  * @param total_msg_number Total number of messages to send.
  * @return int Success: 0, Failure: not 0
  */
-int initialize_ack_matrix(bool*** acks, int total_process_number, int total_msg_number) {
+int initialize_ack_matrix(ack_matrix_t* acks, int total_process_number, int total_msg_number) {
     // Initialize 2-D acks array (N x M), where M = #processes - 1, M = #msg to send for this thread
     bool** acks_tmp = calloc(total_process_number - 1, sizeof(bool*));
     if (acks_tmp == NULL) {
@@ -119,7 +120,7 @@ int initialize_ack_matrix(bool*** acks, int total_process_number, int total_msg_
  * @param acks The ack matrix.
  * @param total_process_number The total number of processes.
  */
-void free_ack_matrix(bool** acks, int total_process_number) {
+void free_ack_matrix(ack_matrix_t acks, int total_process_number) {
     for (size_t i = 0; i < total_process_number - 1; ++i) {
         free(acks[i]);
     }
@@ -133,7 +134,7 @@ void free_ack_matrix(bool** acks, int total_process_number) {
  * @param total_process_number Total number of processes.
  * @return int Success: 0, Failure: not 0
  */
-int initialize_acks_to_send(bool** acks_to_send, int total_process_number) {
+int initialize_acks_to_send(ack_list_t* acks_to_send, int total_process_number) {
     bool* acks_to_send_tmp = calloc(total_process_number - 1, sizeof(bool));
     if (acks_to_send_tmp == NULL) {
         return 1;
@@ -148,6 +149,6 @@ int initialize_acks_to_send(bool** acks_to_send, int total_process_number) {
  * 
  * @param acks_to_send The acks-to-send array.
  */
-void free_acks_to_send(bool* acks_to_send) {
+void free_acks_to_send(ack_list_t acks_to_send) {
     free(acks_to_send);
 }

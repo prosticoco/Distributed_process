@@ -4,16 +4,14 @@
 #include <time.h>
 #include <string.h>
 #include <stdbool.h>
-
-#include "da_proc.h"
-#include "utils.h"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+
 #include "structure.h"
 #include "error.h"
-
+#include "utils.h"
 
 
 static int wait_for_start = 1;
