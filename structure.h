@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <stdbool.h>
 
 // file representing all relevant structures for the project, can be changed....
 
@@ -14,8 +15,11 @@
 // parameter to define maximum text message length
 #define MESSAGE_LENGTH 256
 /**
+
 structure defining a message to be sent via UDP
 */
+
+typedef unsigned int uint;
 typedef struct{
   size_t msg_type; //if ack or not
   uint msg_nr;
@@ -55,7 +59,7 @@ typedef struct{
 typedef struct{
   // total number of sender threads
   size_t no_sender;
-  thread_msg_queue* queues;
+  Thread_msg_queue* queues;
 }Queue_list;
 
 
