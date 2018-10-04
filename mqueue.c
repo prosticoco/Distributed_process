@@ -47,7 +47,7 @@ int dequeue(Msg_queue* queue, Queue_elem* elem){
   }
   // update the element
   *elem = *(queue->front);
-  Queue_elem* new_ptr;
+  Queue_elem* new_ptr = NULL;
   // allocate a new pointer for new array equal to the new size
   new_ptr = realloc(new_ptr,(queue->no_elem -1)*(sizeof(Queue_elem)));
   if(new_ptr == NULL){
@@ -76,30 +76,5 @@ int free_queue(Msg_queue* queue){
   free(queue->front);
   queue->front = NULL;
   queue->back = NULL;
-  return 0;
-}
-
-int main(){
-  Msg_queue testQueue;
-  int error;
-  error = init_queue(&testQueue,5);
-  if(error < 0){
-    printf("init did not work\n");
-    return error;
-  }
-
-  error = enqueue(&testQueue,1);
-  if(error < 0){
-    printf("enqueue did not work\n");
-    return error;
-  }
-  Queue_elem elem_to_print= 0;
-  error = dequeue(&testQueue,&elem_to_print);
-  if(error < 0){
-    printf("dequeue did not work \n");
-    return error;
-  }
-  error = free(&testQueue);
-  printf("this is the element that popped : %d\n",(int)elem_to_print);
   return 0;
 }

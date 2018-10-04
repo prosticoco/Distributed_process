@@ -1,9 +1,9 @@
-#ifndef 
 
 
-#include "structure.h"
+
 #include "error.h"
 #include <stdlib.h>
+
 
 
 // initializes a queue with an arbitrary restriction on the maximum number of elements
