@@ -38,14 +38,16 @@ typedef unsigned int* queue_elem_t;
 
 // structure representing a queue of messages to be sent. 1 per sender_thread
 typedef struct {
-  // total number of elements in queue
+  // the number of elements in the queue
   size_t no_elem;
-  // maximum number of elements in queue allowed
-  size_t max_elem;
-  // pointer to front of queue
-  queue_elem_t* front;
-  // pointer to back of queue
-  queue_elem_t* back;
+  // the size of the queue
+  size_t qsize;
+  // index corresponding to the front of the queue
+  unsigned int front;
+  // index corresponding to the back of the queue
+  unsigned int back;
+  // pointer to the elements of the queue
+  queue_elem_t* elems;
 } msg_queue_t;
 
 // this structure is just used to associate a thread with its own message queue

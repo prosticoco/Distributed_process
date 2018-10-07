@@ -6,11 +6,15 @@
 
 
 // initializes a queue with an arbitrary restriction on the maximum number of elements
-int init_queue(msg_queue_t* queue, size_t max_elem){
+int init_queue(msg_queue_t* queue, size_t size){
   queue->no_elem = 0;
-  queue->max_elem = max_elem;
-  queue->front = NULL;
-  queue->back = NULL;
+  queue->elems = calloc(size,sizeof(queue_elem_t));
+  if(queue->elems == NULL){
+    return ERROR_MEMORY;
+  }
+  queue->qsize = size;
+  queue->front = 0;
+  queue->back = 0;
   return 0;
 }
 
@@ -21,21 +25,21 @@ int queue_empty(msg_queue_t* queue){
 
 // adds an element at the back of the queue
 // returns 0 on success. -1 when queue is full, other errors in other cases
-int enqueue(msg_queue_t* queue, queue_elem_t elem){
-  if(queue->no_elem == queue->max_elem){
+int enqueue(msg_queue_t* queue, queue_elem_t* elem){
+  // check if the queue is full
+  if(queue->no_elem == queue->qsize){
     return ERROR_QUEUE;
   }
-  queue->front = realloc(queue->front,(queue->no_elem + 1)*(sizeof(queue_elem_t)));
-  if(queue->front == NULL){
+  // check valid pointers
+  if(queue->elems == NULL){
     return ERROR_MEMORY;
   }
-  queue->no_elem ++;
-  if(queue->no_elem == 1){
-    queue->back = queue->front;
-  }else{
-    queue->back = &(queue->front[queue->no_elem-1]);
-  }
-  *(queue->back) = elem;
+  // insert element at the back of the queue
+  queue->elems[queue->back] = *elem;
+  // increase number of elements
+  queue->no_elem += 1;
+  // update end of queue pointer
+  queue->back = (queue->back + 1 ) % queue->qsize;
   return 0;
 }
 
@@ -45,36 +49,18 @@ int dequeue(msg_queue_t* queue, queue_elem_t* elem){
   if(queue_empty(queue)){
     return ERROR_QUEUE;
   }
-  // update the element
-  *elem = *(queue->front);
-  Queue_elem* new_ptr = NULL;
-  // allocate a new pointer for new array equal to the new size
-  new_ptr = realloc(new_ptr,(queue->no_elem -1)*(sizeof(queue_elem_t)));
-  if(new_ptr == NULL){
-    return ERROR_MEMORY;
-  }
-  // decrease number of elements after successfull realloc
-  queue->no_elem--;
-  if(queue_empty(queue)){
-    // if the queue is empty now, we free the old pointer and set other pointers to null
-    free(queue->front);
-    queue->back = NULL;
-    queue->front = NULL;
-  }else{
-    // if queue is nonempty we move the remaining elements to the new_ptr and then free the old pointer
-    new_ptr = memmove(new_ptr,&(queue->front[1]),(queue->no_elem)*(sizeof(queue_elem_t)));
-    free(queue->front);
-    // update the queues pointer
-    queue->front = new_ptr;
-    queue->back = &(queue->front[queue->no_elem-1]);
-  }
+  // update value pointed by elem argument
+  *elem = queue->elems[queue->front];
+  // decrease number of elements
+  queue->no_elem -= 1;
+  // update front of queue pointer
+  queue->front = (queue->front + 1) % queue->qsize;
   return 0;
 }
 
 // use at the end to free the memory used by the queue
 int free_queue(msg_queue_t* queue){
-  free(queue->front);
-  queue->front = NULL;
-  queue->back = NULL;
+  free(queue->elems);
+  queue->elems = NULL;
   return 0;
 }
