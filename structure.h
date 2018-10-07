@@ -69,7 +69,7 @@ typedef struct {
 // structure to represent another process and its respective address
 // we still have to choose if we will just use a list or a structure for the address list
 typedef struct {
-  unsigned int* process_id;
+  unsigned int process_id;
   // address structure for sending messages over UDP
   struct sockaddr_in* address;
 } addr_entry_t;
