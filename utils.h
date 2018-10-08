@@ -15,4 +15,11 @@ void free_acks_to_send(ack_list_t acks_to_send);
 
 bool get_msg_ack(size_t process_index, size_t msg_index);
 
+// write 1 to the corresponding element in the ack matrix according to pid and msgid
+int write_ack_matrix(ack_matrix_t* ack_matrix, unsigned int pid,unsigned int msgid);
+
+// reads the corresponding value in the ack matrix
+// if the ack is present returns 1 else returns 0
+int read_ack_matrix(ack_matrix_t* ack_matrix, unsigned int pid, unsigned int msgid);
+
 #endif

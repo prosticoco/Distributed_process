@@ -22,7 +22,7 @@
 structure defining a message to be sent via UDP
 */
 typedef struct {
-  size_t msg_type; //if ack or not
+  size_t msg_type; //if ack or not 0 if not
   unsigned int* msg_nr;
   unsigned int* src_id;
   char mtext[MAX_MESSAGE_LENGTH];
@@ -38,14 +38,16 @@ typedef unsigned int* queue_elem_t;
 
 // structure representing a queue of messages to be sent. 1 per sender_thread
 typedef struct {
-  // total number of elements in queue
+  // the number of elements in the queue
   size_t no_elem;
-  // maximum number of elements in queue allowed
-  size_t max_elem;
-  // pointer to front of queue
-  queue_elem_t* front;
-  // pointer to back of queue
-  queue_elem_t* back;
+  // the size of the queue
+  size_t qsize;
+  // index corresponding to the front of the queue
+  unsigned int front;
+  // index corresponding to the back of the queue
+  unsigned int back;
+  // pointer to the elements of the queue
+  queue_elem_t* elems;
 } msg_queue_t;
 
 // this structure is just used to associate a thread with its own message queue
@@ -67,19 +69,26 @@ typedef struct {
 // structure to represent another process and its respective address
 // we still have to choose if we will just use a list or a structure for the address list
 typedef struct {
-  unsigned int* process_id;
+  unsigned int process_id;
   // address structure for sending messages over UDP
   struct sockaddr_in* address;
 } addr_entry_t;
 
 // made a typedef for the address list, can be changed, I thought it might be useful
 // to create an interface for handling it
-typedef addr_entry_t* addr_book_t;
+typedef struct{
+  size_t size;
+  addr_entry_t* listaddr;
+}addr_book_t;
 
 // structure representing all the information a sender_tread will have access to
 typedef struct {
   // unique id for sender_thread (might be set as the same as process_id)
-  unsigned int* thread_id;
+  unsigned int thread_id;
+  // ID of the current node (ie the n in da_proc n)
+  unsigned int nodeid;
+  // file descriptor for sender socket 
+  int fd;
   // Address and unique id of the associated process
   addr_entry_t* process_address;
   // the sender_thread's msg queue
@@ -92,6 +101,12 @@ typedef struct {
 // structure reprenting all info a receiver thread needs, might be subject to change
 // in the case where we add a new thread responsible for sending acks
 typedef struct {
+  // thread id of receiver thread
+  unsigned int tid;
+  // ID of the current node (ie the n in da_proc n)
+  unsigned int nodeid;
+  // file descriptor for receiver socket
+  unsigned int fd;
   // pointer to the address book of other processes
   addr_book_t* addresses;
   // pointer to the list of thread queues
@@ -104,7 +119,7 @@ typedef struct {
 /**
  * @brief Structure defining a process. Either the current one, or one to which we want
  *        to send data.
- * 
+ *
  */
 typedef struct da_process {
     // Unique process identifier for our program

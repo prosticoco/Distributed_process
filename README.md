@@ -14,7 +14,7 @@ Distributed Algorithms Project
 * When sending a message, add pair [dest, 0] to ack table and change 0 to 1 when receive ack from that dest
         //this way we can easily keep track
 * In each process have a thread for each dest node so that they can advance through multiple messages asynchronously
-* We can never assume a process is ded. 
+* We can never assume a process is ded.
         //By theory in an asynchronous system it is impossible to know if a process is sleeping or has crashed
 
 ## Program flow proposition
@@ -59,3 +59,18 @@ Setup : Multithreaded program :
   - - what messages still have to be sent by each thread
   - - for each other node which ACK have already been received etc..
   - - signal information
+
+## Detailed Behavior
+
+**MAIN**
+
+1. read from membership file
+2. initializes different data structures
+3. spawns all necessary threads
+4. waits for eventual signals
+
+
+**Sender threads**
+
+1. wait for start signal
+2. check if message queue is empty 
