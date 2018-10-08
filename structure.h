@@ -22,7 +22,7 @@
 structure defining a message to be sent via UDP
 */
 typedef struct {
-  size_t msg_type; //if ack or not
+  size_t msg_type; //if ack or not 0 if not
   unsigned int* msg_nr;
   unsigned int* src_id;
   char mtext[MAX_MESSAGE_LENGTH];
@@ -84,7 +84,11 @@ typedef struct{
 // structure representing all the information a sender_tread will have access to
 typedef struct {
   // unique id for sender_thread (might be set as the same as process_id)
-  unsigned int* thread_id;
+  unsigned int thread_id;
+  // ID of the current node (ie the n in da_proc n)
+  unsigned int nodeid;
+  // file descriptor for sender socket 
+  int fd;
   // Address and unique id of the associated process
   addr_entry_t* process_address;
   // the sender_thread's msg queue
@@ -97,6 +101,12 @@ typedef struct {
 // structure reprenting all info a receiver thread needs, might be subject to change
 // in the case where we add a new thread responsible for sending acks
 typedef struct {
+  // thread id of receiver thread
+  unsigned int tid;
+  // ID of the current node (ie the n in da_proc n)
+  unsigned int nodeid;
+  // file descriptor for receiver socket
+  unsigned int fd;
   // pointer to the address book of other processes
   addr_book_t* addresses;
   // pointer to the list of thread queues
