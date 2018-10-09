@@ -81,10 +81,20 @@ typedef struct{
   addr_entry_t* listaddr;
 }addr_book_t;
 
+
+// structure for an ack counter for one thread
 typedef struct{
   unsigned int pid;
   unsigned int counter;
 }ack_counter_t
+
+
+// structure to store list of ack counters per thread
+typedef struct{
+  unsigned int size;
+  ack_counter_t* acks;
+
+}ack_data_t;
 
 // structure representing all the information a sender_tread will have access to
 typedef struct {
@@ -118,7 +128,7 @@ typedef struct {
   // pointer to the list of thread queues
   queue_list_t* thread_queues;
   // pointer to ack matrix
-  ack_matrix_t* ack_matrix;
+  ack_list_t* acklist;
 
 } receiver_info_t;
 

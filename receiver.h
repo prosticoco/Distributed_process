@@ -10,10 +10,9 @@ void *receiver_f(void * params);
 // returns <0 on error, 0 otherwise
 int init_receiver_socket(int * rec_fd,struct sockaddr_in* my_addr);
 
-// updates the shared data according to the last message received
-int process_msg(msg_t* msg,receiver_info_t* data);
 
 
+int deliver_pl(struct sockaddr_in* sender,msg_t* msg);
 
 
 
