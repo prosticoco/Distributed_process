@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <pthread.h>
 
 #include "structure.h"
 #include "error.h"
@@ -37,28 +38,7 @@ static void free_resources(void) {
 // process will broadcast messages to other processes
 static void start(int signum) {
 	wait_for_start = 0;
-	//setup client socket
-	int cl_socketfd;
-	// declare a struct which represent the address of the other processes
-	struct sockaddr_in proc_addr;
-	// portno will have to be affiliated to the corresponding portnumbers in
-	// the membership file
-	int portno;
 
-	// create a udp socket for the client side
-	cl_socketfd = socket(AF_INET,SOCK_DGRAM,0);
-	// reset the address structure
-	bzero((char*) &proc_addr, sizeof(proc_addr));
-	proc_addr.sin_family = AF_INET;
-	size_t num_proc = 0 ;
-
-	// prepare the message to be sent
-
-	// iterate on all the processes and broadcast the message
-
-	for(int i = 0 ; i < num_proc; i++){
-
-	}
 
 }
 
@@ -66,6 +46,7 @@ static void stop(int signum) {
 	// Reset signal handlers to default
 	signal(SIGTERM, SIG_DFL);
 	signal(SIGINT, SIG_DFL);
+
 
 	// Immediately stop network packet processing
 	printf("Immediately stopping network packet processing.\n");
@@ -86,7 +67,7 @@ int main(int argc, char** argv) {
 	signal(SIGUSR1, start);
 	signal(SIGTERM, stop);
 	signal(SIGINT, stop);
-
+	// set signal masks for threads not responsible of handling signals
 	// Parse arguments, including membership
 	int res = parse_membership_args(argc, argv, &total_process_number, &total_msg_number, &this_process);
 	// Initialize ack matrix (N - 1) x M

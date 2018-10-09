@@ -81,13 +81,18 @@ typedef struct{
   addr_entry_t* listaddr;
 }addr_book_t;
 
+typedef struct{
+  unsigned int pid;
+  unsigned int counter;
+}ack_counter_t
+
 // structure representing all the information a sender_tread will have access to
 typedef struct {
   // unique id for sender_thread (might be set as the same as process_id)
   unsigned int thread_id;
   // ID of the current node (ie the n in da_proc n)
   unsigned int nodeid;
-  // file descriptor for sender socket 
+  // file descriptor for sender socket
   int fd;
   // Address and unique id of the associated process
   addr_entry_t* process_address;
@@ -95,6 +100,7 @@ typedef struct {
   thread_msg_queue_t* queue;
   //pointer to the ack matrix
   ack_matrix_t* acks;
+  ack_counter_t* ack_counter;
 } sender_info_t;
 
 
