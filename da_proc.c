@@ -10,7 +10,6 @@
 #include <netdb.h>
 #include <pthread.h>
 
-#include "structure.h"
 #include "error.h"
 #include "utils.h"
 
@@ -20,9 +19,9 @@ static int total_process_number = 0;
 static int total_msg_number = 0;
 static da_process_t this_process;
 // Matrix of acks from other processes
-static bool** ack_matrix = NULL;
+static ack_matrix_t ack_matrix = NULL;
 // Tells us if each sender thread has to send an ACK
-static bool* acks_to_send = NULL;
+static ack_list_t acks_to_send = NULL;
 
 
 static void free_resources(void) {

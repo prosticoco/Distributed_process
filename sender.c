@@ -24,6 +24,19 @@ int init_socket_sender(sender_info_t* data){
   return 0;
 }
 
+int send_pl(sender_info_t* data,msg_t* msg){
+
+  int error = 0;
+
+  while(read_ack(msg->msg_nr, data->ack_counter) == 0){
+    error = send_fl(data->fd, data->process_address->address, msg);
+    if(error < 0){
+      return ERROR_SEND;
+    }
+    sleep(50);
+}
+
+
 int send_fl(int fd,struct sockaddr_in* address,msg_t* msg){
   int error;
   // sends a message to the corresponding address pointed by data
