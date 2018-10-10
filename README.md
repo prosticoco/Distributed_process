@@ -3,16 +3,15 @@ Distributed Algorithms Project
 
 ## Things to do
 
-* Find out how to send UDP messages with C
-* Find out how to start a process with C
-* Implement perfect links _directly_ over fair-loss links, do not implement stubborn links as is done in the class
-* Implement Broadcasts using perfect links when we had a REAL course about broadcasts
+* DONE Find out how to send UDP messages with C
+* DONE Find out how to start a process with C
+* (1/2 DONE) Implement perfect links _directly_ over fair-loss links, do not implement stubborn links as is done in the class
+* Implement UNIFIED RELIABLE Broadcasts using perfect links
 
 <<<<<<< Updated upstream
 ##Ideas
 
-* When sending a message, add pair [dest, 0] to ack table and change 0 to 1 when receive ack from that dest
-        //this way we can easily keep track
+
 * In each process have a thread for each dest node so that they can advance through multiple messages asynchronously
 * We can never assume a process is ded.
         //By theory in an asynchronous system it is impossible to know if a process is sleeping or has crashed
@@ -74,3 +73,29 @@ Setup : Multithreaded program :
 
 1. wait for start signal
 2. check if message queue is empty 
+
+
+**URB BROADCAST**
+
+## here is the pseudocode for unified reliable broadcast
+
+-ON <INIT>:
+    create an empty list called PENDING for each process
+    it is used for messages that are being broadcasted and are waiting to be delivered
+
+-ON <BROADCAST(m)>:
+    PENDING = PENDING U {self, msg_nr}
+    for all p in adress_book{
+        pl_send(message)
+-ON <PL_DELIVER(sender,m)>:
+    if(sender, m) NOT IN PENDING:
+        PENDING = PENDING U {sender, m}
+        for all p in adress_book except (sender){
+            pl_send(message)
+        }
+    }
+-while(true)
+        if(sender, m) in pending & #ofcandeliver > N/2 & m not delivered
+            URB_DELIVER(sender, m)
+
+##
