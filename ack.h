@@ -4,7 +4,7 @@
 
 #include "structure.h"
 
-int init_acks(ack_data_t* acks,size_t num_msg,size_t num_proc,da_process_t* proc_list);
+int init_acks(ack_data_t* data, size_t num_proc, da_process_t* proc_list);
 
 int add_ack(ack_data_t* acks,unsigned int pid,unsigned int msg_no);
 

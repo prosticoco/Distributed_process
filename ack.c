@@ -1,4 +1,5 @@
 #include "ack.h"
+#include "error.h"
 
 #include <pthread.h>
 #include <stdio.h>

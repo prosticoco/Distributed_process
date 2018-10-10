@@ -86,7 +86,7 @@ typedef struct{
 typedef struct{
   unsigned int pid;
   unsigned int counter;
-}ack_counter_t
+}ack_counter_t;
 
 
 // structure to store list of ack counters per thread
