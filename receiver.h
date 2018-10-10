@@ -21,4 +21,10 @@ int end_receiver(receiver_info_t* data);
 
 
 
+//the receiver takes care of all deliveries and checks if message can be delivered
+int deliver_urb(sender_info_t* data,msg_t* msg);
+
+//check if msg can be delivered
+bool candeliver(msg_t* msg);
+
 #endif

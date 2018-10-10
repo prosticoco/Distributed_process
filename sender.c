@@ -85,6 +85,19 @@ int send_fl(int fd,struct sockaddr_in* address,msg_t* msg){
   return 0;
 }
 
+//simple best effort broadcast uses pl_send
+int broadcast_beb(msg_t* msg, addr_book_t* book);
+
+
+//unified reliable broadcast that uses beb
+int broadcast_urb(msg_t* msg, addr_book_t* book){
+
+  /**pending.add(self,msg->msg_nr)
+   * broadcast_beb(msg);
+   */
+
+}
+
 
 int terminate_senders(sender_info_t* senders,size_t no_senders){
   int error;

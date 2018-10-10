@@ -19,8 +19,22 @@ int send_pl(sender_info_t* data,msg_t* msg);
 // sends a message msg via fair loss link
 int send_fl(int fd,struct sockaddr_in* address,msg_t* msg);
 
+**
+ * the broadcast method is called by a process which then distributes pl_sends to threads 
+ * the sender_info_t* data is dependant on the thread so it is constructed 
+ * after/inside the broadcast call
+ */
+
+//simple best effort broadcast uses pl_send
+int broadcast_beb(msg_t* msg, addr_book_t* book);
+
+
+//unified reliable broadcast that uses beb
+int broadcast_urb(msg_t* msg, addr_book_t* book);
+
 
 // called when program stops, closes the senders file descriptors, senders is a pointer to a list of senders
 int end_senders(receiver_info_t* data);
+
 
 #endif
