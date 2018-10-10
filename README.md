@@ -8,7 +8,6 @@ Distributed Algorithms Project
 * (1/2 DONE) Implement perfect links _directly_ over fair-loss links, do not implement stubborn links as is done in the class
 * Implement UNIFIED RELIABLE Broadcasts using perfect links
 
-<<<<<<< Updated upstream
 ##Ideas
 
 
@@ -17,10 +16,6 @@ Distributed Algorithms Project
         //By theory in an asynchronous system it is impossible to know if a process is sleeping or has crashed
 
 ## Program flow proposition
-=======
-
-## program flow proposition
->>>>>>> Stashed changes
 
 Setup : Multithreaded program :
   - Process represents 1 node in a graph of connected nodes which communicate with each other
@@ -72,7 +67,6 @@ Setup : Multithreaded program :
 **Sender threads**
 
 1. wait for start signal
-<<<<<<< HEAD
 2. check if message queue is empty 
 
 
@@ -99,11 +93,6 @@ Setup : Multithreaded program :
         if(sender, m) in pending & #ofcandeliver > N/2 & m not delivered
             URB_DELIVER(sender, m)
 
-##
-=======
-2. check if message queue is empty
-
-
 ## Discussion with the TA :
 
 Question about signals : I realized we should not worry about which thread intercepts the signals, as long as the handler methods are non-blocking.
@@ -113,4 +102,3 @@ ie, any thread can get any signal and will handle it in a finite amount of time
 Question about read/write simultaneously : the TA said it could be unstable so we should use mutex's to ensure syncrhonisation between threads.
 
 Question about no duplication : no need to worry we just have to not "deliver" the message twice but we can still receive it twice.
->>>>>>> 609fcc6a14d29e483c1f8edd7cfe4613f6dce1b8
