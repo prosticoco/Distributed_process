@@ -10,9 +10,14 @@ void *receiver_f(void * params);
 // returns <0 on error, 0 otherwise
 int init_receiver_socket(int * rec_fd,struct sockaddr_in* my_addr);
 
+// spawns receiver thread 
+int init_receiver(receiver_info_t* data);
 
 
-int deliver_pl(struct sockaddr_in* sender,msg_t* msg);
+
+int deliver(receiver_info_t* data,struct sockaddr_in* sender,msg_t* msg);
+
+int end_receiver(receiver_info_t* data);
 
 
 

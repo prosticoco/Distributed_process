@@ -11,6 +11,39 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+// callback function for sender thread, ie main function for thread
+void *sender_f(void * params);
+
+
+
+int init_senders(receiver_info_t* data){
+  unsigned int no_nodes = data->no_nodes;
+  sender_info_t* senders = calloc(no_nodes,sizeof(sender_info_t));
+  if(senders == NULL){
+    fprintf(stderr,"ERROR calloc() in init_senders()");
+    return ERROR_MEMORY;
+  }
+  addr_book_t* book = data->addresses;
+  unsigned int current_pid;
+  ack_data_t* counters = data->acklist;
+  int error;
+  for(int i = 0; i < no_nodes; i++){
+      senders[i].nodeid = data->nodeid;
+      current_pid = book->listaddr[i].process_id;
+      senders[i].process_address->process_id = current_pid;
+      senders[i].process_address->address = book->listaddr[i].address;
+      senders[i].queue = &(data->thread_queues->queues[i]);
+      senders[i].queue->pid = current_pid;
+      senders[i].ack_counter = &(counters->acks[i]);
+      senders[i].ack_counter->pid = current_pid;
+      senders[i].fd = NULL;
+      error = init_socket_sender(&senders[i]);
+      if(error){
+        return error;
+      }
+      // TO FINISH 
+  }
+}
 
 int init_socket_sender(sender_info_t* data){
   // open a new socket

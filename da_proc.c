@@ -10,6 +10,9 @@
 #include <netdb.h>
 #include <pthread.h>
 
+#include "addrbook.h"
+#include "ack.h"
+#include "mqueue.h"
 #include "error.h"
 #include "utils.h"
 
@@ -61,7 +64,21 @@ static void stop(int signum) {
 }
 
 int main(int argc, char** argv) {
+	// IMPORTANT HAVE TO FILL IN ALL OF THE FIELDS IN DATA BEFORE INITIALIZING THREADS
+	// Except filedescriptor field
+	// lol I mean fill in any data you can
+	receiver_info_t data;
+	// need parsing of membership file to get the number of nodes
+	// default values 
+	data.no_nodes = 4; // N-1
+	pthread_t sender_threads[data.no_nodes];
+	// receiver thread
+	pthread_t receiver_thread;
 
+
+	data.senders = &sender_threads;
+	data.receiver = &receiver_thread;
+	
 	// Set signal handlers
 	signal(SIGUSR1, start);
 	signal(SIGTERM, stop);
@@ -81,6 +98,8 @@ int main(int argc, char** argv) {
 	// Initialize application
 	// Start listening for incoming UDP packets
 	printf("Initializing.\n");
+	// TODO : initialize all the pointer variables mentionned above
+	// After initialization: 
 
 
 	// Wait until start signal

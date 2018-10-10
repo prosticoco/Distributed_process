@@ -82,8 +82,8 @@ void *readerf(void *params){
   }
   ready_to_connect = 1;
   int len;
-  n = recvfrom(sockr, (char *) buffer,255,MSG_WAITALL, (struct sockaddr *) &cli_addr,
-&len);
+  n = recvfrom(sockr, (char *) buffer,255,
+  MSG_WAITALL, (struct sockaddr *) &cli_addr,&len);
   buffer[n] = '\0';
   printf("MESSAGE RECIEVED ON READER\n");
   printf("%s\n",buffer);

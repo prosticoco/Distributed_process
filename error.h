@@ -16,7 +16,11 @@ typedef enum {
   ERROR_CLOSE,
   ERROR_ACK_LOCK,
   ERROR_LOCK,
-  ERROR_PID
+  ERROR_PID,
+  ERROR_BIND,
+  ERROR_THREAD,
+  ERROR_NETWORK,
+  ERROR_IO
 } error_codes;
 
 #endif

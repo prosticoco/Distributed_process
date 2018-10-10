@@ -9,6 +9,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <stdbool.h>
+#include <pthread.h>
 
 // file representing all relevant structures for the project, can be changed....
 
@@ -53,7 +54,7 @@ typedef struct {
 // this structure is just used to associate a thread with its own message queue
 typedef struct {
   // the id of the sender_thread
-  unsigned int thread_id;
+  unsigned int pid;
   // the msg queue associated with a thread
   msg_queue_t* queue;
 } thread_msg_queue_t;
@@ -97,8 +98,6 @@ typedef struct{
 
 // structure representing all the information a sender_tread will have access to
 typedef struct {
-  // unique id for sender_thread (might be set as the same as process_id)
-  unsigned int thread_id;
   // ID of the current node (ie the n in da_proc n)
   unsigned int nodeid;
   // file descriptor for sender socket
@@ -108,7 +107,6 @@ typedef struct {
   // the sender_thread's msg queue
   thread_msg_queue_t* queue;
   //pointer to the ack matrix
-  ack_matrix_t* acks;
   ack_counter_t* ack_counter;
 } sender_info_t;
 
@@ -116,18 +114,25 @@ typedef struct {
 // structure reprenting all info a receiver thread needs, might be subject to change
 // in the case where we add a new thread responsible for sending acks
 typedef struct {
-  // thread id of receiver thread
-  unsigned int tid;
+  // number of external nodes, equivalent to the number of sender_threads
+  // as well as no of entries in the address book, etc, etc 
+  unsigned int no_nodes;
   // ID of the current node (ie the n in da_proc n)
   unsigned int nodeid;
   // file descriptor for receiver socket
   unsigned int fd;
   // pointer to the address book of other processes
   addr_book_t* addresses;
+  // address of the current process
+  struct sockaddr_in* my_address;
   // pointer to the list of thread queues
   queue_list_t* thread_queues;
   // pointer to ack matrix
-  ack_list_t* acklist;
+  ack_data_t* acklist;
+  //list of sender threads
+  pthread_t* senders;
+  // receiver thread
+  pthread_t* receiver;
 
 } receiver_info_t;
 
