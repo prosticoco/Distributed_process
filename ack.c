@@ -47,6 +47,35 @@ int add_ack(ack_data_t* acks,unsigned int pid,unsigned int msg_no){
   int error;
 }
 
-int read_ack(ack_data_t* acks,unsigned int pid, unsigned int msg_no);
+int read_ack(ack_data_t* acks, unsigned int pid, unsigned int msg_no) {
+    // Acquire lock for reading
+    if (pthread_rwlock_rdlock(&ack_lock)) {
+        return ERROR_LOCK;
+    }
+
+    // TODO: might have to change that for something more efficient
+    // Find ack counter bound to given pid
+    ack_counter_t* this_counter = NULL;
+    for (size_t i = 0; i < acks->size; ++i) {
+        ack_counter_t* counter = acks->acks + i;
+        if (counter->pid == pid) {
+            this_counter = counter;
+            break;
+        }
+    }
+    if (this_counter == NULL) {
+        return ERROR_PID;
+    }
+
+    int acked = this_counter->counter >= msg_no ? 1 : 0;
+
+    // Release lock
+    if (pthread_rwlock_unlock(&ack_lock)) {
+        return ERROR_LOCK;
+    }
+
+    // Return result.
+    return acked;
+}
 
 int free_acks(ack_data_t* acks);
