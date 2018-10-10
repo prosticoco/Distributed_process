@@ -93,7 +93,6 @@ typedef struct{
 typedef struct{
   unsigned int size;
   ack_counter_t* acks;
-
 }ack_data_t;
 
 // structure representing all the information a sender_tread will have access to
