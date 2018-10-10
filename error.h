@@ -15,7 +15,8 @@ typedef enum {
   ERROR_SEND,
   ERROR_CLOSE,
   ERROR_ACK_LOCK,
-  ERROR_LOCK
+  ERROR_LOCK,
+  ERROR_PID
 } error_codes;
 
 #endif
