@@ -14,7 +14,6 @@
 
 
 
-
 // function callback for receiver threads, each spawned receiver will call this function and start reading msgs
 void *receiver_f(void * params){
     msg_t next_message;
@@ -78,3 +77,93 @@ int end_receiver(receiver_info_t* data){
     
 }
 
+int deliver(receiver_info_t* data,struct sockaddr_in* sender,msg_t* msg){
+
+    int error = 0;
+    //IF ACK add ack to acklist. basta.
+    if(msg->msg_type == ACK_NO){
+        error = add_ack(data->acklist ,msg->src_id ,msg->msg_nr); 
+        if(error < 0){
+            return error;
+        }
+    }
+    //real message
+    else{
+        /**create string from src_id and msg_nr that will be/is written in .out file
+         * delivery of application message, using the format
+         *   <d sender seq nr>
+         * */
+        char* str[128];
+        sprintf(str, "d %u %u", msg->src_id, msg->msg_nr);
+
+        //.out file name for this process
+        char* name[128];
+        sprintf(name, "da proc %u", data->nodeid);
+
+        //check if msg not yet delivered i.e. first time seeing msg
+        if(already_delivered(name, str) == 0){
+            error = delivered_add(name, str);
+            if(error < 0){
+                return error;
+            }
+        }
+
+        //create ack message
+        msg_t ack;
+        ack.msg_nr = msg->msg_nr;
+        ack.msg_type = ACK_NO;
+        ack.src_id = data->nodeid;
+        
+        error = send_fl(data->fd,sender,&ack);
+        if(error < 0){
+            return error;
+        }
+    }
+    return 0;
+}
+
+int already_delivered(char *fname, char* str){
+
+	FILE *fp;
+	int line_num = 1;
+	char temp[MAX_MESSAGE_LENGTH];
+	
+	if((fp = fopen(strcat(fname, ".out"), "r")) == NULL) {
+		return ERROR_FILE;
+	}
+
+	
+
+	while(fgets(temp, MAX_MESSAGE_LENGTH, fp) != NULL) {
+		if((strstr(temp, str)) != NULL) {
+			return 1;
+		}
+		line_num++;
+	}
+	
+	//Close the file if still open.
+	if(fp) {
+		fclose(fp);
+	}
+   	return 0;
+}
+
+int delivered_add(char *fname, char* str){
+
+    int error;
+    FILE *fp;
+
+    if(fp = fopen(strcat(fname, ".out"), "a") == NULL ) {
+        return ERROR_FILE;
+    }
+    error = fprintf(fp, str);
+    if(error < 0){
+        return ERROR_FILE;
+    }
+
+    if(fp) {
+		fclose(fp);
+	}
+   	return 0;
+
+}
