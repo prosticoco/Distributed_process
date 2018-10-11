@@ -35,7 +35,7 @@ void *receiver_f(void * params){
             return error;
         }
     }
-
+    return 0;
 }
 // creates a socket for receiving messages, updates the value of file descriptor
 // returns <0 on error, 0 otherwise
@@ -58,7 +58,7 @@ int init_receiver(receiver_info_t* data){
     if(error){
         return error;
     }
-    error = pthread_create(data->receiver,NULL,receiver_f,data);
+    error = pthread_create(data->receiver,NULL,receiver_f,(void*)data);
     if(error){
         fprintf(stderr,"ERROR pthread_create() return code : %d \n",error);
         return ERROR_THREAD;

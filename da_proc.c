@@ -16,8 +16,6 @@
 #include "error.h"
 #include "utils.h"
 
-
-static int wait_for_start = 1;
 static int total_process_number = 0;
 static int total_msg_number = 0;
 static da_process_t this_process;
@@ -25,6 +23,11 @@ static da_process_t this_process;
 static ack_matrix_t ack_matrix = NULL;
 // Tells us if each sender thread has to send an ACK
 static ack_list_t acks_to_send = NULL;
+
+// new condition variable to wake up threads for them to start sending messages
+static pthread_cond_t start_condition = PTHREAD_COND_INITIALIZER;
+// mutex used with the condition variable
+static pthread_mutex_t start_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 
 static void free_resources(void) {
@@ -39,8 +42,20 @@ static void free_resources(void) {
 // function called when process recieves start signal
 // process will broadcast messages to other processes
 static void start(int signum) {
-	wait_for_start = 0;
-
+	int error = 0; 
+	error = pthread_mutex_lock(&start_mutex);
+	if(error){
+		fprintf(stderr,"ERROR pthread_mutex_lock in start() error code %d\n",error);
+		return;
+	}
+	error = pthread_cond_broadcast(&start_condition);
+	if(error){
+		fprintf(stderr,"ERROR pthread_cond_broadcast error code %d\n",error);
+	}
+	error = pthread_mutex_unlock(&start_mutex);
+	if(error){
+		fprintf(stderr,"ERROR pthread_mutex_unlock in start() error code %d\n",error);
+	}
 
 }
 
@@ -64,6 +79,7 @@ static void stop(int signum) {
 }
 
 int main(int argc, char** argv) {
+	int error;
 	// IMPORTANT HAVE TO FILL IN ALL OF THE FIELDS IN DATA BEFORE INITIALIZING THREADS
 	// Except filedescriptor field
 	// lol I mean fill in any data you can
@@ -75,15 +91,16 @@ int main(int argc, char** argv) {
 	// receiver thread
 	pthread_t receiver_thread;
 
-
+	// fields that do not require membership file to be initialized
 	data.senders = &sender_threads;
 	data.receiver = &receiver_thread;
-	
+	data.start = &start_condition;
+	data.start_m = &start_mutex;
+
 	// Set signal handlers
 	signal(SIGUSR1, start);
 	signal(SIGTERM, stop);
 	signal(SIGINT, stop);
-	// set signal masks for threads not responsible of handling signals
 	// Parse arguments, including membership
 	int res = parse_membership_args(argc, argv, &total_process_number, &total_msg_number, &this_process);
 	// Initialize ack matrix (N - 1) x M
@@ -95,27 +112,7 @@ int main(int argc, char** argv) {
 		return res;
 	}
 
-	// Initialize application
-	// Start listening for incoming UDP packets
-	printf("Initializing.\n");
-	// TODO : initialize all the pointer variables mentionned above
-	// After initialization: 
-
-
-	// Wait until start signal
-	while(wait_for_start) {
-		struct timespec sleep_time;
-		sleep_time.tv_sec = 0;
-		sleep_time.tv_nsec = 1000;
-		nanosleep(&sleep_time, NULL);
-	}
-
-
-	// Broadcast messages
-	printf("Broadcasting messages.\n");
-
-
-	// Wait until stopped
+	// Wait for signal I guess
 	while(1) {
 		struct timespec sleep_time;
 		sleep_time.tv_sec = 1;

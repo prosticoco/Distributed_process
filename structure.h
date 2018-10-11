@@ -108,6 +108,10 @@ typedef struct {
   thread_msg_queue_t* queue;
   //pointer to the ack matrix
   ack_counter_t* ack_counter;
+  // condition variable to start
+  pthread_cond_t* start;
+  pthread_mutex_t* start_m;
+  
 } sender_info_t;
 
 
@@ -133,6 +137,9 @@ typedef struct {
   pthread_t* senders;
   // receiver thread
   pthread_t* receiver;
+  // condition variable to start
+  pthread_cond_t* start;
+  pthread_mutex_t* start_m;
 
 } receiver_info_t;
 

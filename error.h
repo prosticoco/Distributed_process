@@ -20,7 +20,9 @@ typedef enum {
   ERROR_BIND,
   ERROR_THREAD,
   ERROR_NETWORK,
-  ERROR_IO
+  ERROR_IO,
+  ERROR_CONDITION,
+  ERROR_MUTEX
 } error_codes;
 
 #endif

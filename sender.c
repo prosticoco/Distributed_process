@@ -12,36 +12,79 @@
 #include <arpa/inet.h>
 
 // callback function for sender thread, ie main function for thread
-void *sender_f(void * params);
+void *sender_f(void * params){
+  int error;
+  sender_info_t* data_s = (sender_info_t*) params;
+
+  // WAIT TO START the following code temporarily locks a mutex (mutex gets unlocked and locked again while cond_wait)
+  error = pthread_mutex_lock(data_s->start_m);
+  if(error){
+    fprintf(stderr,"ERROR pthread_mutex_lock() error code %d\n",error);
+    return ERROR_MUTEX;
+  }
+  error = pthread_cond_wait(data_s->start,data_s->start_m);
+  if(error){
+    fprintf(stderr,"ERROR pthread_cond_wait() error code %d\n",error);
+    return ERROR_CONDITION;
+  }
+  error = pthread_mutex_unlock(data_s->start_m);
+  if(error){
+    fprintf(stderr,"ERROR pthread_mutex_unlock() error code %d\n",error);
+    return ERROR_MUTEX;
+  }
+  // FINISH WAIT TO START, the thread will now start sending its messages
+  while(1){
+
+  }
+
+
+  return 0;
+  
+}
 
 
 
 int init_senders(receiver_info_t* data){
   unsigned int no_nodes = data->no_nodes;
-  sender_info_t* senders = calloc(no_nodes,sizeof(sender_info_t));
-  if(senders == NULL){
+  // allocate array of sender_info_t 
+  sender_info_t* sender_array = calloc(no_nodes,sizeof(sender_info_t));
+  if(sender_array == NULL){
     fprintf(stderr,"ERROR calloc() in init_senders()");
     return ERROR_MEMORY;
   }
+  // copy locally/temporarily the address book for faster access
   addr_book_t* book = data->addresses;
   unsigned int current_pid;
+  // copy temporaily list of counters 
   ack_data_t* counters = data->acklist;
   int error;
+  sender_info_t* curr_s = NULL;
+  // iterate over each sender_info_t structure to initialize all the fields according 
+  // to the data
   for(int i = 0; i < no_nodes; i++){
-      senders[i].nodeid = data->nodeid;
+      // the main node id 
+      curr_s = &(sender_array[i]);
+      curr_s->nodeid = data->nodeid;
+      // get the id of the external process corresponding to sender[i]
       current_pid = book->listaddr[i].process_id;
-      senders[i].process_address->process_id = current_pid;
-      senders[i].process_address->address = book->listaddr[i].address;
-      senders[i].queue = &(data->thread_queues->queues[i]);
-      senders[i].queue->pid = current_pid;
-      senders[i].ack_counter = &(counters->acks[i]);
-      senders[i].ack_counter->pid = current_pid;
-      senders[i].fd = NULL;
-      error = init_socket_sender(&senders[i]);
+      // set all the other fields accordingly
+      curr_s->process_address->process_id = current_pid;
+      curr_s->process_address->address = book->listaddr[i].address;
+      curr_s->queue = &(data->thread_queues->queues[i]);
+      curr_s->queue->pid = current_pid;
+      curr_s->ack_counter = &(counters->acks[i]);
+      curr_s->ack_counter->pid = current_pid;
+      // copy the address of the condition mutex to start sending messages
+      curr_s->start = data->start;
+      curr_s->start_m = data->start_m;
+      // when everything is done initialize the socket (so that the filedescriptor of the sender gets updated too)
+      error = init_socket_sender(curr_s);
       if(error){
         return error;
       }
-      // TO FINISH 
+      // everything is set up so we can now spawn the corresponding thread
+      error = pthread_create(&data->senders[i],NULL,sender_f,(void*) curr_s);
+       
   }
 }
 
