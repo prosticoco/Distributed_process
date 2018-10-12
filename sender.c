@@ -34,7 +34,7 @@ void *sender_f(void * params){
   }
   // FINISH WAIT TO START, the thread will now start sending its messages
   while(1){
-
+    // send message 
   }
 
 
