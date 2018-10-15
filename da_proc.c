@@ -15,6 +15,8 @@
 #include "mqueue.h"
 #include "error.h"
 #include "utils.h"
+#include "sender.h"
+#include "receiver.h"
 
 static int total_process_number = 0;
 static int total_msg_number = 0;
@@ -29,8 +31,16 @@ static pthread_cond_t start_condition = PTHREAD_COND_INITIALIZER;
 // mutex used with the condition variable
 static pthread_mutex_t start_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+static receiver_info_t* data_ptr;
+
 
 static void free_resources(void) {
+	if(data_ptr != NULL){
+		if(data_ptr->sender_infos != NULL){
+			terminate_senders(data_ptr);
+		}
+		end_receiver(data_ptr);
+	}
 	if (ack_matrix != NULL) {
 		free_ack_matrix(ack_matrix, total_process_number);
 	}
@@ -42,6 +52,7 @@ static void free_resources(void) {
 // function called when process recieves start signal
 // process will broadcast messages to other processes
 static void start(int signum) {
+	fprintf("START SENDING MESSAGES\n");
 	int error = 0; 
 	error = pthread_mutex_lock(&start_mutex);
 	if(error){
@@ -69,7 +80,7 @@ static void stop(int signum) {
 	printf("Immediately stopping network packet processing.\n");
 
 	// Write/flush output file if necessary
-	printf("Writing output.\n");
+	printf("Writing output. lol just joking we did not implement this shit yet\n");
 
 	// Free resources
 	free_resources();
@@ -101,6 +112,7 @@ int main(int argc, char** argv) {
 	signal(SIGUSR1, start);
 	signal(SIGTERM, stop);
 	signal(SIGINT, stop);
+
 	// Parse arguments, including membership
 	int res = parse_membership_args(argc, argv, &total_process_number, &total_msg_number, &this_process);
 	// Initialize ack matrix (N - 1) x M
@@ -111,7 +123,8 @@ int main(int argc, char** argv) {
 		free_resources();
 		return res;
 	}
-
+	// set the static reference to the main data 
+	data_ptr = &data;
 	// Wait for signal I guess
 	while(1) {
 		struct timespec sleep_time;

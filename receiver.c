@@ -28,6 +28,7 @@ void *receiver_f(void * params){
             fprintf(stderr,"ERROR : recvfrom return error code %d \n",error);
             return ERROR_NETWORK;
         }
+        
         error = deliver(data,&client,&next_message);
         if(error < 0){
             fprintf(stderr,"ERROR deliver() error code  %d\n",error);
@@ -70,15 +71,11 @@ int end_receiver(receiver_info_t* data){
     if(close(data->fd)){
         return ERROR_IO;
     }
-    if(pthread_join(data->receiver,NULL)){
-        return ERROR_THREAD;
-    }
     return 0;
-    
 }
 
 int deliver(receiver_info_t* data,struct sockaddr_in* sender,msg_t* msg){
-
+    fprintf(stdout,"DELIVERED CALLED\n Received message type %d from process %d, message no %d \n",msg->msg_type,msg->src_id,msg->msg_nr);
     int error = 0;
     //IF ACK add ack to acklist. basta.
     if(msg->msg_type == ACK_NO){
@@ -93,20 +90,20 @@ int deliver(receiver_info_t* data,struct sockaddr_in* sender,msg_t* msg){
          * delivery of application message, using the format
          *   <d sender seq nr>
          * */
-        char* str[128];
-        sprintf(str, "d %u %u", msg->src_id, msg->msg_nr);
+        //char* str[128];
+        //sprintf(str, "d %u %u", msg->src_id, msg->msg_nr);
 
         //.out file name for this process
-        char* name[128];
-        sprintf(name, "da proc %u", data->nodeid);
+        //char* name[128];
+        //sprintf(name, "da proc %u", data->nodeid);
 
         //check if msg not yet delivered i.e. first time seeing msg
-        if(already_delivered(name, str) == 0){
-            error = delivered_add(name, str);
-            if(error < 0){
-                return error;
-            }
-        }
+        //if(already_delivered(name, str) == 0){
+    //  error = delivered_add(name, str);
+            //if(error < 0){
+              //  return error;
+            //}
+        //}
 
         //create ack message
         msg_t ack;
@@ -118,10 +115,13 @@ int deliver(receiver_info_t* data,struct sockaddr_in* sender,msg_t* msg){
         if(error < 0){
             return error;
         }
+        fprintf(stdout,"sent ack for message number %d coming from process no %d \n",msg->msg_nr,msg->src_id);
     }
     return 0;
 }
 
+
+/**
 int already_delivered(char *fname, char* str){
 
 	FILE *fp;
@@ -167,3 +167,5 @@ int delivered_add(char *fname, char* str){
    	return 0;
 
 }
+*/
+

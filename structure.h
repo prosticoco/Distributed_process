@@ -111,7 +111,7 @@ typedef struct {
   // the sender_thread's msg queue
   thread_msg_queue_t* queue;
   //pointer to the ack matrix
-  ack_counter_t* ack_counter;
+  ack_data_t* acklist;
   // condition variable to start
   pthread_cond_t* start;
   pthread_mutex_t* start_m;
@@ -129,6 +129,8 @@ typedef struct {
   unsigned int nodeid;
   // file descriptor for receiver socket
   unsigned int fd;
+  // the list of pointers to sender infos
+  sender_info_t* sender_infos;
   // pointer to the address book of other processes
   addr_book_t* addresses;
   // address of the current process
