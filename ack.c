@@ -14,6 +14,20 @@ static pthread_rwlockattr_t attribute;
 static int lock_in_use = 0;
 
 
+static ack_counter_t* get_ack_counter(ack_data_t* acks, unsigned int pid) {
+    // TODO: might be possible to do it in a more efficient way
+    // Find ack counter bound to given pid
+    ack_counter_t* this_counter = NULL;
+    for (size_t i = 0; i < acks->size; ++i) {
+        ack_counter_t* counter = acks->acks + i;
+        if (counter->pid == pid) {
+            this_counter = counter;
+            break;
+        }
+    }
+
+    return this_counter;
+}
 
 
 // only call once initializes acks structure and initializes a reader/writer lock
@@ -42,9 +56,30 @@ int init_acks(ack_data_t* data,size_t num_proc,da_process_t* proc_list){
   return 0;
 }
 
-int add_ack(ack_data_t* acks,unsigned int pid,unsigned int msg_no){
-  
-  int error;
+
+int add_ack(ack_data_t* acks, unsigned int pid, unsigned int msg_no) {
+    // Acquire lock for writing
+    if (pthread_rwlock_wrlock(&ack_lock)) {
+        return ERROR_LOCK;
+    }
+
+    // Find ack counter bound to given pid
+    ack_counter_t* this_counter = get_ack_counter(acks, pid);
+    if (this_counter == NULL) {
+        return ERROR_PID;
+    }
+
+    // Increment counter only if given message isn't acked already
+    if (this_counter->counter < msg_no) {
+        this_counter->counter++;
+    }
+
+    // Release lock
+    if (pthread_rwlock_unlock(&ack_lock)) {
+        return ERROR_LOCK;
+    }
+
+    return 0;
 }
 
 int read_ack(ack_data_t* acks, unsigned int pid, unsigned int msg_no) {
@@ -53,16 +88,8 @@ int read_ack(ack_data_t* acks, unsigned int pid, unsigned int msg_no) {
         return ERROR_LOCK;
     }
 
-    // TODO: might have to change that for something more efficient
     // Find ack counter bound to given pid
-    ack_counter_t* this_counter = NULL;
-    for (size_t i = 0; i < acks->size; ++i) {
-        ack_counter_t* counter = acks->acks + i;
-        if (counter->pid == pid) {
-            this_counter = counter;
-            break;
-        }
-    }
+    ack_counter_t* this_counter = get_ack_counter(acks, pid);
     if (this_counter == NULL) {
         return ERROR_PID;
     }
@@ -78,4 +105,10 @@ int read_ack(ack_data_t* acks, unsigned int pid, unsigned int msg_no) {
     return acked;
 }
 
-int free_acks(ack_data_t* acks);
+
+int free_acks(ack_data_t* acks) {
+    for (size_t i = 0; i < acks->size; ++i) {
+        free(acks->acks + i);
+    }
+    free(acks);
+}
