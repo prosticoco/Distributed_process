@@ -82,10 +82,6 @@ typedef struct{
   size_t size;
   addr_entry_t* listaddr;
 }addr_book_t;
-typedef struct{
-  size_t size;
-  addr_entry_t* listaddr;
-}addr_book_t;
 
 // structure for an ack counter for one thread
 typedef struct{
