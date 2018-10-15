@@ -107,8 +107,19 @@ int read_ack(ack_data_t* acks, unsigned int pid, unsigned int msg_no) {
 
 
 int free_acks(ack_data_t* acks) {
+    if (acks == NULL) {
+        return ERROR_MEMORY;
+    }
+
+    int error = 0;
     for (size_t i = 0; i < acks->size; ++i) {
-        free(acks->acks + i);
+        ack_counter_t* counter = acks->acks + i;
+        if (counter != NULL) {
+            free(acks->acks + i);
+        } else {
+            error = ERROR_MEMORY;
+        }
     }
     free(acks);
+    return error;
 }
