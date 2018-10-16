@@ -23,7 +23,8 @@ typedef enum {
   ERROR_IO,
   ERROR_CONDITION,
   ERROR_MUTEX,
-  ERROR_FILE
+  ERROR_FILE,
+  ERROR_ARGS
 } error_codes;
 
 #endif

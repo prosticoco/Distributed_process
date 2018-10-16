@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <pthread.h>
 
@@ -18,23 +19,16 @@
 #include "sender.h"
 #include "receiver.h"
 
-static int total_process_number = 0;
-static int total_msg_number = 0;
-static da_process_t this_process;
-// Matrix of acks from other processes
-static ack_matrix_t ack_matrix = NULL;
-// Tells us if each sender thread has to send an ACK
-static ack_list_t acks_to_send = NULL;
 
 // new condition variable to wake up threads for them to start sending messages
 static pthread_cond_t start_condition = PTHREAD_COND_INITIALIZER;
 // mutex used with the condition variable
 static pthread_mutex_t start_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-static receiver_info_t* data_ptr;
+static receiver_info_t data;
 
 
-void test_init(receiver_info_t* data, unsigned int node_num,unsigned int total_nodes){
+int test_init(receiver_info_t* data, unsigned int node_num,unsigned int total_nodes){
 	da_process_t other_processes[total_nodes-1];
 	data->nodeid = node_num;
 	data->no_nodes = total_nodes -1;
@@ -71,6 +65,7 @@ void test_init(receiver_info_t* data, unsigned int node_num,unsigned int total_n
 			data->my_address->sin_port = htons(11002);
 			init_acks(data->acklist,total_nodes -1 , other_processes);
 	}
+	return 0;
 }
 
 void end_test(receiver_info_t* data){
@@ -80,20 +75,11 @@ void end_test(receiver_info_t* data){
 
 
 static void free_resources(void) {
-	if(data_ptr != NULL){
-		if(data_ptr->sender_infos != NULL){
-			terminate_senders(data_ptr);
-		}
-		end_receiver(data_ptr);
+	if (data.sender_infos != NULL) {
+		terminate_senders(&data);
 	}
-	end_test(data_ptr);
-	//if (ack_matrix != NULL) {
-	//	free_ack_matrix(ack_matrix, total_process_number);
-	//}
-	//if (acks_to_send != NULL) {
-	//	free_acks_to_send(acks_to_send);
-	//}
-
+	end_receiver(&data);
+	end_test(&data);
 }
 
 // function called when process recieves start signal
@@ -144,11 +130,12 @@ int main(int argc, char** argv) {
 	// IMPORTANT HAVE TO FILL IN ALL OF THE FIELDS IN DATA BEFORE INITIALIZING THREADS
 	// Except filedescriptor field
 	// lol I mean fill in any data you can
-	receiver_info_t data;
 	// need parsing of membership file to get the number of nodes
 	// default values 
 	// initalize values for testing, hardcoded in this method
-	test_init(&data,atoi(argv[1]),2);
+	test_init(&data,atoi(argv[1]), 2);
+	// Initialize values with membership file.
+	//parse_membership_args(argc, argv, &data);
 	// initialize list of pthreads
 	pthread_t sender_threads[data.no_nodes];
 	// receiver thread
@@ -159,7 +146,6 @@ int main(int argc, char** argv) {
 	data.receiver = &receiver_thread;
 	data.start = &start_condition;
 	data.start_m = &start_mutex;
-	data_ptr = &data;
 
 	// TODO: maybe move this after all the data has been initialized ?
 	// Set signal handlers
@@ -174,7 +160,7 @@ int main(int argc, char** argv) {
 		fprintf(stderr,"MT : Error Initializing receiver error code %d \n",error);
 		return error;
 	}
-	prinf("MT : finished initializing receiver thread with success\n");
+	printf("MT : finished initializing receiver thread with success\n");
 
 	error = init_senders(&data);
 	if(error){
@@ -184,43 +170,10 @@ int main(int argc, char** argv) {
 	printf("MT : finished initializing sender threads with success\n");
 
 	printf("MT : Now gonna sleep and wait for my signals hihi \n");
-	While(1) {
+	while (1) {
 		struct timespec sleep_time;
 		sleep_time.tv_sec = 1;
 		sleep_time.tv_nsec = 0;
 		nanosleep(&sleep_time, NULL);
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// Parse arguments, including membership
-	//int res = parse_membership_args(argc, argv, &total_process_number, &total_msg_number, &this_process);
-	// Initialize ack matrix (N - 1) x M
-	//res += initialize_ack_matrix(&ack_matrix, total_process_number, total_msg_number);
-	// Initialize acks-to-send array
-	//res += initialize_acks_to_send(&acks_to_send, total_process_number);
-
-	//if (res != 0) {
-	//	free_resources();
-	//	return res;
-	//}
-	// set the static reference to the main data 
-	
-	// Wait for signal I guess
-	//while(1) {
-	//	struct timespec sleep_time;
-	//	sleep_time.tv_sec = 1;
-	//	sleep_time.tv_nsec = 0;
-	//	nanosleep(&sleep_time, NULL);
-	//}
 }

@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 
 #include "utils.h"
+#include "error.h"
 
 /**
  * @brief Parses command line arguments and updates the given variables.
@@ -16,41 +17,43 @@
  * @param this_process Pointer to the structure of the calling process.
  * @return int Success: 0, Failure: not 0
  */
-int parse_membership_args(int argc, char** argv, int* total_process_number, int* total_msg_number, da_process_t* this_process) {
+int parse_membership_args(int argc, char** argv, receiver_info_t* data) {
     if (argc < 4) {
         fprintf(stderr, "ERROR: not enough arguments.\n");
-        return 1;
+        return ERROR_ARGS;
     }
 
+    // ***** this process uid *****
     int uid = atoi(argv[1]);
     printf("Process uid = %i\n", uid);
-    this_process->uid = uid;
+    data->nodeid = uid;
 
+    // ***** open membership file *****
     const char* membership_filename = argv[2];
     printf("Membership filename = \"%s\"\n", membership_filename);
-
-    *total_msg_number = atoi(argv[3]);
-    printf("Number of messages to broadcast = %i\n", *total_msg_number);
-
+    // TODO: what do I do with the number of messages to send ? (argv[3])
     FILE* membership_file = fopen(membership_filename, "r");
     if (membership_file == NULL) {
         fprintf(stderr, "ERROR: Could not open membership file.\n");
-        return 1;
+        return ERROR_FILE;
     }
 
+    // ***** total number of processes *****
     // 12 + 3 + 4 + 3 + 5 = 27 -> 32 is enough for one line here.
     char line[32];
     // Get total number of processes from the 1st line
     if (fgets(line, sizeof(line), membership_file) == NULL) {
         fprintf(stderr, "ERROR: Could not read from membership file.\n");
         fclose(membership_file);
-        return 1;
+        return ERROR_FILE;
     }
-    *total_process_number = atoi(line);
-    printf("Total number of processes = %i\n", *total_process_number);
+    // TODO: -1 ?
+    data->no_nodes = atoi(line) - 1;
+    printf("Total number of processes = %i\n", data->no_nodes);
 
+    // ***** other processes infos *****
+    /*
     bool found = false;
-
     // Iterate over lines until we find the right line
     while (fgets(line, sizeof(line), membership_file) != NULL) {
         // Get line process uid
@@ -81,6 +84,7 @@ int parse_membership_args(int argc, char** argv, int* total_process_number, int*
         fclose(membership_file);
         return 1;
     }
+    */
 
     fclose(membership_file);
     return 0;

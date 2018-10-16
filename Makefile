@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -std=gnu11
+CFLAGS = -Wall
 
 all: da_proc tests
 
