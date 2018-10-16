@@ -103,11 +103,12 @@ int main(int argc, char** argv) {
 	pthread_t receiver_thread;
 
 	// fields that do not require membership file to be initialized
-	data.senders = &sender_threads;
+	data.senders = sender_threads;
 	data.receiver = &receiver_thread;
 	data.start = &start_condition;
 	data.start_m = &start_mutex;
 
+	// TODO: maybe move this after all the data has been initialized ?
 	// Set signal handlers
 	signal(SIGUSR1, start);
 	signal(SIGTERM, stop);
