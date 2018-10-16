@@ -34,6 +34,51 @@ static pthread_mutex_t start_mutex = PTHREAD_MUTEX_INITIALIZER;
 static receiver_info_t* data_ptr;
 
 
+void test_init(receiver_info_t* data, unsigned int node_num,unsigned int total_nodes){
+	da_process_t other_processes[total_nodes-1];
+	data->nodeid = node_num;
+	data->no_nodes = total_nodes -1;
+	switch(node_num){
+
+		case 1 :
+			if(!inet_aton("127.0.0.1", &(other_processes[0].ipv4_addr) )){
+				fprintf(stderr,"ERROR inet_aton");
+				return ERROR_MEMORY;
+			}
+			other_processes[0].uid = 2;
+			other_processes[0].port_num = htons(11002);
+			init_addrbook(data->addresses,total_nodes-1,other_processes);
+			data->my_address->sin_family = AF_INET;
+			if(!inet_aton("127.0.0.1", &(data->my_address->sin_addr))){
+				fprintf(stderr,"ERROR inet_aton");
+				return ERROR_MEMORY;
+			}
+			data->my_address->sin_port = htons(11001);
+			init_acks(data->acklist,total_nodes -1 , other_processes);
+		case 2 :
+			if(!inet_aton("127.0.0.1", &(other_processes[0].ipv4_addr) )){
+				fprintf(stderr,"ERROR inet_aton");
+				return ERROR_MEMORY;
+			}
+			other_processes[0].uid = 1;
+			other_processes[0].port_num = htons(11001);
+			init_addrbook(data->addresses,total_nodes-1,other_processes);
+			data->my_address->sin_family = AF_INET;
+			if(!inet_aton("127.0.0.1", &(data->my_address->sin_addr))){
+				fprintf(stderr,"ERROR inet_aton");
+				return ERROR_MEMORY;
+			}
+			data->my_address->sin_port = htons(11002);
+			init_acks(data->acklist,total_nodes -1 , other_processes);
+	}
+}
+
+void end_test(receiver_info_t* data){
+	free_addrbook(data->addresses);
+	free_acks(data->acklist);
+}
+
+
 static void free_resources(void) {
 	if(data_ptr != NULL){
 		if(data_ptr->sender_infos != NULL){
@@ -41,18 +86,20 @@ static void free_resources(void) {
 		}
 		end_receiver(data_ptr);
 	}
-	if (ack_matrix != NULL) {
-		free_ack_matrix(ack_matrix, total_process_number);
-	}
-	if (acks_to_send != NULL) {
-		free_acks_to_send(acks_to_send);
-	}
+	end_test(data_ptr);
+	//if (ack_matrix != NULL) {
+	//	free_ack_matrix(ack_matrix, total_process_number);
+	//}
+	//if (acks_to_send != NULL) {
+	//	free_acks_to_send(acks_to_send);
+	//}
+
 }
 
 // function called when process recieves start signal
 // process will broadcast messages to other processes
 static void start(int signum) {
-	fprintf("START SENDING MESSAGES\n");
+	fprintf(stdout,"START SENDING MESSAGES\n");
 	int error = 0; 
 	error = pthread_mutex_lock(&start_mutex);
 	if(error){
@@ -77,13 +124,16 @@ static void stop(int signum) {
 
 
 	// Immediately stop network packet processing
-	printf("Immediately stopping network packet processing.\n");
-
+	printf("Immediately stopping network packet processing.\n"
+	"killing all other fucking threads \n");
+	pthread_kill_other_threads_np();
 	// Write/flush output file if necessary
+	printf("Freeing the fucking stupid ressources\n");
+	free_resources();
 	printf("Writing output. lol just joking we did not implement this shit yet\n");
 
 	// Free resources
-	free_resources();
+	
 
 	// Exit directly from signal handler
 	exit(0);
@@ -97,7 +147,9 @@ int main(int argc, char** argv) {
 	receiver_info_t data;
 	// need parsing of membership file to get the number of nodes
 	// default values 
-	data.no_nodes = 4; // N-1
+	// initalize values for testing, hardcoded in this method
+	test_init(&data,atoi(argv[1]),2);
+	// initialize list of pthreads
 	pthread_t sender_threads[data.no_nodes];
 	// receiver thread
 	pthread_t receiver_thread;
@@ -107,6 +159,7 @@ int main(int argc, char** argv) {
 	data.receiver = &receiver_thread;
 	data.start = &start_condition;
 	data.start_m = &start_mutex;
+	data_ptr = &data;
 
 	// TODO: maybe move this after all the data has been initialized ?
 	// Set signal handlers
@@ -114,23 +167,60 @@ int main(int argc, char** argv) {
 	signal(SIGTERM, stop);
 	signal(SIGINT, stop);
 
-	// Parse arguments, including membership
-	int res = parse_membership_args(argc, argv, &total_process_number, &total_msg_number, &this_process);
-	// Initialize ack matrix (N - 1) x M
-	res += initialize_ack_matrix(&ack_matrix, total_process_number, total_msg_number);
-	// Initialize acks-to-send array
-	res += initialize_acks_to_send(&acks_to_send, total_process_number);
-	if (res != 0) {
-		free_resources();
-		return res;
+	printf("MT : Finished initializing values of data\n");
+
+	error = init_receiver(&data);
+	if(error){
+		fprintf(stderr,"MT : Error Initializing receiver error code %d \n",error);
+		return error;
 	}
-	// set the static reference to the main data 
-	data_ptr = &data;
-	// Wait for signal I guess
-	while(1) {
+	prinf("MT : finished initializing receiver thread with success\n");
+
+	error = init_senders(&data);
+	if(error){
+		fprintf(stderr,"MT : Error Initializing sender threads, error code %d\n",error);
+		return error;
+	}
+	printf("MT : finished initializing sender threads with success\n");
+
+	printf("MT : Now gonna sleep and wait for my signals hihi \n");
+	While(1) {
 		struct timespec sleep_time;
 		sleep_time.tv_sec = 1;
 		sleep_time.tv_nsec = 0;
 		nanosleep(&sleep_time, NULL);
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// Parse arguments, including membership
+	//int res = parse_membership_args(argc, argv, &total_process_number, &total_msg_number, &this_process);
+	// Initialize ack matrix (N - 1) x M
+	//res += initialize_ack_matrix(&ack_matrix, total_process_number, total_msg_number);
+	// Initialize acks-to-send array
+	//res += initialize_acks_to_send(&acks_to_send, total_process_number);
+
+	//if (res != 0) {
+	//	free_resources();
+	//	return res;
+	//}
+	// set the static reference to the main data 
+	
+	// Wait for signal I guess
+	//while(1) {
+	//	struct timespec sleep_time;
+	//	sleep_time.tv_sec = 1;
+	//	sleep_time.tv_nsec = 0;
+	//	nanosleep(&sleep_time, NULL);
+	//}
 }
