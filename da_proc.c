@@ -68,6 +68,19 @@ int test_init(receiver_info_t* data, unsigned int node_num,unsigned int total_no
 	return 0;
 }
 
+int kill_threads(void){
+	int error = pthread_cancel(data.receiver);
+	if(error){
+		return error;
+	}
+	for(int i = 0 ; i < data.no_nodes; i++){
+		error = pthread_cancel(&(data.senders[i]));
+		if(error){
+			return error;
+		}
+	}
+}
+
 void end_test(receiver_info_t* data){
 	free_addrbook(data->addresses);
 	free_acks(data->acklist);
@@ -107,17 +120,21 @@ static void stop(int signum) {
 	// Reset signal handlers to default
 	signal(SIGTERM, SIG_DFL);
 	signal(SIGINT, SIG_DFL);
+	int error;
 
 
 	// Immediately stop network packet processing
 	printf("Immediately stopping network packet processing.\n"
 	"killing all other fucking threads \n");
-	pthread_kill_other_threads_np();
+	error = kill_threads();
+	if(error){
+		fprintf(stderr,"error while killing the little fucker threads error code %d \n",error);
+	}
 	// Write/flush output file if necessary
 	printf("Freeing the fucking stupid ressources\n");
 	free_resources();
 	printf("Writing output. lol just joking we did not implement this shit yet\n");
-
+	
 	// Free resources
 	
 
