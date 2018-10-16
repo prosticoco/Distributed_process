@@ -49,9 +49,11 @@ int init_acks(ack_data_t* data,size_t num_proc,da_process_t* proc_list){
     if (data->acks == NULL) {
         return ERROR_MEMORY;
     }
+    data->size = num_proc;
     for (int i = 0 ; i < num_proc; i++) {
         data->acks[i].counter = 0;
         data->acks[i].pid = proc_list[i].uid;
+        printf("pid for counter was initialized to this fucking value %d \n",data->acks[i].pid);
     }
     return 0;
 }
@@ -85,12 +87,14 @@ int add_ack(ack_data_t* acks, unsigned int pid, unsigned int msg_no) {
 int read_ack(ack_data_t* acks, unsigned int pid, unsigned int msg_no) {
     // Acquire lock for reading
     if (pthread_rwlock_rdlock(&ack_lock)) {
+        printf("Error Lock fuck shit marc shit\n");
         return ERROR_LOCK;
     }
 
     // Find ack counter bound to given pid
     ack_counter_t* this_counter = get_ack_counter(acks, pid);
     if (this_counter == NULL) {
+        printf("Error PID \n");
         return ERROR_PID;
     }
 
@@ -98,6 +102,7 @@ int read_ack(ack_data_t* acks, unsigned int pid, unsigned int msg_no) {
 
     // Release lock
     if (pthread_rwlock_unlock(&ack_lock)) {
+        printf("Error Lock\n");
         return ERROR_LOCK;
     }
 

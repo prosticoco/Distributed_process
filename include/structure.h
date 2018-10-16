@@ -19,6 +19,7 @@
 // parameter to define maximum text message length
 #define MAX_MESSAGE_LENGTH 256
 #define ACK_NO  0
+#define MSG_NO  1
 /**
 
 structure defining a message to be sent via UDP

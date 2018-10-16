@@ -14,6 +14,26 @@
 #include "error.h"
 #include "structure.h"
 
+int test_send1(sender_info_t* data){
+  int error;
+  msg_t msg;
+  msg.msg_nr = 1;
+  msg.msg_type = MSG_NO;
+  msg.src_id = 1;
+  error = send_pl(data,&msg);
+  printf("SENDER THREAD : message number one was successfully sent\n");
+  if(error){
+    return error;
+  }
+  msg.msg_nr = 2;
+  error = send_pl(data,&msg);
+  if(error){
+    return error;
+  }
+  return 0;
+
+}
+
 // callback function for sender thread, ie main function for thread
 void *sender_f(void * params){
   
@@ -21,6 +41,7 @@ void *sender_f(void * params){
   sender_info_t* data_s = (sender_info_t*) params;
   
   printf("sender thread for proc no : %d \n",data_s->process_address->process_id);
+  printf("Sender thread : I am happy to announce that I will send some messages to port number %d\n",data_s->process_address->address.sin_port);
   // WAIT TO START the following code temporarily locks a mutex (mutex gets unlocked and locked again while cond_wait)
   error = pthread_mutex_lock(data_s->start_m);
   if(error){
@@ -37,7 +58,11 @@ void *sender_f(void * params){
     fprintf(stderr,"ERROR pthread_mutex_unlock() error code %d\n",error);
     exit(ERROR_MUTEX);
   }
+  printf("I can now send messages :)\n");
   // FINISH WAIT TO START, the thread will now start sending its messages
+  if(data_s->nodeid == 1){
+    test_send1(data_s);
+  }
   while(1){
     // send message 
   }
@@ -47,6 +72,9 @@ void *sender_f(void * params){
   
 }
 
+
+
+//int test_send2(sender_info_t* data);
 
 
 int init_senders(receiver_info_t* data){
@@ -108,14 +136,18 @@ int init_socket_sender(sender_info_t* data){
 int send_pl(sender_info_t* data,msg_t* msg){
 
   int error = 0;
-
+  int i = 0;
   while(!read_ack(data->acklist, data->process_address->process_id, msg->msg_nr)){
+    i+= 1;
+    printf("look at me I am in a while \n");
     error = send_fl(data->fd, &(data->process_address->address), msg);
+    printf("just sent a message via fair loss link, what a story mark\n");
     if(error < 0){
       return ERROR_SEND;
     }
-    sleep(50);
+    usleep(2000);
   }
+  printf("exiting perfect link, number of iterations in while loop = %d\n",i);
   return 0;
 }
 

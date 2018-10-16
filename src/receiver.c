@@ -22,6 +22,7 @@ void *receiver_f(void * params){
     int error;
     receiver_info_t* data = (receiver_info_t *) params;
     printf("receiver thread, node id : %d \n",data->nodeid);
+    printf("my port number is equal to %d \n",data->my_address.sin_port);
     struct sockaddr_in client;
     unsigned int length_client;
     while(1){
@@ -31,7 +32,7 @@ void *receiver_f(void * params){
             fprintf(stderr,"ERROR : recvfrom return error code %d \n",error);
             exit(ERROR_NETWORK);
         }
-        
+        printf("message received\n");
         error = deliver(data,&client,&next_message);
         if(error < 0){
             fprintf(stderr,"ERROR deliver() error code  %d\n",error);
@@ -109,13 +110,21 @@ int deliver(receiver_info_t* data,struct sockaddr_in* sender,msg_t* msg){
         //}
 
         //create ack message
+        // get back address to send ack
+        struct sockaddr_in ack_address;
+        error = find_addrbook(&(data->addresses),msg->src_id,&ack_address);
+        if(error){
+            printf("error searching for id in address book \n");
+            return error;
+        }
         msg_t ack;
         ack.msg_nr = msg->msg_nr;
         ack.msg_type = ACK_NO;
         ack.src_id = data->nodeid;
-        
-        error = send_fl(data->fd,sender,&ack);
+        printf("gonna send that bitch an ack for msg no %d \n",msg->msg_nr);
+        error = send_fl(data->fd,&ack_address,&ack);
         if(error < 0){
+            printf("wooooooow that did not work because fair loss send fucked up oh shit\n");
             return error;
         }
         fprintf(stdout,"sent ack for message number %d coming from process no %d \n",msg->msg_nr,msg->src_id);
