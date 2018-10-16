@@ -41,14 +41,15 @@ int test_init(receiver_info_t* data, unsigned int node_num,unsigned int total_no
 			}
 			other_processes[0].uid = 2;
 			other_processes[0].port_num = htons(11002);
-			init_addrbook(data->addresses,total_nodes-1,other_processes);
-			data->my_address->sin_family = AF_INET;
-			if(!inet_aton("127.0.0.1", &(data->my_address->sin_addr))){
+			init_addrbook(&(data->addresses),total_nodes-1,other_processes);
+			data->my_address.sin_family = AF_INET;
+			if(!inet_aton("127.0.0.1", &(data->my_address.sin_addr))){
 				fprintf(stderr,"ERROR inet_aton");
 				return ERROR_MEMORY;
 			}
-			data->my_address->sin_port = htons(11001);
-			init_acks(data->acklist,total_nodes -1 , other_processes);
+			data->my_address.sin_port = htons(11001);
+			init_acks(&(data->acklist),total_nodes -1 , other_processes);
+			break;
 		case 2 :
 			if(!inet_aton("127.0.0.1", &(other_processes[0].ipv4_addr) )){
 				fprintf(stderr,"ERROR inet_aton");
@@ -56,14 +57,15 @@ int test_init(receiver_info_t* data, unsigned int node_num,unsigned int total_no
 			}
 			other_processes[0].uid = 1;
 			other_processes[0].port_num = htons(11001);
-			init_addrbook(data->addresses,total_nodes-1,other_processes);
-			data->my_address->sin_family = AF_INET;
-			if(!inet_aton("127.0.0.1", &(data->my_address->sin_addr))){
+			init_addrbook(&(data->addresses),total_nodes-1,other_processes);
+			data->my_address.sin_family = AF_INET;
+			if(!inet_aton("127.0.0.1", &(data->my_address.sin_addr))){
 				fprintf(stderr,"ERROR inet_aton");
 				return ERROR_MEMORY;
 			}
-			data->my_address->sin_port = htons(11002);
-			init_acks(data->acklist,total_nodes -1 , other_processes);
+			data->my_address.sin_port = htons(11002);
+			init_acks(&(data->acklist),total_nodes -1 , other_processes);
+			break;
 	}
 	return 0;
 }
@@ -83,16 +85,21 @@ int kill_threads(void){
 }
 
 void end_test(receiver_info_t* data){
-	free_addrbook(data->addresses);
-	free_acks(data->acklist);
+	free_addrbook(&(data->addresses));
+	printf("freed address book with success \n");
+	free_acks(&(data->acklist));
+	printf("freed acks with success yoooopie \n");
 }
 
 
 static void free_resources(void) {
+	printf("before terminating senders...\n");
 	if (data.sender_infos != NULL) {
 		terminate_senders(&data);
 	}
+	printf("terminated senders with success\n");
 	end_receiver(&data);
+	printf("ended receiver with success\n");
 	end_test(&data);
 }
 
@@ -151,10 +158,12 @@ int main(int argc, char** argv) {
 	// need parsing of membership file to get the number of nodes
 	// default values 
 	// initalize values for testing, hardcoded in this method
+	printf("initializing tests\n");
 	test_init(&data,atoi(argv[1]), 2);
 	// Initialize values with membership file.
 	//parse_membership_args(argc, argv, &data);
 	// initialize list of pthreads
+	printf("finished initializing tests\n");
 	pthread_t sender_threads[data.no_nodes];
 	// receiver thread
 	pthread_t receiver_thread;

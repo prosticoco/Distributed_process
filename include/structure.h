@@ -24,9 +24,9 @@
 structure defining a message to be sent via UDP
 */
 typedef struct {
-  size_t msg_type; //if ack or not 0 if not
-  unsigned int* msg_nr;
-  unsigned int* src_id;
+  unsigned int msg_type; //if ack or not 0 if not
+  unsigned int msg_nr;
+  unsigned int src_id;
   char mtext[MAX_MESSAGE_LENGTH];
 } msg_t;
 
@@ -41,9 +41,9 @@ typedef unsigned int* queue_elem_t;
 // structure representing a queue of messages to be sent. 1 per sender_thread
 typedef struct {
   // the number of elements in the queue
-  size_t no_elem;
+  unsigned int no_elem;
   // the size of the queue
-  size_t qsize;
+  unsigned int qsize;
   // index corresponding to the front of the queue
   unsigned int front;
   // index corresponding to the back of the queue
@@ -63,7 +63,7 @@ typedef struct {
 // structure representing the list of message queues, 1 for all threads
 typedef struct {
   // total number of sender threads
-  size_t no_sender;
+  unsigned int no_sender;
   thread_msg_queue_t* queues;
 } queue_list_t;
 
@@ -73,13 +73,13 @@ typedef struct {
 typedef struct {
   unsigned int process_id;
   // address structure for sending messages over UDP
-  struct sockaddr_in* address;
+  struct sockaddr_in address;
 } addr_entry_t;
 
 // made a typedef for the address list, can be changed, I thought it might be useful
 // to create an interface for handling it
 typedef struct{
-  size_t size;
+  unsigned int size;
   addr_entry_t* listaddr;
 }addr_book_t;
 
@@ -124,17 +124,17 @@ typedef struct {
   // ID of the current node (ie the n in da_proc n)
   unsigned int nodeid;
   // file descriptor for receiver socket
-  unsigned int fd;
+   int fd;
   // the list of pointers to sender infos
   sender_info_t* sender_infos;
   // pointer to the address book of other processes
-  addr_book_t* addresses;
+  addr_book_t addresses;
   // address of the current process
-  struct sockaddr_in* my_address;
+  struct sockaddr_in my_address;
   // pointer to the list of thread queues
   queue_list_t* thread_queues;
   // pointer to ack matrix
-  ack_data_t* acklist;
+  ack_data_t acklist;
   //list of sender threads
   pthread_t* senders;
   // receiver thread

@@ -12,12 +12,15 @@
 #include "ack.h"
 #include "sender.h"
 #include "error.h"
+#include "structure.h"
 
 // callback function for sender thread, ie main function for thread
 void *sender_f(void * params){
+  
   int error;
   sender_info_t* data_s = (sender_info_t*) params;
-
+  
+  printf("sender thread for proc no : %d \n",data_s->process_address->process_id);
   // WAIT TO START the following code temporarily locks a mutex (mutex gets unlocked and locked again while cond_wait)
   error = pthread_mutex_lock(data_s->start_m);
   if(error){
@@ -58,10 +61,9 @@ int init_senders(receiver_info_t* data){
     return ERROR_MEMORY;
   }
   // copy locally/temporarily the address book for faster access
-  addr_book_t* book = data->addresses;
-  unsigned int current_pid;
+  addr_book_t* book = &(data->addresses);
   // copy temporaily list of counters 
-  ack_data_t* counters = data->acklist;
+  ack_data_t* counters = &(data->acklist);
   int error;
   sender_info_t* curr_s = NULL;
   // iterate over each sender_info_t structure to initialize all the fields according 
@@ -70,13 +72,9 @@ int init_senders(receiver_info_t* data){
       // the main node id 
       curr_s = &(sender_array[i]);
       curr_s->nodeid = data->nodeid;
-      // get the id of the external process corresponding to sender[i]
-      current_pid = book->listaddr[i].process_id;
       // set all the other fields accordingly
-      curr_s->process_address->process_id = current_pid;
-      curr_s->process_address->address = book->listaddr[i].address;
-      curr_s->queue = &(data->thread_queues->queues[i]);
-      curr_s->queue->pid = current_pid;
+      curr_s->process_address = &(book->listaddr[i]);
+      curr_s->queue = NULL;
       curr_s->acklist = counters;
       // copy the address of the condition mutex to start sending messages
       curr_s->start = data->start;
@@ -111,8 +109,8 @@ int send_pl(sender_info_t* data,msg_t* msg){
 
   int error = 0;
 
-  while(!read_ack(data->acklist, data->process_address->process_id, *(msg->msg_nr))){
-    error = send_fl(data->fd, data->process_address->address, msg);
+  while(!read_ack(data->acklist, data->process_address->process_id, msg->msg_nr)){
+    error = send_fl(data->fd, &(data->process_address->address), msg);
     if(error < 0){
       return ERROR_SEND;
     }

@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <stdio.h>
 
 
 // creates an address book for all nodes listed in membership file
@@ -20,11 +21,11 @@ int init_addrbook(addr_book_t* book, size_t num_proc, da_process_t* proc_list){
     }
     // set all the list of entries to zero
     memset(book->listaddr,0,num_proc*sizeof(addr_entry_t));
-    struct sockaddr_in* curr_addr = NULL;
+    struct sockaddr_in * curr_addr;
     // go over all the list of entries and update the addresses of the book
     for(int i = 0 ; i < num_proc; i++){
       // get the address of the address field :)
-      curr_addr = book->listaddr[i].address;
+      curr_addr = &(book->listaddr[i].address);
       book->listaddr[i].process_id = proc_list[i].uid;
       curr_addr->sin_family = AF_INET;
       curr_addr->sin_port = proc_list[i].port_num;
@@ -40,7 +41,7 @@ int find_addrbook(addr_book_t* book, unsigned int proc_id, struct sockaddr_in* a
   for(int i = 0; i < book->size; i++){
       curr_entry = book->listaddr[i];
       if(curr_entry.process_id == proc_id){
-        *address = *(curr_entry.address);
+        *address = curr_entry.address;
         return 0;
       }
   }

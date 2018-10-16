@@ -120,6 +120,5 @@ int free_acks(ack_data_t* acks) {
             error = ERROR_MEMORY;
         }
     }
-    free(acks);
     return error;
 }
