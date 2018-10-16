@@ -1,8 +1,3 @@
-#include "receiver.h"
-#include "error.h"
-#include "mqueue.h"
-#include "addrbook.h"
-#include "ack.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -11,14 +6,22 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
+#include "receiver.h"
+#include "error.h"
+#include "mqueue.h"
+#include "addrbook.h"
+#include "ack.h"
+#include "sender.h"
 
 
 // function callback for receiver threads, each spawned receiver will call this function and start reading msgs
 void *receiver_f(void * params){
     msg_t next_message;
     int error;
-    sender_info_t* data = (sender_info_t *) params;
+    receiver_info_t* data = (receiver_info_t *) params;
+    printf("receiver thread, node id : %d \n",data->nodeid);
     struct sockaddr_in client;
     unsigned int length_client;
     while(1){
@@ -26,13 +29,13 @@ void *receiver_f(void * params){
         MSG_WAITALL, (struct sockaddr *) &client,&length_client);
         if(error < 0){
             fprintf(stderr,"ERROR : recvfrom return error code %d \n",error);
-            return ERROR_NETWORK;
+            exit(ERROR_NETWORK);
         }
         
         error = deliver(data,&client,&next_message);
         if(error < 0){
             fprintf(stderr,"ERROR deliver() error code  %d\n",error);
-            return error;
+            exit(error);
         }
     }
     return 0;
@@ -54,7 +57,7 @@ int init_receiver_socket(int * rec_fd,struct sockaddr_in* my_addr){
 int init_receiver(receiver_info_t* data){
     int error;
     // initialize the receiver's socket
-    error = init_receiver_socket(&(data->fd),data->my_address);
+    error = init_receiver_socket(&(data->fd),&(data->my_address));
     if(error){
         return error;
     }
@@ -79,7 +82,7 @@ int deliver(receiver_info_t* data,struct sockaddr_in* sender,msg_t* msg){
     int error = 0;
     //IF ACK add ack to acklist. basta.
     if(msg->msg_type == ACK_NO){
-        error = add_ack(data->acklist ,msg->src_id ,msg->msg_nr); 
+        error = add_ack(&(data->acklist) ,msg->src_id ,msg->msg_nr); 
         if(error < 0){
             return error;
         }
