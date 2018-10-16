@@ -69,16 +69,17 @@ int test_init(receiver_info_t* data, unsigned int node_num,unsigned int total_no
 }
 
 int kill_threads(void){
-	int error = pthread_cancel(data.receiver);
+	int error = pthread_cancel(*data.receiver);
 	if(error){
 		return error;
 	}
 	for(int i = 0 ; i < data.no_nodes; i++){
-		error = pthread_cancel(&(data.senders[i]));
+		error = pthread_cancel(data.senders[i]);
 		if(error){
 			return error;
 		}
 	}
+	return 0;
 }
 
 void end_test(receiver_info_t* data){

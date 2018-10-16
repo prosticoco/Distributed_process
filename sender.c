@@ -1,5 +1,3 @@
-#include "sender.h"
-#include "error.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +9,10 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+#include "ack.h"
+#include "sender.h"
+#include "error.h"
+
 // callback function for sender thread, ie main function for thread
 void *sender_f(void * params){
   int error;
@@ -20,17 +22,17 @@ void *sender_f(void * params){
   error = pthread_mutex_lock(data_s->start_m);
   if(error){
     fprintf(stderr,"ERROR pthread_mutex_lock() error code %d\n",error);
-    return ERROR_MUTEX;
+    exit(ERROR_MUTEX);
   }
   error = pthread_cond_wait(data_s->start,data_s->start_m);
   if(error){
     fprintf(stderr,"ERROR pthread_cond_wait() error code %d\n",error);
-    return ERROR_CONDITION;
+    exit(ERROR_CONDITION);
   }
   error = pthread_mutex_unlock(data_s->start_m);
   if(error){
     fprintf(stderr,"ERROR pthread_mutex_unlock() error code %d\n",error);
-    return ERROR_MUTEX;
+    exit(ERROR_MUTEX);
   }
   // FINISH WAIT TO START, the thread will now start sending its messages
   while(1){
@@ -90,6 +92,7 @@ int init_senders(receiver_info_t* data){
         return ERROR_THREAD;
       }
   }
+  return 0;
 }
 
 int init_socket_sender(sender_info_t* data){
@@ -108,13 +111,14 @@ int send_pl(sender_info_t* data,msg_t* msg){
 
   int error = 0;
 
-  while(!read_ack(data->acklist,data->process_address->process_id,msg->msg_nr)){
+  while(!read_ack(data->acklist, data->process_address->process_id, *(msg->msg_nr))){
     error = send_fl(data->fd, data->process_address->address, msg);
     if(error < 0){
       return ERROR_SEND;
     }
     sleep(50);
   }
+  return 0;
 }
 
 
@@ -142,7 +146,7 @@ int broadcast_urb(msg_t* msg, addr_book_t* book){
   /**pending.add(self,msg->msg_nr)
    * broadcast_beb(msg);
    */
-
+  return 0;
 }
 
 
