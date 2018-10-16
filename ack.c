@@ -40,7 +40,7 @@ int init_acks(ack_data_t* data,size_t num_proc,da_process_t* proc_list){
     if (error) {
         return ERROR_LOCK;
     }
-    error = pthread_rwlockattr_setkind_np(&attribute,PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP);
+    error = pthread_rwlockattr_setkind_np(&attribute, PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP);
     if (error) {
         return ERROR_LOCK;
     }
