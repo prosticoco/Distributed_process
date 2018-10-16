@@ -1,13 +1,21 @@
+# Plagiarized from http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
+# If you don't want to understand anything, read http://www.gnu.org/software/make/manual/make.html
 CC = gcc
 CFLAGS = -Wall
+LDLIBS = -pthread
+DEPS = ack.h addrbook.h error.h mqueue.h receiver.h sender.h structure.h utils.h
+OBJ = ack.o addrbook.o da_proc.o mqueue.o receiver.o sender.o utils.o
 
-all: da_proc tests
+# Recompile C files automatically if header files change
+%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
-da_proc: da_proc.c utils.c ack.c ack.h utils.h structure.h error.h addrbook.c addrbook.h sender.c sender.h receiver.c receiver.h
-	$(CC) $(CFLAGS) -o da_proc da_proc.c utils.c ack.c addrbook.c addrbook.h sender.c sender.h receiver.c receiver.h -pthread
+da_proc: $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDLIBS)
 
+.PHONY: clean
 clean:
-	rm da_proc tests
+	rm -f $(OBJ) da_proc
 
 tests:
 	$(CC) $(CFLAGS) -o tests tests.c
