@@ -15,6 +15,7 @@ OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
 
 # Recompile C files automatically if header files change
 $(ODIR)/%.o: %.c $(DEPS)
+	@mkdir -p obj
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 da_proc: $(OBJ)

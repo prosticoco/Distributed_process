@@ -90,46 +90,6 @@ int parse_membership_args(int argc, char** argv, receiver_info_t* data) {
     return 0;
 }
 
-/**
- * @brief Allocate memory for the ack matrix and set all flags to false.
- * 
- * @param acks Pointer to the ack matrix.
- * @param total_process_number Total number of processes.
- * @param total_msg_number Total number of messages to send.
- * @return int Success: 0, Failure: not 0
- */
-int initialize_ack_matrix(ack_matrix_t* acks, int total_process_number, int total_msg_number) {
-    // Initialize 2-D acks array (N x M), where M = #processes - 1, M = #msg to send for this thread
-    bool** acks_tmp = calloc(total_process_number - 1, sizeof(bool*));
-    if (acks_tmp == NULL) {
-        fprintf(stderr, "ERROR: Could not initialize ack array.\n");
-        return 1;
-    }
-    for (size_t i = 0; i < total_process_number - 1; ++i) {
-        // Calloc should initialize everything to false.
-        acks_tmp[i] = calloc(total_msg_number, sizeof(bool));
-        if (acks_tmp[i] == NULL) {
-            fprintf(stderr, "ERROR: Could not initialize ack array.\n");
-            return 1;
-        }
-    }
-
-    *acks = acks_tmp;
-    return 0;
-}
-
-/**
- * @brief Free ack matrix resources.
- * 
- * @param acks The ack matrix.
- * @param total_process_number The total number of processes.
- */
-void free_ack_matrix(ack_matrix_t acks, int total_process_number) {
-    for (size_t i = 0; i < total_process_number - 1; ++i) {
-        free(acks[i]);
-    }
-    free(acks);
-}
 
 /**
  * @brief Allocate memory for the acks-to-send array and set all flags to false.

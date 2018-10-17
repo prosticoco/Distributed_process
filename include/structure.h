@@ -31,9 +31,6 @@ typedef struct {
   char mtext[MAX_MESSAGE_LENGTH];
 } msg_t;
 
-// represents ACK Matrix (à changer si besoin @droz)
-typedef bool** ack_matrix_t;
-
 typedef bool* ack_list_t;
 
 // represents an element of the queue, will just be equal to the msg_nr
@@ -82,20 +79,20 @@ typedef struct {
 typedef struct{
   unsigned int size;
   addr_entry_t* listaddr;
-}addr_book_t;
+} addr_book_t;
 
 // structure for an ack counter for one thread
 typedef struct{
   unsigned int pid;
   unsigned int counter;
-}ack_counter_t;
+} ack_counter_t;
 
 
 // structure to store list of ack counters per thread
 typedef struct{
   unsigned int size;
   ack_counter_t* acks;
-}ack_data_t;
+} ack_data_t;
 
 // structure representing all the information a sender_tread will have access to
 typedef struct {
