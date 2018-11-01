@@ -38,13 +38,22 @@ def fifob(num_msgs,pid,destinations):
 
 def deliver_fl(sequence_nr,original_sender,sender):
     send_fl(ACK_NUMBER,original_sender,pid,sender)
-    deliver_pl(sequence_nr,original_sender,sender)
+    if delivered[original_sender] < sequence_nr:
+        deliver_pl(sequence_nr,original_sender,sender)
 
 def deliver_pl(sequence_nr,original_sender,sender):
     deliver_beb(sequence_nr,original_sender,sender)
 
+def candeliver(sequence_nr,original_sender):
+        if count(urb_ACK[original_sender],x >= sequence_nr) > N/2:
+                return True
+        else return False
+
 def deliver_beb(sequence_nr,original_sender,sender):
-    
+    if urb_ACK[original_sender][sender] == sequence_nr -1:
+            urb_ACK[original_sender][sender] += 1
+    if candeliver :
+            
     
 
 def deliver_urb(sequence_nr,original_sender,sender)
