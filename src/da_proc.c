@@ -28,7 +28,7 @@ static pthread_mutex_t start_mutex = PTHREAD_MUTEX_INITIALIZER;
 static receiver_info_t data;
 
 
-int test_init(receiver_info_t* data, unsigned int node_num,unsigned int total_nodes){
+int test_init(receiver_info_t* data, unsigned int node_num, unsigned int total_nodes){
 	da_process_t other_processes[total_nodes-1];
 	data->nodeid = node_num;
 	data->no_nodes = total_nodes -1;
@@ -173,14 +173,14 @@ int main(int argc, char** argv) {
 
 	error = init_receiver(&data);
 	if (error) {
-		fprintf(stderr,"MT : Error Initializing receiver error code %d \n",error);
+		fprintf(stderr,"MT : Error Initializing receiver error code %d \n", error);
 		return error;
 	}
 	printf("MT : finished initializing receiver thread with success\n");
 
 	error = init_senders(&data);
 	if (error) {
-		fprintf(stderr,"MT : Error Initializing sender threads, error code %d\n",error);
+		fprintf(stderr,"MT : Error Initializing sender threads, error code %d\n", error);
 		return error;
 	}
 	printf("MT : finished initializing sender threads with success\n");
