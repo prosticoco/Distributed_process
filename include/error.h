@@ -1,10 +1,4 @@
-
-
-
-
-
-#ifndef ERROR_H
-#define ERROR_H
+#pragma once
 
 typedef enum {
 
@@ -26,5 +20,3 @@ typedef enum {
   ERROR_FILE,
   ERROR_ARGS
 } error_codes;
-
-#endif
