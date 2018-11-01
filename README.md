@@ -8,7 +8,7 @@ Distributed Algorithms Project
 * (1/2 DONE) Implement perfect links _directly_ over fair-loss links, do not implement stubborn links as is done in the class
 * Implement UNIFIED RELIABLE Broadcasts using perfect links
 
-##Ideas
+## Ideas
 
 
 * In each process have a thread for each dest node so that they can advance through multiple messages asynchronously
@@ -50,9 +50,9 @@ Setup : Multithreaded program :
 
   Idea is to have arrays that will be updated by the receiver thread and read by the sender threads, these arrays should contain information such as :
 
-  - - what messages still have to be sent by each thread
-  - - for each other node which ACK have already been received etc..
-  - - signal information
+  - what messages still have to be sent by each thread
+  - for each other node which ACK have already been received etc..
+  - signal information
 
 ## Detailed Behavior
 

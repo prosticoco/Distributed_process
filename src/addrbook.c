@@ -11,25 +11,25 @@
 
 
 // creates an address book for all nodes listed in membership file
-int init_addrbook(addr_book_t* book, size_t num_proc, da_process_t* proc_list){
+int init_addrbook(addr_book_t* book, size_t num_proc, da_process_t* proc_list) {
     // set the book size to the number of nodes
     book->size = num_proc;
     // allocate memory for the list of addresses
-    book->listaddr = calloc(num_proc,sizeof(addr_entry_t));
-    if(book->listaddr == NULL){
-      return ERROR_MEMORY;
+    book->listaddr = calloc(num_proc, sizeof(addr_entry_t));
+    if (book->listaddr == NULL) {
+        return ERROR_MEMORY;
     }
     // set all the list of entries to zero
-    memset(book->listaddr,0,num_proc*sizeof(addr_entry_t));
+    memset(book->listaddr, 0, num_proc*sizeof(addr_entry_t));
     struct sockaddr_in * curr_addr;
     // go over all the list of entries and update the addresses of the book
-    for(int i = 0 ; i < num_proc; i++){
-      // get the address of the address field :)
-      curr_addr = &(book->listaddr[i].address);
-      book->listaddr[i].process_id = proc_list[i].uid;
-      curr_addr->sin_family = AF_INET;
-      curr_addr->sin_port = proc_list[i].port_num;
-      curr_addr->sin_addr = proc_list[i].ipv4_addr;
+    for (int i = 0 ; i < num_proc; i++) {
+        // get the address of the address field :)
+        curr_addr = &(book->listaddr[i].address);
+        book->listaddr[i].process_id = proc_list[i].uid;
+        curr_addr->sin_family = AF_INET;
+        curr_addr->sin_port = proc_list[i].port_num;
+        curr_addr->sin_addr = proc_list[i].ipv4_addr;
     }
     return 0;
 }

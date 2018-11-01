@@ -70,21 +70,21 @@ int test_init(receiver_info_t* data, unsigned int node_num,unsigned int total_no
 	return 0;
 }
 
-int kill_threads(void){
+int kill_threads(void) {
 	int error = pthread_cancel(*data.receiver);
-	if(error){
+	if (error) {
 		return error;
 	}
-	for(int i = 0 ; i < data.no_nodes; i++){
+	for (int i = 0 ; i < data.no_nodes; i++) {
 		error = pthread_cancel(data.senders[i]);
-		if(error){
+		if (error) {
 			return error;
 		}
 	}
 	return 0;
 }
 
-void end_test(receiver_info_t* data){
+void end_test(receiver_info_t* data) {
 	free_addrbook(&(data->addresses));
 	printf("freed address book with success \n");
 	free_acks(&(data->acklist));
@@ -106,36 +106,29 @@ static void free_resources(void) {
 // function called when process recieves start signal
 // process will broadcast messages to other processes
 static void start(int signum) {
-	fprintf(stdout,"START SENDING MESSAGES\n");
-	int error = 0; 
-	error = pthread_mutex_lock(&start_mutex);
-	if(error){
+	printf("START SENDING MESSAGES\n");
+	int error = pthread_mutex_lock(&start_mutex);
+	if (error) {
 		fprintf(stderr,"ERROR pthread_mutex_lock in start() error code %d\n",error);
 		return;
 	}
 	error = pthread_cond_broadcast(&start_condition);
-	if(error){
+	if (error) {
 		fprintf(stderr,"ERROR pthread_cond_broadcast error code %d\n",error);
 	}
 	error = pthread_mutex_unlock(&start_mutex);
-	if(error){
+	if (error) {
 		fprintf(stderr,"ERROR pthread_mutex_unlock in start() error code %d\n",error);
 	}
-
 }
 
 static void stop(int signum) {
-	// Reset signal handlers to default
-	signal(SIGTERM, SIG_DFL);
-	signal(SIGINT, SIG_DFL);
 	int error;
-
-
 	// Immediately stop network packet processing
 	printf("Immediately stopping network packet processing.\n"
 	"killing all other fucking threads \n");
 	error = kill_threads();
-	if(error){
+	if (error) {
 		fprintf(stderr,"error while killing the little fucker threads error code %d \n",error);
 	}
 	// Write/flush output file if necessary
@@ -145,7 +138,9 @@ static void stop(int signum) {
 	
 	// Free resources
 	
-
+	// Reset signal handlers to default
+	signal(SIGTERM, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
 	// Exit directly from signal handler
 	exit(0);
 }
@@ -174,28 +169,26 @@ int main(int argc, char** argv) {
 	data.start = &start_condition;
 	data.start_m = &start_mutex;
 
-	// TODO: maybe move this after all the data has been initialized ?
-	// Set signal handlers
-	signal(SIGUSR1, start);
-	signal(SIGTERM, stop);
-	signal(SIGINT, stop);
-
 	printf("MT : Finished initializing values of data\n");
 
 	error = init_receiver(&data);
-	if(error){
+	if (error) {
 		fprintf(stderr,"MT : Error Initializing receiver error code %d \n",error);
 		return error;
 	}
 	printf("MT : finished initializing receiver thread with success\n");
 
 	error = init_senders(&data);
-	if(error){
+	if (error) {
 		fprintf(stderr,"MT : Error Initializing sender threads, error code %d\n",error);
 		return error;
 	}
 	printf("MT : finished initializing sender threads with success\n");
-
+	
+	// Set signal handlers
+	signal(SIGUSR1, start);
+	signal(SIGTERM, stop);
+	signal(SIGINT, stop);
 	printf("MT : Now gonna sleep and wait for my signals hihi \n");
 	while (1) {
 		struct timespec sleep_time;
