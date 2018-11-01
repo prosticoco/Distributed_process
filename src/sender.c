@@ -76,13 +76,12 @@ int init_senders(receiver_info_t* data) {
     unsigned int no_nodes = data->no_nodes;
     // allocate array of sender_info_t 
     sender_info_t* sender_array = calloc(no_nodes, sizeof(sender_info_t));
-    memset(sender_array, 0, no_nodes * sizeof(sender_info_t));
     // add the pointer in the data structure
-    data->sender_infos = sender_array;
     if (sender_array == NULL) {
         fprintf(stderr,"ERROR calloc() in init_senders()");
         return ERROR_MEMORY;
     }
+    data->sender_infos = sender_array;
     // copy locally/temporarily the address book for faster access
     addr_book_t* book = &(data->addresses);
     // copy temporaily list of counters 
@@ -118,7 +117,7 @@ int init_senders(receiver_info_t* data) {
 
 int init_socket_sender(sender_info_t* data) {
     // open a new socket
-    int desc = socket(AF_INET,SOCK_DGRAM,0);
+    int desc = socket(AF_INET, SOCK_DGRAM, 0);
     // check if any error
     if (desc < 0) {
         return ERROR_SOCKET;

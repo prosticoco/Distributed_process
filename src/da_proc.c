@@ -29,9 +29,9 @@ static receiver_info_t data;
 
 
 int test_init(receiver_info_t* data, unsigned int node_num, unsigned int total_nodes){
-	da_process_t other_processes[total_nodes-1];
+	da_process_t other_processes[total_nodes - 1];
 	data->nodeid = node_num;
-	data->no_nodes = total_nodes -1;
+	data->no_nodes = total_nodes - 1;
 	switch(node_num){
 
 		case 1 :
@@ -153,8 +153,8 @@ int main(int argc, char** argv) {
 	// need parsing of membership file to get the number of nodes
 	// default values 
 	// initalize values for testing, hardcoded in this method
-	printf("initializing tests\n");
-	test_init(&data,atoi(argv[1]), 2);
+	//printf("initializing tests\n");
+	//test_init(&data,atoi(argv[1]), 2);
 	// Initialize values with membership file.
 	//parse_membership_args(argc, argv, &data);
 	// initialize list of pthreads
@@ -171,6 +171,7 @@ int main(int argc, char** argv) {
 
 	printf("MT : Finished initializing values of data\n");
 
+	// Needs current process address
 	error = init_receiver(&data);
 	if (error) {
 		fprintf(stderr,"MT : Error Initializing receiver error code %d \n", error);
@@ -178,6 +179,7 @@ int main(int argc, char** argv) {
 	}
 	printf("MT : finished initializing receiver thread with success\n");
 
+	// Needs address book
 	error = init_senders(&data);
 	if (error) {
 		fprintf(stderr,"MT : Error Initializing sender threads, error code %d\n", error);

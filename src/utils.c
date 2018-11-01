@@ -51,6 +51,10 @@ int parse_membership_args(int argc, char** argv, receiver_info_t* data) {
     data->no_nodes = atoi(line) - 1;
     printf("Total number of processes = %i\n", data->no_nodes);
 
+    // ***** get IPv4 address for current process *****
+    bool found = false;
+    // Iterate over lines until we find the right line
+
     // ***** other processes infos *****
     /*
     bool found = false;

@@ -47,12 +47,12 @@ void *receiver_f(void * params) {
 }
 // creates a socket for receiving messages, updates the value of file descriptor
 // returns <0 on error, 0 otherwise
-int init_receiver_socket(int * rec_fd, struct sockaddr_in* my_addr) {
+int init_receiver_socket(int* rec_fd, struct sockaddr_in* my_addr) {
     *rec_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (*rec_fd < 0) {
         return ERROR_SOCKET;
     }
-    if (bind(*rec_fd, (struct sockaddr*) my_addr, sizeof(struct sockaddr_in)) < 0) {
+    if (bind(*rec_fd, (struct sockaddr*) my_addr, sizeof(struct sockaddr_in))) {
         return ERROR_BIND;
     }
     return 0;
@@ -66,7 +66,7 @@ int init_receiver(receiver_info_t* data) {
     if (error) {
         return error;
     }
-    error = pthread_create(data->receiver, NULL, receiver_f, (void*)data);
+    error = pthread_create(data->receiver, NULL, receiver_f, (void*) data);
     if (error) {
         fprintf(stderr,"ERROR pthread_create() return code : %d \n", error);
         return ERROR_THREAD;
