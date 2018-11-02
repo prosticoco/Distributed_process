@@ -2,10 +2,37 @@
 #include "error.h"
 // Delivered methods
 
+
+#include <stdlib.h>
+
+// structure for the delivered set
+typedef struct{
+    unsigned int no_process;
+    unsigned int* counters;
+}delivered_t;
+
+// structure for the "ack[m]" set
+typedef struct{
+    unsigned int no_process;
+    unsigned int card;
+    int* set;
+}pset_t;
+
+typedef struct{
+    pset_t* sets;
+    unsigned int nr_active;
+}ack_line_t;
+
+typedef struct{
+    unsigned int no_msgs;
+    unsigned int no_process;
+    ack_line_t* sets;
+}ack_m_t;
+
 int create_delivered(unsigned int no_process, delivered_t* delivered){
     delivered->counters = calloc(no_process,sizeof(unsigned int));
     if(delivered->counters == NULL){
-        return ERROR_MEMORY;
+        return -1;
     }
     delivered->no_process = no_process;
     return 0;
@@ -13,7 +40,7 @@ int create_delivered(unsigned int no_process, delivered_t* delivered){
 
 int add_delivered(unsigned int pid,delivered_t* delivered){
     if(pid > delivered->no_process){
-        return ERROR_PID;
+        return -1;
     }
     delivered->counters[pid -1] += 1;
     return 0;
@@ -22,7 +49,7 @@ int add_delivered(unsigned int pid,delivered_t* delivered){
 // returns 1 or 0 wether message has been delivered, < 0 upon error
 int is_delivered(unsigned int pid, unsigned int snr, delivered_t* delivered){
     if(pid > delivered->no_process){
-        return ERROR_PID;
+        return -1;
     }
     return delivered->counters[pid -1] >= snr;
 }
@@ -38,7 +65,7 @@ int free_delivered(delivered_t* delivered){
 int create_pset(unsigned int no_process,pset_t* pset){
     pset->set = calloc(no_process,sizeof(int));
     if (pset->set == NULL){
-        return ERROR_MEMORY;
+        return -1;
     }
     pset->no_process = no_process;
     pset->card = 0;
@@ -47,7 +74,7 @@ int create_pset(unsigned int no_process,pset_t* pset){
 
 int add_pset(unsigned int pid,pset_t* pset){
     if(pid > pset->no_process){
-        return ERROR_PID;
+        return -1;
     }
     if(pset->set[pid - 1] == 0){
         pset->set[pid -1] = 1;
@@ -69,7 +96,7 @@ int init_ack_m(unsigned int no_process, unsigned int no_msgs, ack_m_t* acks){
     // only initialize pointers to lines 
     acks->sets = calloc(no_msgs,sizeof(ack_line_t));
     if(acks->sets == NULL){
-        return ERROR_MEMORY;
+        return -1;
     }
     acks->no_msgs = no_msgs;
     acks->no_process = no_process;
@@ -83,7 +110,7 @@ int add_ack(unsigned int snr, unsigned int original_sender, unsigned int sender,
     while(snr > acks->no_msgs){
         acks->sets = realloc(acks->sets,(2*acks->no_msgs)*sizeof(ack_line_t));
         if(acks->sets == NULL){
-            return ERROR_MEMORY;
+            return -1;
         }
         // set the newly allocated region to 0        
         memset(&(acks->sets[acks->no_msgs]),0,acks->no_msgs);
@@ -93,7 +120,7 @@ int add_ack(unsigned int snr, unsigned int original_sender, unsigned int sender,
     if(acks->sets[snr-1].nr_active == 0){
         acks->sets[snr-1].sets = calloc(acks->no_process,sizeof(pset_t));
         if(acks->sets[snr -1 ].sets == NULL){
-            return ERROR_MEMORY;
+            return -1;
         }
     }
     int error;
@@ -149,4 +176,16 @@ int free_ack_m(ack_m_t* acks){
     acks->sets = NULL;
     return 0;
 }
+
+int main(){
+    unsigned int no_process = 4;
+    unsigned int no_messages_init = 100;
+    ack_m_t matrix;
+    int error = init_ack_m(no_process,no_messages_init,&matrix);
+}
+
+
+
+
+
 

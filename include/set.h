@@ -10,14 +10,18 @@ typedef struct{
 typedef struct{
     unsigned int no_process;
     unsigned int card;
-    char* set;
+    int* set;
 }pset_t;
 
+typedef struct{
+    pset_t* sets;
+    unsigned int nr_active;
+}ack_line_t;
 
 typedef struct{
     unsigned int no_msgs;
     unsigned int no_process;
-    pset_t** sets;
+    ack_line_t* sets;
 }ack_m_t;
 
 // Delivered methods
