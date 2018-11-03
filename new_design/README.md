@@ -8,12 +8,14 @@
 
 ## Thread Structure :
 
-- N-1 Threads (Senders) only take care of sending messages through perfect link (they each wait on a personal queue of messages)
+- X Threads (Senders) only take care of sending messages through perfect link. The controller assigns messages to send to each thread and if a message is blocked for n loops, the task is put at the end of the task list and we try with the next task
 
 - One thread (Receiver) reads from the incoming messages from a socket and adds them to a queue to be processed.
 
 - One thread (Controller) waits on the queue of msgs to process and takes care of processing messages.
-
+## File structure
+- we create a .h and .c for each layer and we implement structures in each file that that layer needs
+- this way every layer can compile by itself and its nice (if we remove the call of other layer)
 ## Data Structures :
 
 **Network Data**
@@ -53,6 +55,12 @@ _TODO_
 
 - As mentionned above, the queues will be mutex locked to ensure synchronisation between the controller and the senders
 - As done in the previous version, we will fir# New idea for project redesign :
+
+----------------------------------------
+---------------------------------------
+WHY IS THIS DUPED???
+----------------------------------------
+----------------------------------------
 
 ## Parameters : 
 

@@ -14,32 +14,39 @@ ACK_NUMBER
 
 
 # FAIR LOSS
-def send_fl(sequence_nr,original_sender,pid,destination):
+def send_fl(int fd, struct sockaddr_in* address, msg_t* msg):
     # Just sends the msg
-def deliver_fl(sequence_nr,original_sender,sender):
-    send_fl(ACK_NUMBER,original_sender,pid,sender)
-    
-        deliver_pl(sequence_nr,original_sender,sender)
+def deliver_fl(receiver_info_t* data, struct sockaddr_in* sender, msg_t* msg):
+        deliver_pl(struct sockaddr_in* sender, msg_t* msg)
 
 
 
-
+# PERFECT LINK
+# we want 1 sender thread to send to many process, so that it doesnt block on 1 process, we implement a threshold
+# if the pl_send loops more than the threshold we move this task (of sending this message to that process) at the end of the
+# task queue and send the next message from the task list
 def send_pl(sequence_nr,original_sender,pid,destination):
-    send_fl(sequence_nr,original_sender,pid,destination)
-    wait(1)
-    while pl_ACK[destination] < sequence_nr:
-        send_fl(sequence_nr,original_sender,pid,destination)
-        wait(1)
+        loop_i = 0
+        while pl_ACK[destination] < sequence_nr:
+                if(loop_i >= THRESHOLD):
+                        return BLOCKED_VALUE
+                send_fl(int fd, struct sockaddr_in* address, msg_t* msg)
+                loop_i += 1
+                wait(lambda)
+        return SUCCESS_VALUE
+
 
 def deliver_pl(sequence_nr,original_sender,sender):
-    deliver_beb(sequence_nr,original_sender,sender)
+        if(sequence_nr not in delivered)
+                delivered.add(sequence_nr)
+                deliver_beb(sequence_nr,original_sender,sender)
 
 
 
 
 def beb(sequence_nr,original_sender,pid,destinations):
-    for i in destinations:
-        send_pl(sequence_nr,original_sender,pid,i)
+        for i in destinations:
+                send_pl(sequence_nr,original_sender,pid,i)
 
 def urb(sequence_nr,pid,destinations):
     urb_ACK[pid][pid] += 1
