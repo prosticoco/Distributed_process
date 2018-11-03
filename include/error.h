@@ -18,7 +18,8 @@ typedef enum {
   ERROR_CONDITION,
   ERROR_MUTEX,
   ERROR_FILE,
-  ERROR_ARGS
+  ERROR_ARGS,
+  ERROR_TABLE
 } error_codes;
 
 
