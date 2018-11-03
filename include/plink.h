@@ -1,11 +1,7 @@
 
 
 
-typedef struct{
-    unsigned int sn;
-    unsigned int original_sender;
-    unsigned int sender;
-}mid_t;
+typedef unsigned int mid_t;
 
 
 typedef struct{
@@ -13,11 +9,17 @@ typedef struct{
 }plink_msg_t;
 
 typedef struct{
-    unsigned int no_entries;
+    unsigned int no_msgs;
     unsigned int no_process;
-    unsigned int*** entries;
+    unsigned int total_entries;
+    unsigned int* entries;
 }uid_table_t;
 
+typedef struct{
+    
+}ack_table_t;
+
+// Interface for table handling
 
 int init_table_uid(uid_table_t* table,unsigned int no_entries, unsigned int no_process);
 
@@ -26,3 +28,5 @@ int table_read_entry(uid_table_t* table,mid_t mid);
 int table_write_entry(uid_table_t* table,mid_t mid,unsigned int value);
 
 int free_table_uid(uid_table_t* table);
+
+// interface

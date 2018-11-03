@@ -1,23 +1,48 @@
 #include <stdlib.h>
+#include <string.h>
 #include "error.h"
 #include "plink.h"
 
 #define MAX_SIZE 1024
 
-int init_table_uid(uid_table_t* table,unsigned int no_entries, unsigned int no_process){
+int init_table_uid(uid_table_t* table,unsigned int no_msgs, unsigned int no_process){
+    table->entries = calloc(no_msgs*no_process*no_process,sizeof(unsigned int));
+    if(table->entries == NULL){
+        return ERROR_MEMORY;
+    }
+    table->no_msgs = no_msgs;
+    table->no_process = no_process;
+    table->total_entries = no_msgs*no_process*no_process;
+    return 0;
 }
 
 int table_read_entry(uid_table_t* table,mid_t mid){
-    if(mid.sn > table->no_entries){
+    if(mid >= table->total_entries){
         return 0;
     }
-    return table->entries[mid.sn][mid.original_sender][mid.sender];
+    return table->entries[mid];
 }
 
 int table_write_entry(uid_table_t* table,mid_t mid,unsigned int value){
-    while(mid.sn > table->no_entries){
-
+    unsigned int new_size;
+    unsigned int old_size = table->total_entries;
+    while(mid >= table->total_entries){
+        new_size = table->total_entries * 2;
+        table->entries = realloc(table->entries,sizeof(unsigned int)*new_size);
+        if(table->entries == NULL){
+            return ERROR_MEMORY;
+        }     
+        table->total_entries = new_size;
+        memset(&(table->entries[old_size]),0,table->total_entries - old_size);
+        table->no_msgs = table->no_msgs*2;
+        return 0;
     }
+    table->entries[mid] = value;
+    return 0;
 }
 
-int free_table_uid(uid_table_t* table);
+int free_table_uid(uid_table_t* table){
+    free(table->entries);
+    table->entries = NULL;
+    return 0;
+}
