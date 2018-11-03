@@ -1,30 +1,27 @@
-typedef struct{
-
-}fl_data_t;
+#include "plink.h"
 
 typedef struct{
-
-}pl_data_t;
-
-typedef struct{
-
-}beb_data_t;
-
-typedef struct{
-
-}urb_data_t;
+    // unique identifier
+    mid_t mid;
+    // if 0 then it is not an ack
+    unsigned int ack;
+}pl_msg_t;
 
 typedef struct{
-
-}fifo_data_t;
-
-
-
+    unsigned int original_sender;
+    unsigned int sender;
+    unsigned int no_seen;
+    pl_msg_t pl_msg;
+}urb_msg_t;
 
 typedef struct{
-    fl_data_t fldata;
-    pl_data_t pldata;
-    beb_data_t bebdata;
-    urb_data_t urbdata;
-    fifo_data_t fifodata;    
+    unsigned int sequence_num;
+}fifo_msg_t;
+
+typedef struct{
+    fifo_msg_t fifo_msg;
+}msg_t;
+
+typedef struct{  
+
 }net_data_t

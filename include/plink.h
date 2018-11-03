@@ -1,6 +1,8 @@
 
 #include <pthread.h>
 
+#include "data.h"
+
 typedef unsigned int mid_t;
 
 
@@ -57,3 +59,6 @@ int free_delivered(pl_delivered_t* delivered);
 
 // Send and Receive
 
+int pl_send(msg_t msg,unsigned int pid,net_data_t* data);
+
+int pl_receive(msg_t msg,net_data_t* data);
