@@ -3,7 +3,9 @@
 #include "error.h"
 #include "plink.h"
 
-#define MAX_SIZE 1024
+#define MAX_SIZE 1024*8
+
+pthread_mutex_t ack_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int init_table_uid(uid_table_t* table,unsigned int no_msgs, unsigned int no_process){
     table->entries = calloc(no_msgs*no_process*no_process,sizeof(unsigned int));
@@ -26,6 +28,9 @@ int table_read_entry(uid_table_t* table,mid_t mid){
 int table_write_entry(uid_table_t* table,mid_t mid,unsigned int value){
     unsigned int new_size;
     unsigned int old_size = table->total_entries;
+    if(mid > MAX_SIZE){
+        return ERROR_TABLE;
+    }
     while(mid >= table->total_entries){
         new_size = table->total_entries * 2;
         table->entries = realloc(table->entries,sizeof(unsigned int)*new_size);
@@ -46,3 +51,35 @@ int free_table_uid(uid_table_t* table){
     table->entries = NULL;
     return 0;
 }
+
+// Perfect link ack table methods
+int init_ack_table(ack_table_t* acks, unsigned int no_entries, unsigned int no_process){
+    int error = pthread_mutex_init(&(acks->table_mutex),NULL);
+    if(error){
+        return ERROR_MUTEX;
+    }
+    error = init_table_uid(&(acks->table),no_entries, no_process);
+    if(error){
+        return error;
+    }
+}
+
+int is_ack(ack_table_t* acks,mid_t mid){
+    pthread_mutex_lock(&(acks->table_mutex));
+    int value = table_read_entry(&(acks->table),mid);
+    pthread_mutex_unlock(&(acks->table_mutex));
+    return value;
+}
+
+int set_ack(ack_table_t* acks,mid_t mid){
+    pthread_mutex_lock(&(acks->table_mutex));
+    int error = table_write_entry(&(acks->table),mid,1);
+    pthread_mutex_unlock(&(acks->table_mutex));
+    return error;
+}
+
+int free_ack_table(ack_table_t * acks){
+    free(&(acks->table));
+    return 0;
+}
+
