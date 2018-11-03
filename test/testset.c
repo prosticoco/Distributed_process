@@ -1,9 +1,9 @@
-#include "set.h"
-#include "error.h"
-// Delivered methods
+
 
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 // structure for the delivered set
 typedef struct{
@@ -182,6 +182,11 @@ int main(){
     unsigned int no_messages_init = 100;
     ack_m_t matrix;
     int error = init_ack_m(no_process,no_messages_init,&matrix);
+    if(error){
+        printf("Error while initializing matrix\n");
+    }
+    printf("Successfully initialized matrix\n");
+    return 0;
 }
 
 
