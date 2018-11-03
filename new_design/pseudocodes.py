@@ -11,8 +11,18 @@ delivered # List of counters of delivered messages
 # initialized to all zeros
 ACK_NUMBER 
 
+
+
+# FAIR LOSS
 def send_fl(sequence_nr,original_sender,pid,destination):
     # Just sends the msg
+def deliver_fl(sequence_nr,original_sender,sender):
+    send_fl(ACK_NUMBER,original_sender,pid,sender)
+    
+        deliver_pl(sequence_nr,original_sender,sender)
+
+
+
 
 def send_pl(sequence_nr,original_sender,pid,destination):
     send_fl(sequence_nr,original_sender,pid,destination)
@@ -20,7 +30,12 @@ def send_pl(sequence_nr,original_sender,pid,destination):
     while pl_ACK[destination] < sequence_nr:
         send_fl(sequence_nr,original_sender,pid,destination)
         wait(1)
-    
+
+def deliver_pl(sequence_nr,original_sender,sender):
+    deliver_beb(sequence_nr,original_sender,sender)
+
+
+
 
 def beb(sequence_nr,original_sender,pid,destinations):
     for i in destinations:
@@ -36,13 +51,9 @@ def fifob(num_msgs,pid,destinations):
         urb(i,pid,destinations)
 
 
-def deliver_fl(sequence_nr,original_sender,sender):
-    send_fl(ACK_NUMBER,original_sender,pid,sender)
-    if delivered[original_sender] < sequence_nr:
-        deliver_pl(sequence_nr,original_sender,sender)
 
-def deliver_pl(sequence_nr,original_sender,sender):
-    deliver_beb(sequence_nr,original_sender,sender)
+
+
 
 def candeliver(sequence_nr,original_sender):
         if count(urb_ACK[original_sender],x >= sequence_nr) > N/2:
