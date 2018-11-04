@@ -20,6 +20,13 @@ typedef struct{
     unsigned int total_entries;
 }urb_table_t;
 
+typedef struct{
+    unsigned int bol;
+    unsigned int no_msgs;
+    unsigned int no_process;
+    unsigned int total_entries;
+} pending_t;
+
 typedef struct {
     unsigned int no_msgs;
     unsigned int no_process;
@@ -95,5 +102,6 @@ typedef struct {
     int* fds;
     pthread_t* senders;
     pthread_t receiver;
+    pending_t* pending;
 } net_data_t;
 
