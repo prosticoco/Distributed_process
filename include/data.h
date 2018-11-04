@@ -82,8 +82,10 @@ typedef struct {
 
 typedef struct {  
     addr_book_t* address_book;
-    unsigned int self_pid;
-    int fd;
+    size_t self_pid;
+    size_t num_proc;
+    size_t num_msg;
+    int* fd;
     ack_table_t* pl_acks;
     msg_queue_t* task_q;
 } net_data_t;
