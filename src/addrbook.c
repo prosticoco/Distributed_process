@@ -19,7 +19,7 @@ addr_book_t* alloc_addr_book(size_t num_entries) {
         return NULL;
     }
 
-    struct sockaddr_in* addresses = calloc(num_entries, sizeof(sockaddr_in));
+    struct sockaddr_in* addresses = calloc(num_entries, sizeof(struct sockaddr_in));
     if (!addresses) {
         free(new_addr_book);
         return NULL;
