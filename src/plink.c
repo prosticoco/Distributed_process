@@ -92,9 +92,17 @@ int free_ack_table(ack_table_t * acks){
 
 // Interface for delivered table
 
-int init_deliver_pl(pl_delivered_t* delivered,unsigned int no_entries, unsigned int no_process);
+int init_deliver_pl(pl_delivered_t* delivered,unsigned int no_entries, unsigned int no_process){
+    int error = init_table_uid(&(delivered->table),no_entries, no_process);
+    if(error){
+        return error;
+    }
+    return 0;
+}
 
-int is_delivered(pl_delivered_t* delivered,mid_t mid);
+int is_delivered(pl_delivered_t* delivered,mid_t mid){
+    return table_read_entry(&(delivered->table),mid);
+}
 
 int set_delivered(pl_delivered_t* delivered,mid_t mid);
 
