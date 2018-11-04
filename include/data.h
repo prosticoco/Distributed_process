@@ -38,6 +38,7 @@ typedef struct{
 typedef struct {
     urb_msg_t urb_msg;
     mid_t mid;
+    unsigned int sender;
     unsigned int mtype;
 } msg_t;
 
