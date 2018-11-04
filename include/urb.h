@@ -34,11 +34,11 @@ typedef struct{
 } ack_table_t;
 
 
-int urb_send(urb_data_t* data, urb_msg_t* msg)
+int urb_send(urb_data_t* data, urb_msg_t* msg);
 
-int urb_deliver(urb_data_t* data, urb_msg_t* msg)
+int urb_deliver(urb_data_t* data, urb_msg_t* msg);
 
-bool candeliver(urb_msg_t* msg)
+bool candeliver(urb_msg_t* msg);
 
 int init_table_uid(uid_table_t* table,unsigned int no_entries, unsigned int no_process);
 
