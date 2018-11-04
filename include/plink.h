@@ -3,7 +3,9 @@
 #include <pthread.h>
 
 #include "data.h"
-
+#include "flink.h"
+#include "beb.h"
+#include "urb.h"
 
 
 
@@ -56,6 +58,6 @@ int free_delivered(pl_delivered_t* delivered);
 
 // Send and Receive
 
-int pl_send(msg_t msg,unsigned int pid,net_data_t* data);
+int pl_send(unsigned int pid,net_data_t* data, msg_t* msg);
 
-int pl_receive(msg_t msg,net_data_t* data);
+int pl_deliver(net_data_t* data, msg_t* msg);
