@@ -11,6 +11,7 @@
 #include "error.h"
 #include "data.h"
 #include "layers.h"
+#include "fifo.h"
 
 #define MAX_SIZE_PENDING 1024*8
 
@@ -21,7 +22,7 @@ int add_pending(pending_t* pending,unsigned int seen_id){
         return ERROR_TABLE;
     }
     while(seen_id >= pending->total_entries){
-        error = realloc_table(pending);
+        error = realloc_pending(pending);
         if(error){
             return error;
         }    
@@ -41,7 +42,7 @@ int free_pending(pending_t* pending){
     free(pending->bol);
     pending->bol = NULL;
     return 0;
-}
+
 }
 
 int init_pending(pending_t* pending, unsigned int no_msgs, unsigned int no_process){
@@ -91,7 +92,7 @@ int deliver_fifo(net_data_t* data, fifo_msg_t msg){
     unsigned next_idx;
     next_idx = get_next(msg.original_sender);
     
-    while(error = get_pending((data->address_book->num_proc-1) * next_idx + msg.original_sender-1) == 1){
+    while(error = get_pending(data->pending, (data->address_book->num_proc-1) * next_idx + msg.original_sender-1) == 1){
         error = write_next(msg.original_sender, next_idx+1);
         if(error <0){
             return error;
