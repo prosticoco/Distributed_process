@@ -52,6 +52,7 @@ typedef struct {
     urb_msg_t urb_msg;
     mid_t mid;
     unsigned int sender;
+    // is 1 if ack, zero otherwise
     unsigned int mtype;
 } msg_t;
 
