@@ -159,15 +159,15 @@ int deliver_pl(net_data_t* data, size_t thread_idx, msg_t msg){
         ack.mid = msg.mid;
         ack.mtype = ACK_NO;
         ack.sender = data->self_pid;
-        
-        error = deliver_beb(data, msg.urb_msg);
-        if(error < 0){
-            return error;
-        }
         error = send_fl(data, thread_idx, msg.sender, ack);
         if (error < 0) {
             return error;
         }
+        error = deliver_beb(data, msg.urb_msg);
+        if(error < 0){
+            return error;
+        }
+        
         
     }
     return 0;
