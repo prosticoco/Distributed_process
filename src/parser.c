@@ -23,7 +23,7 @@ static int cleanup(FILE* file, int result) {
  * @param data The data structure to fill.
  * @return int 0 in case of success, non-0 otherwise.
  */
-int parse_membership_args(int argc, char** argv, const net_data_t* data) {
+int parse_membership_args(int argc, char** argv, net_data_t* data) {
     // Check arguments
     if (argc < 4) {
         fprintf(stderr, "Error: parsing: not enough arguments\n");
@@ -59,7 +59,7 @@ int parse_membership_args(int argc, char** argv, const net_data_t* data) {
         fprintf(stderr, "Error: parsing: could not read membership file\n");
         return cleanup(membership_file, ERROR_FILE);
     }
-    int num_proc = atoi(line);
+    size_t num_proc = (size_t) atoi(line);
     if (num_proc == 0) {
         fprintf(stderr, "Error: parsing: invalid total process number\n");
         return cleanup(membership_file, ERROR_FILE);
@@ -67,6 +67,11 @@ int parse_membership_args(int argc, char** argv, const net_data_t* data) {
     // TODO: fill data
 
     // ----- FILL ADDRESS BOOK -----
+    data->address_book = alloc_addr_book(num_proc);
+    if (!data->address_book) {
+        fprintf(stderr, "Error: parsing: could not allocate address book\n");
+        return cleanup(membership_file, ERROR_MEMORY);
+    }
     while (fgets(line, sizeof(line), membership_file)) {
         // Get line process uid, address and port
         const char* pid_str = strtok(line, ' ');
@@ -77,7 +82,7 @@ int parse_membership_args(int argc, char** argv, const net_data_t* data) {
             return cleanup(membership_file, ERROR_FILE);
         }
 
-        int pid = atoi(pid_str);
+        size_t pid = (size_t) atoi(pid_str);
         if (pid == 0) {
             fprintf(stderr, "Error: parsing: invalid line format\n");
             return cleanup(membership_file, ERROR_FILE);
@@ -97,8 +102,12 @@ int parse_membership_args(int argc, char** argv, const net_data_t* data) {
         addr.sin_port = port;
         addr.sin_addr = ipv4;
 
-        
+        // Add entry into address book
+        if (add_entry(data->address_book, pid, addr)) {
+            fprintf(stderr, "Error: parsing: could not add entry to address book\n");
+            return cleanup(membership_file, ERROR_FILE);
+        }
     }
 
-    return 0;
+    return cleanup(membership_file, 0);
 }
