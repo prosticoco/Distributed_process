@@ -4,7 +4,7 @@
 
 
 
-int add_pending(pending_t* pending,unsigned int seen_id);
+int add_pending(pending_t* pending,unsigned int seen_id,unsigned int value);
 
 int get_pending(pending_t* pending, unsigned int seen_id);
 
