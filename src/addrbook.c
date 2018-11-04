@@ -1,54 +1,80 @@
-#include "addrbook.h"
-#include "structure.h"
-#include "error.h"
 #include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <stdio.h>
 
+#include "addrbook.h"
+#include "error.h"
 
-// creates an address book for all nodes listed in membership file
-int init_addrbook(addr_book_t* book, size_t num_proc, da_process_t* proc_list) {
-    // set the book size to the number of nodes
-    book->size = num_proc;
-    // allocate memory for the list of addresses
-    book->listaddr = calloc(num_proc, sizeof(addr_entry_t));
-    if (book->listaddr == NULL) {
+/**
+ * @brief Allocate new address book.
+ * 
+ * @param num_entries Number of entries to store in the address book, greater than 0.
+ * @return addr_book_t* A new address book in case of sucess, NULL in case of failure.
+ */
+addr_book_t* alloc_addr_book(size_t num_entries) {
+    if (num_entries == 0) {
+        return NULL;
+    }
+
+    addr_book_t* new_addr_book = malloc(sizeof(addr_book_t));
+    if (!new_addr_book) {
+        return NULL;
+    }
+
+    struct sockaddr_in* addresses = calloc(num_entries, sizeof(struct sockaddr_in));
+    if (!addresses) {
+        free(new_addr_book);
+        return NULL;
+    }
+    new_addr_book->num_proc = num_entries;
+    new_addr_book->addresses = addresses;
+    return new_addr_book;
+}
+
+/**
+ * @brief Free resources for an address book.
+ * 
+ * @param addr_book The address book to free. If it is NULL, no operation will be performed.
+ */
+void free_addr_book(addr_book_t* addr_book) {
+    if (addr_book != NULL) {
+        free(addr_book->addresses);
+        free(addr_book);
+    }
+}
+
+/**
+ * @brief Add new entry to the address book.
+ * 
+ * @param addr_book The address book.
+ * @param pid The pid of the process.
+ * @param addr The address to bind to the given process.
+ * @return int 0 in case of sucess, non-0 otherwise.
+ */
+int add_entry(addr_book_t* addr_book, size_t pid, struct sockaddr_in addr) {
+    if (!addr_book || !addr_book->addresses) {
         return ERROR_MEMORY;
     }
-    // set all the list of entries to zero
-    memset(book->listaddr, 0, num_proc*sizeof(addr_entry_t));
-    struct sockaddr_in * curr_addr;
-    // go over all the list of entries and update the addresses of the book
-    for (int i = 0 ; i < num_proc; i++) {
-        // get the address of the address field :)
-        curr_addr = &(book->listaddr[i].address);
-        book->listaddr[i].process_id = proc_list[i].uid;
-        curr_addr->sin_family = AF_INET;
-        curr_addr->sin_port = proc_list[i].port_num;
-        curr_addr->sin_addr = proc_list[i].ipv4_addr;
+    if (pid > addr_book->num_proc + 1) {
+        return ERROR_PID;
     }
+    addr_book->addresses[pid-1] = addr;
     return 0;
 }
 
-// updates address passed in arguments according to the proc_id
-// returns 0 upon success, -1 if wrong proc_id
-int find_addrbook(addr_book_t* book, unsigned int proc_id, struct sockaddr_in* address){
-  addr_entry_t curr_entry;
-  for(int i = 0; i < book->size; i++){
-      curr_entry = book->listaddr[i];
-      if(curr_entry.process_id == proc_id){
-        *address = curr_entry.address;
-        return 0;
-      }
-  }
-  return ERROR_ADDR_NOT_FOUND;
-}
-
-int free_addrbook(addr_book_t* book){
-  free(book->listaddr);
-  return 0;
+/**
+ * @brief Get address for given pid.
+ * 
+ * @param addr_book The address book.
+ * @param pid The given pid.
+ * @param addr Pointer to a structure in which the function stores the corresponding IP address.
+ * @return int 0 in case of success, non-0 otherwise.
+ */
+int get_addr(addr_book_t* addr_book, size_t pid, struct sockaddr_in* addr) {
+    if (!addr_book || !addr_book->addresses || !addr) {
+        return ERROR_MEMORY;
+    }
+    if (pid > addr_book->num_proc + 1) {
+        return ERROR_PID;
+    }
+    *addr = addr_book->addresses[pid-1];
+    return 0;
 }

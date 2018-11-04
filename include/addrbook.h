@@ -1,17 +1,50 @@
-#ifndef ADDRBOOK_H
-#define ADDRBOOK_H
+#pragma once
 
-#include "structure.h"
-#include "error.h"
+#include <stddef.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
+/* ----- DEFINITION ----- */
+typedef struct {
+    // Number of processes, including current one.
+    size_t num_proc;
+    // List of ip addresses
+    struct sockaddr_in* addresses;
+} addr_book_t;
 
-// creates an address book for all nodes listed in membership file
-int init_addrbook(addr_book_t* book, size_t num_proc, da_process_t* proc_list);
+/* ----- INTERFACE ----- */
 
-// updates address passed in arguments according to the proc_id
-// returns 0 upon success, -1 if wrong proc_id
-int find_addrbook(addr_book_t* book, unsigned int proc_id, struct sockaddr_in* address);
+/**
+ * @brief Allocate new address book.
+ * 
+ * @param num_entries Number of entries to store in the address book.
+ * @return addr_book_t* A new address book in case of sucess, NULL in case of failure.
+ */
+addr_book_t* alloc_addr_book(size_t num_entries);
 
-int free_addrbook(addr_book_t* book);
+/**
+ * @brief Free resources for an address book.
+ * 
+ * @param addr_book The address book to free.
+ */
+void free_addr_book(addr_book_t* addr_book);
 
-#endif
+/**
+ * @brief Add new entry to the address book.
+ * 
+ * @param addr_book The address book.
+ * @param pid The pid of the process.
+ * @param addr The address to bind to the given process.
+ * @return int 0 in case of sucess, non-0 otherwise.
+ */
+int add_entry(addr_book_t* addr_book, size_t pid, struct sockaddr_in addr);
+
+/**
+ * @brief Get address for given pid.
+ * 
+ * @param addr_book The address book.
+ * @param pid The given pid.
+ * @param addr Pointer to a structure in which the function stores the corresponding IP address.
+ * @return int 0 in case of success, non-0 otherwise.
+ */
+int get_addr(addr_book_t* addr_book, size_t pid, struct sockaddr_in* addr);
