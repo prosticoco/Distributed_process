@@ -37,7 +37,7 @@ void free_addr_book(addr_book_t* addr_book);
  * @param addr The address to bind to the given process.
  * @return int 0 in case of sucess, non-0 otherwise.
  */
-int add_entry(addr_book_t* addr_book, size_t pid, struct sockaddr_in* addr);
+int add_entry(addr_book_t* addr_book, size_t pid, struct sockaddr_in addr);
 
 /**
  * @brief Get address for given pid.

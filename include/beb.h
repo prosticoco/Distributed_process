@@ -1,3 +1,4 @@
+#pragma once
 //best effort broadcast
 
 //when asked to broadcast message m, need to create message for every process in addr book 

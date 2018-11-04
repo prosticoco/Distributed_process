@@ -1,9 +1,11 @@
+#pragma once
+
 #include "addrbook.h"
 
-typedef struct{
+typedef struct {
     struct sockaddr_in* address;
     int fd;
-}fl_data_t;
+} fl_data_t;
 
 typedef struct{
 
