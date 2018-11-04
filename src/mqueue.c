@@ -30,6 +30,8 @@ int queue_empty(msg_queue_t* queue) {
 // adds an element at the back of the queue
 // returns 0 on success. -1 when queue is full, other errors in other cases
 int enqueue(msg_queue_t* queue, queue_task_t* elem) {
+
+    
     // check if the queue is full
     if (queue->no_elem == queue->qsize) {
         return ERROR_QUEUE;
