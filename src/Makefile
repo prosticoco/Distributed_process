@@ -5,12 +5,12 @@ LDLIBS = -pthread
 IDIR = ../include
 # Oh dear
 ODIR = obj
-CC = gcc
+CC = clang
 CFLAGS = -Wall -I$(IDIR)
 
-_DEPS = ack.h addrbook.h error.h mqueue.h receiver.h sender.h structure.h utils.h
+_DEPS = addrbook.h beb.h data.h error.h flink.h plink.h set.h urb.h
 DEPS = $(patsubst %, $(IDIR)/%, $(_DEPS))
-_OBJ = ack.o addrbook.o da_proc.o mqueue.o receiver.o sender.o utils.o
+_OBJ = addrbook.o beb.o da_proc.o flink.o plink.o set.o urb.o
 OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
 
 # Recompile C files automatically if header files change

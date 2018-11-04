@@ -10,18 +10,19 @@
 #include <unistd.h>
 
 #include "plink.h"
+#include "flink.h"
 
 #include "data.h"
 #include "error.h"
 
 
 // fair loss send
-int send_fl(fl_data_t* data, fl_msg_t* msg) {
+int send_fl(net_data_t* data, fl_msg_t* msg) {
     int error;
     // sends a message to the corresponding address pointed by data
-    error = sendto(data->fd,(const char*) msg, sizeof(fl_msg_t),
+    error = sendto(data->fldata->fd,(const char*) msg, sizeof(fl_msg_t),
                     MSG_DONTWAIT,
-                    data-> address,
+                    (const struct sockaddr*) data->fldata->address,
                     sizeof(struct sockaddr_in));
     // handles any error due to sendto
     if (error < 0) {
@@ -31,8 +32,7 @@ int send_fl(fl_data_t* data, fl_msg_t* msg) {
 }
 
 //fair loss receive/deliver
-int deliver_fl(struct sockaddr_in* sender, msg_t* msg){
-    int error;
-    error = deliver_pl(struct sockaddr_in* sender, msg_t* msg);
+int deliver_fl(net_data_t* data, msg_t* msg){
+    int error = deliver_pl(data->fldata->address, msg);
     return error;
 }

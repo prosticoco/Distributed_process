@@ -1,3 +1,5 @@
+#pragma once
+
 // Fair loss layer
 #include <pthread.h>
 #include <stdio.h>
@@ -21,7 +23,7 @@ typedef struct {
 } fl_msg_t;
 
 // fair loss send
-int send_fl(fl_data_t* data, fl_msg_t* msg)
+int send_fl(net_data_t* data, fl_msg_t* msg);
 
 //fair loss receive/deliver
-int deliver_fl(fl_data_t* data, msg_t* msg)
+int deliver_fl(net_data_t* data, msg_t* msg);

@@ -1,26 +1,23 @@
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-
+#pragma once
 
 #include "addrbook.h"
-#include "plink.h"
 
+typedef struct {
+    struct sockaddr_in* address;
+    int fd;
+} fl_data_t;
+
+typedef struct {
+
+} pl_data_t;
+
+typedef struct {
+    addr_book_t* address_book;
+} beb_data_t;
 
 typedef struct{
-    // unique identifier
-    mid_t mid;
-    // if 0 then it is not an ack
-    unsigned int ack;
-}pl_msg_t;
-
-typedef struct{
-    unsigned int original_sender;
-    unsigned int sender;
-    unsigned int no_seen;
-    pl_msg_t pl_msg;
-}urb_msg_t;
+    addr_book_t* address_book;
+}urb_data_t;
 
 typedef struct{
     unsigned int sequence_num;
@@ -28,8 +25,13 @@ typedef struct{
 
 
 typedef struct{
-    fifo_msg_t fifo_msg;
-}msg_t;
+    fl_data_t* fldata;
+    pl_data_t* pldata;
+    beb_data_t* bebdata;
+    urb_data_t* urbdata;
+    fifo_data_t* fifodata;    
+}net_data_t;
+
 
 typedef struct{  
     struct sockaddr_in* address;

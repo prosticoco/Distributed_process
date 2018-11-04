@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdlib.h>
 
 // structure for the delivered set
