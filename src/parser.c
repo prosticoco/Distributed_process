@@ -77,7 +77,7 @@ int parse_membership_args(int argc, char** argv, const net_data_t* data) {
             return cleanup(membership_file, ERROR_FILE);
         }
 
-        int pid = atoi(pid_str);
+        size_t pid = (size_t) atoi(pid_str);
         if (pid == 0) {
             fprintf(stderr, "Error: parsing: invalid line format\n");
             return cleanup(membership_file, ERROR_FILE);
@@ -97,8 +97,12 @@ int parse_membership_args(int argc, char** argv, const net_data_t* data) {
         addr.sin_port = port;
         addr.sin_addr = ipv4;
 
-        
+        // Add entry into address book
+        if (add_entry(&(data->address_book), pid, addr)) {
+            fprintf(stderr, "Error: parsing: could not add entry to address book\n");
+            return cleanup(membership_file, ERROR_FILE);
+        }
     }
 
-    return 0;
+    return cleanup(membership_file, 0);
 }
