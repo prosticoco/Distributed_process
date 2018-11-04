@@ -31,7 +31,7 @@ int queue_empty(msg_queue_t* queue) {
 // returns 0 on success. -1 when queue is full, other errors in other cases
 int enqueue(msg_queue_t* queue, queue_task_t* elem) {
 
-    
+    pthread_mutex_lock(&(queue->queue_mutex));
     // check if the queue is full
     if (queue->no_elem == queue->qsize) {
         return ERROR_QUEUE;
@@ -46,11 +46,14 @@ int enqueue(msg_queue_t* queue, queue_task_t* elem) {
     queue->no_elem += 1;
     // update end of queue pointer
     queue->back = (queue->back + 1) % queue->qsize;
+    pthread_mutex_unlock(&(queue->queue_mutex));
     return 0;
 }
 
 // pops the next element of the queue
 int dequeue(msg_queue_t* queue, queue_task_t* elem) {
+
+    pthread_mutex_lock(&(queue->queue_mutex));
     // if queue is empty
     if (queue_empty(queue)) {
         return ERROR_QUEUE;
@@ -61,6 +64,8 @@ int dequeue(msg_queue_t* queue, queue_task_t* elem) {
     queue->no_elem -= 1;
     // update front of queue pointer
     queue->front = (queue->front + 1) % queue->qsize;
+
+    pthread_mutex_unlock(&(queue->queue_mutex));
     return 0;
 }
 
