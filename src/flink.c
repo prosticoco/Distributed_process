@@ -14,8 +14,16 @@
 #include "data.h"
 #include "error.h"
 
-// fair loss send
-int send_fl(net_data_t* data, unsigned int dest_pid, msg_t msg) {
+/**
+ * @brief Send message to destination pid.
+ * 
+ * @param data Pointer to the global data.
+ * @param thread_idx Index of the thread calling the function.
+ * @param dest_pid Pid of the destination process.
+ * @param msg Msg to send.
+ * @return int 0 in case of success, non-0 otherwise.
+ */
+int send_fl(net_data_t* data, size_t thread_idx, unsigned int dest_pid, msg_t msg) {
     int error;
     struct sockaddr_in address;
     error = get_addr(data->address_book, dest_pid, &address);
@@ -23,7 +31,7 @@ int send_fl(net_data_t* data, unsigned int dest_pid, msg_t msg) {
         return error;
     }
     // sends a message to the corresponding address pointed by data
-    error = sendto(data->fd,(const char*) &msg, sizeof(msg_t),
+    error = sendto(data->fds[thread_idx],(const char*) &msg, sizeof(msg_t),
                     MSG_DONTWAIT,
                     (const struct sockaddr *) &address,
                     sizeof(struct sockaddr_in));
@@ -34,8 +42,15 @@ int send_fl(net_data_t* data, unsigned int dest_pid, msg_t msg) {
     return 0;
 }
 
-//fair loss receive/deliver
-int deliver_fl(net_data_t* data, msg_t msg){
-    int error = deliver_pl(data, msg);
+/**
+ * @brief fair loss deliver
+ * 
+ * @param data all data we need
+ * @param thread_idx
+ * @param msg message we received
+ * @return int 
+ */
+int deliver_fl(net_data_t* data, size_t thread_idx, msg_t msg){
+    int error = deliver_pl(data, thread_idx, msg);
     return error;
 }

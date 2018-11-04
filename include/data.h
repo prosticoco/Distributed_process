@@ -8,6 +8,17 @@
 typedef unsigned int mid_t;
 
 
+typedef struct {
+    unsigned int seen;
+    unsigned int delivered;
+} urb_entry_t;
+
+typedef struct{
+    urb_entry_t* values;
+    unsigned int no_msgs;
+    unsigned int no_process;
+    unsigned int total_entries;
+}urb_table_t;
 
 typedef struct {
     unsigned int no_msgs;
@@ -41,6 +52,7 @@ typedef struct {
     urb_msg_t urb_msg;
     mid_t mid;
     unsigned int sender;
+    // is 1 if ack, zero otherwise
     unsigned int mtype;
 } msg_t;
 
@@ -70,10 +82,13 @@ typedef struct {
 
 typedef struct {  
     addr_book_t* address_book;
-    unsigned int self_pid;
-    int fd;
+    size_t self_pid;
+    size_t num_proc;
+    size_t num_msg;
+    int* fds;
     unsigned int total_no_process;
     ack_table_t* pl_acks;
     msg_queue_t* task_q;
     urb_table_t* urb_table;
 } net_data_t;
+

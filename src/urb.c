@@ -95,8 +95,22 @@ int free_urb_table(urb_table_t* table){
  * @return int 
  */
 int send_urb(net_data_t* data, fifo_msg_t msg){
-    unsigned int seen_id = (data->total_no_process)*(msg.sequence_num -1) + msg.original_sender;
-    
+    // compute the URB's unique id
+    unsigned int seen_id = (data->total_no_process)*(msg.sequence_num -1) + msg.original_sender -1;
+    // add the message to the seen messages
+    int error = add_seen_urb(data->urb_table,seen_id);
+    if(error){
+        return error;
+    }
+    urb_msg_t new_msg;
+    new_msg.fifo_msg = msg;
+    new_msg.no_seen = 1;
+    new_msg.seen_id = seen_id;
+    error = send_beb(data,new_msg);
+    if(error){
+        return error;
+    }
+    return 0;
 }
 
 /**
@@ -107,5 +121,26 @@ int send_urb(net_data_t* data, fifo_msg_t msg){
  * @return int 
  */
 int deliver_urb(net_data_t* data, urb_msg_t msg){
+    urb_msg_t new_msg;
+    int error;
+    if(!is_seen_urb(data->urb_table,msg.seen_id)){
+        error = add_seen_urb(data->urb_table,msg.seen_id);
+        if(error){
+            return error;
+        }
+        msg.no_seen += 1;
+        error = send_beb(data,msg);
+        if(error){
+            return error;
+        }
+    }
+    if((msg.no_seen > (data->total_no_process) / 2) &&
+     !is_delivered_urb(data->urb_table,msg.seen_id)){
+         error = add_delivered_urb(data->urb_table,msg.seen_id);
+         if(error){
+             return error;
+         }
+         deliver_fifo(data,msg.fifo_msg);
+    }
 
 }

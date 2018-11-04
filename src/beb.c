@@ -6,18 +6,18 @@
 #include "urb.h"
 
 int send_beb(net_data_t* data, urb_msg_t msg) {
-    size_t num_proc = data->address_book->num_proc;
+    unsigned int num_proc = data->total_no_process;
     unsigned int self = data->self_pid;
     // Send message to all processes
-    for (size_t i = 1; i <= num_proc; ++i) {
+    for (size_t i = 1; i <= num_proc; ++i){
         // Get IP address for process i
         // TODO: maybe avoid broadcasting to ourselves ?
         // This would require knowing our own pid.
         int res;
         if(i != self){
             msg_t message;
-            message.mid = (num_proc * (msg.seen_id) + self-1);
-            message.mtype = 1;
+            message.mid = (num_proc * (msg.seen_id)  + self-1);
+            message.mtype = 0;
             message.sender = self;
             message.urb_msg = msg;
             queue_task_t task;

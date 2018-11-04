@@ -13,7 +13,7 @@
 
 pthread_mutex_t ack_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-int init_table_uid(uid_table_t* table,unsigned int no_msgs, unsigned int no_process){
+int init_table_uid(uid_table_t* table, unsigned int no_msgs, unsigned int no_process){
     table->entries = calloc(no_msgs*no_process*no_process,sizeof(unsigned int));
     if(table->entries == NULL){
         return ERROR_MEMORY;
@@ -90,7 +90,7 @@ int free_ack_table(ack_table_t * acks){
     return 0;
 }
 
-int send_pl(unsigned int pid,net_data_t* data, msg_t msg){
+int send_pl(unsigned int pid, size_t thread_idx, net_data_t* data, msg_t msg) {
     int error = 0;
     int i = 0;
     while (!is_ack(data->pl_acks, msg.mid)) {
@@ -104,7 +104,7 @@ int send_pl(unsigned int pid,net_data_t* data, msg_t msg){
             return 0;
             }
         }
-        error = send_fl(data, pid, msg);
+        error = send_fl(data, thread_idx, pid, msg);
         i+= 1;
         if (error < 0){
             return ERROR_SEND;
@@ -114,7 +114,7 @@ int send_pl(unsigned int pid,net_data_t* data, msg_t msg){
     return 0;
 }
 
-int deliver_pl(net_data_t* data, msg_t msg){
+int deliver_pl(net_data_t* data, size_t thread_idx, msg_t msg){
     int error = 0;
 
     //IF ACK add ack to acklist. basta.
@@ -138,7 +138,7 @@ int deliver_pl(net_data_t* data, msg_t msg){
         if(error < 0){
             return error;
         }
-        error = send_fl(data, msg.sender, ack);
+        error = send_fl(data, thread_idx, msg.sender, ack);
         if (error < 0) {
             return error;
         }
