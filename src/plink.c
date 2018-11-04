@@ -5,6 +5,7 @@
 #include "mqueue.h"
 #define MAX_SIZE 1024*8
 #define THRESHOLD 50
+#define ACK_NO 11
 
 pthread_mutex_t ack_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -108,4 +109,30 @@ int pl_send(unsigned int pid,net_data_t* data, msg_t* msg){
     return 0;
 }
 
-int pl_deliver(net_data_t* data, msg_t* msg);
+int pl_deliver(net_data_t* data, msg_t* msg){
+    int error = 0;
+
+    //IF ACK add ack to acklist. basta.
+    if (msg->mtype == ACK_NO) {
+        error = set_ack(data->pl_acks, msg->mid); 
+        if (error < 0) {
+            return error;
+        }
+    }
+    //real message
+    else {
+        //create ack message
+        
+        msg_t ack;
+        ack.mid = msg->mid;
+        ack.mtype = ACK_NO;
+        ack.urb_msg = NULL;
+
+        error = send_fl(data, msg->urb_msg->sender, &ack);
+        if (error < 0) {
+            return error;
+        }
+    }
+    return 0;
+
+}

@@ -56,8 +56,21 @@ int set_delivered(pl_delivered_t* delivered,mid_t mid);
 
 int free_delivered(pl_delivered_t* delivered);
 
-// Send and Receive
-
+/**
+ * @brief perfect link send
+ * 
+ * @param pid pid of process we send to
+ * @param data all data we need
+ * @param msg msg to send
+ * @return int 
+ */
 int pl_send(unsigned int pid,net_data_t* data, msg_t* msg);
 
+/**
+ * @brief perfect link deliver
+ * 
+ * @param data 
+ * @param msg 
+ * @return int 
+ */
 int pl_deliver(net_data_t* data, msg_t* msg);

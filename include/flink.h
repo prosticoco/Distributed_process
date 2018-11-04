@@ -27,8 +27,21 @@ typedef struct {
     unsigned int mtype;
 } msg_t;
 
-// fair loss send
+/**
+ * @brief fair loss send
+ * 
+ * @param data ptr to all data we need
+ * @param dest_pid pid of process we want to send msg
+ * @param msg msg we want to send
+ * @return int 
+ */
 int send_fl(net_data_t* data, unsigned int dest_pid, msg_t* msg);
 
-//fair loss receive/deliver
+/**
+ * @brief fair loss deliver
+ * 
+ * @param data all data we need
+ * @param msg message we received
+ * @return int 
+ */
 int deliver_fl(net_data_t* data, msg_t* msg);
