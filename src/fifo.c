@@ -36,10 +36,20 @@ int deliver_fifo(net_data_t* data, fifo_msg_t msg){
     }
     unsigned next_idx;
     next_idx = get_next(msg.original_sender);
-    if(next_idx <0){
-        return next_idx;
-    }
+    
     while(error = get_pending((data->address_book->num_proc) * next_idx + msg.original_sender) == 1){
-        error = 
+        error = write_next(msg.original_sender, next_idx+1);
+        if(error <0){
+            return error;
+        }
+        error = write_pending((data->address_book->num_proc) * next_idx + msg.original_sender, 0);
+        if(error<0){
+            return error;
+        }
+        //write to log
+        //error = deliver(BUFFER TYPE BUFFERmsg.original_sender, next_idx);
+        next_idx = next_idx+1;
+        
     }
+    return 0;
 }
