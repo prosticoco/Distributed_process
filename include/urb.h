@@ -26,6 +26,16 @@ typedef struct{
 
 init_urb_table(urb_table_t* table, unsigned int no_msgs, unsigned int no_process);
 
+is_delivered_urb(urb_table_t* table, unsigned int seen_id);
+
+add_delivered_urb(urb_table_t* table,unsigned int seen_id);
+
+is_seen_urb(urb_table_t* table,unsigned int seen_id);
+
+add_seen_urb(urb_table_t* table, unsigned int seen_id);
+
+free_urb_table(urb_table_t* table);
+
 
 
 
