@@ -33,6 +33,10 @@ typedef struct{
     //JE SAIS POOOOOOOOOO
 } ack_table_t;
 
+typedef struct{
+    fifo_msg_t* fifo_msg;
+    unsigned int sender;
+} urb_msg_t;
 
 int urb_send(urb_data_t* data, urb_msg_t* msg)
 

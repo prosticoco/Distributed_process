@@ -18,12 +18,17 @@
 
 
 // Structures for Layer 0
+
+typedef unsigned int mid_t;
+
 typedef struct {
-    unsigned int msg_type;
-} fl_msg_t;
+    urb_msg_t* pl_msg;
+    mid_t mid;
+    unsigned int mtype;
+} msg_t;
 
 // fair loss send
-int send_fl(net_data_t* data, fl_msg_t* msg);
+int send_fl(net_data_t* data, msg_t* msg);
 
 //fair loss receive/deliver
 int deliver_fl(net_data_t* data, msg_t* msg);
