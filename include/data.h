@@ -1,4 +1,12 @@
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+
+
+#include "addrbook.h"
 #include "plink.h"
+
 
 typedef struct{
     // unique identifier
@@ -18,10 +26,13 @@ typedef struct{
     unsigned int sequence_num;
 }fifo_msg_t;
 
+
 typedef struct{
     fifo_msg_t fifo_msg;
 }msg_t;
 
 typedef struct{  
-
+    struct sockaddr_in* address;
+    addr_book_t address_book;
+    int fd;
 }net_data_t
