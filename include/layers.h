@@ -73,3 +73,21 @@ int send_urb(net_data_t* data, fifo_msg_t msg);
  * @return int 
  */
 int deliver_urb(net_data_t* data, urb_msg_t msg);
+
+/**
+ * @brief 
+ * 
+ * @param data 
+ * @param msg 
+ * @return int 
+ */
+int send_fifo(net_data_t* data, fifo_msg_t msg);
+
+/**
+ * @brief 
+ * 
+ * @param data 
+ * @param msg 
+ * @return int 
+ */
+int deliver_fifo(net_data_t* data, fifo_msg_t msg);
