@@ -92,11 +92,24 @@ typedef struct {
 
 } msg_queue_t;
 
-typedef struct{
+typedef struct {
     uid_table_t table;
-}pl_delivered_t;
+} pl_delivered_t;
 
-typedef struct {  
+// Forward declaration to make it work.
+struct net_data;
+typedef struct {
+    size_t idx;
+    int socket_fd;
+    struct net_data* data;
+} sender_thread_arg_t;
+
+typedef struct {
+    pthread_t thread;
+    sender_thread_arg_t args;
+} sender_thread_t;
+
+typedef struct net_data {  
     addr_book_t* address_book;
     size_t self_pid;
     size_t num_proc;
@@ -105,8 +118,7 @@ typedef struct {
     pl_delivered_t* pl_delivered;
     msg_queue_t* task_q;
     urb_table_t* urb_table;
-    int* fds;
-    pthread_t* senders;
+    sender_thread_t* senders;
     pthread_t receiver;
     pending_t* pending;
     next_t* next;

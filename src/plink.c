@@ -119,7 +119,7 @@ int free_delivered(pl_delivered_t* delivered){
 
 
 
-int send_pl(unsigned int pid, size_t thread_idx, net_data_t* data, msg_t msg) {
+int send_pl(unsigned int pid, int socket_fd, net_data_t* data, msg_t msg) {
     int error = 0;
     int i = 0;
     while (!is_ack(data->pl_acks, msg.mid)) {
@@ -133,7 +133,7 @@ int send_pl(unsigned int pid, size_t thread_idx, net_data_t* data, msg_t msg) {
             }
             return 0;
         }
-        error = send_fl(data, thread_idx, pid, msg);
+        error = send_fl(data, socket_fd, pid, msg);
         i+= 1;
         if (error < 0){
             return ERROR_SEND;

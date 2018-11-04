@@ -23,7 +23,7 @@
  * @param msg Msg to send.
  * @return int 0 in case of success, non-0 otherwise.
  */
-int send_fl(net_data_t* data, size_t thread_idx, unsigned int dest_pid, msg_t msg) {
+int send_fl(net_data_t* data, int socket_fd, unsigned int dest_pid, msg_t msg) {
     int error;
     struct sockaddr_in address;
     error = get_addr(data->address_book, dest_pid, &address);
@@ -31,7 +31,7 @@ int send_fl(net_data_t* data, size_t thread_idx, unsigned int dest_pid, msg_t ms
         return error;
     }
     // sends a message to the corresponding address pointed by data
-    error = sendto(data->fds[thread_idx],(const char*) &msg, sizeof(msg_t),
+    error = sendto(socket_fd,(const char*) &msg, sizeof(msg_t),
                     MSG_DONTWAIT,
                     (const struct sockaddr *) &address,
                     sizeof(struct sockaddr_in));
