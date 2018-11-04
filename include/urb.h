@@ -10,8 +10,6 @@
 //i.e. are waiting for enough processes to be in candeliver
 //but these 2 are same thing just different name and purpose but same structure
 // table_uid_t delivered_urb, table_uid_t pending
-
-
 int is_delivered_urb(urb_table_t* table, unsigned int seen_id);
 
 int add_delivered_urb(urb_table_t* table,unsigned int seen_id);
