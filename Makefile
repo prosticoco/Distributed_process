@@ -2,9 +2,10 @@
 # If you don't want to understand anything, read http://www.gnu.org/software/make/manual/make.html
 
 LDLIBS = -pthread
-IDIR = ../include
+IDIR = include
+SDIR = src
 # Oh dear
-ODIR = obj
+ODIR = src/obj
 CC = gcc
 CFLAGS = -Wall -I$(IDIR)
 
@@ -14,8 +15,8 @@ _OBJ = addrbook.o beb.o da_proc.o flink.o parser.o plink.o set.o urb.o
 OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
 
 # Recompile C files automatically if header files change
-$(ODIR)/%.o: %.c $(DEPS)
-	@mkdir -p obj
+$(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
+	mkdir -p $(ODIR)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 da_proc: $(OBJ)

@@ -1,7 +1,4 @@
-#ifndef MQUEUE_H
-#define MQUEUE_H
-
-
+#pragma once
 
 #include <stdlib.h>
 #include <pthread.h>
@@ -50,5 +47,3 @@ int dequeue(msg_queue_t* queue, queue_task_t* elem);
 
 // use at the end to free the memory used by the queue
 int free_queue(msg_queue_t* queue);
-
-#endif

@@ -9,10 +9,12 @@
 
 
 /* ----- GLOBAL DATA ----- */
-net_data_t net_data;
-net_data.address_book = NULL;
-net_data.pl_acks = NULL;
-net_data.task_q = NULL;
+net_data_t net_data = {
+	.address_book = NULL,
+	.self_pid = 0,
+	.pl_acks = NULL,
+	.task_q = NULL
+};
 
 static int wait_for_start = 1;
 
