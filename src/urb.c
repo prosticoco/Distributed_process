@@ -121,7 +121,6 @@ int send_urb(net_data_t* data, fifo_msg_t msg){
  * @return int 
  */
 int deliver_urb(net_data_t* data, urb_msg_t msg){
-    urb_msg_t new_msg;
     int error;
     if(!is_seen_urb(data->urb_table,msg.seen_id)){
         error = add_seen_urb(data->urb_table,msg.seen_id);
