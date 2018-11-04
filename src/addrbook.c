@@ -24,6 +24,7 @@ addr_book_t* alloc_addr_book(size_t num_entries) {
         free(new_addr_book);
         return NULL;
     }
+    new_addr_book->num_proc = num_entries;
     new_addr_book->addresses = addresses;
     return new_addr_book;
 }

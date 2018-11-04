@@ -6,6 +6,7 @@
 //Uniform reliable broadcast
 
 
+<<<<<<< HEAD
 /** every urb message needs the original message that is in beb_msg
  *  and the pid of the original sender and the current sender
  */
@@ -15,6 +16,8 @@ typedef struct{
     unsigned int no_seen;
 } urb_msg_t;
 
+=======
+>>>>>>> 3295132ffe855b45e2f8a3e194f6078072c51e7f
 //list of uids that are delivered in urb
 //AND list of uids that are pending to be delivered 
 //i.e. are waiting for enough processes to be in candeliver

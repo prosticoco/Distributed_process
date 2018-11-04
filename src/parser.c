@@ -31,12 +31,12 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
     }
 
     // ----- GET CURRENT PROCESS ID -----
-    int curr_id = atoi(argv[1]);
-    if (curr_id == 0) {
+    size_t self_pid = (size_t) atoi(argv[1]);
+    if (self_pid == 0) {
         fprintf(stderr, "Error: parsing: invalid process number\n");
         return cleanup(NULL, ERROR_ARGS);
     }
-    // TODO: fill data
+    data->self_pid = self_pid;
 
     // ----- GET NUMBER OF MESSAGES TO SEND -----
     int num_msg_to_send = atoi(argv[3]);
@@ -64,7 +64,6 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
         fprintf(stderr, "Error: parsing: invalid total process number\n");
         return cleanup(membership_file, ERROR_FILE);
     }
-    // TODO: fill data
 
     // ----- FILL ADDRESS BOOK -----
     data->address_book = alloc_addr_book(num_proc);
