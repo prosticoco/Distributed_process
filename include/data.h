@@ -84,6 +84,8 @@ typedef struct {
     addr_book_t* address_book;
     unsigned int self_pid;
     int fd;
+    unsigned int total_no_process;
     ack_table_t* pl_acks;
     msg_queue_t* task_q;
+    urb_table_t* urb_table;
 } net_data_t;

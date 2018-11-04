@@ -95,7 +95,8 @@ int free_urb_table(urb_table_t* table){
  * @return int 
  */
 int send_urb(net_data_t* data, fifo_msg_t msg){
-
+    unsigned int seen_id = (data->total_no_process)*(msg.sequence_num -1) + msg.original_sender;
+    
 }
 
 /**
