@@ -15,7 +15,7 @@
 #include "error.h"
 
 // fair loss send
-int send_fl(net_data_t* data, unsigned int dest_pid, msg_t* msg) {
+int send_fl(net_data_t* data, unsigned int dest_pid, msg_t msg) {
     int error;
     struct sockaddr_in address;
     error = get_addr(data->address_book, dest_pid, &address);
@@ -23,7 +23,7 @@ int send_fl(net_data_t* data, unsigned int dest_pid, msg_t* msg) {
         return error;
     }
     // sends a message to the corresponding address pointed by data
-    error = sendto(data->fd,(const char*) msg, sizeof(msg_t),
+    error = sendto(data->fd,(const char*) &msg, sizeof(msg_t),
                     MSG_DONTWAIT,
                     (const struct sockaddr *) &address,
                     sizeof(struct sockaddr_in));
@@ -35,7 +35,7 @@ int send_fl(net_data_t* data, unsigned int dest_pid, msg_t* msg) {
 }
 
 //fair loss receive/deliver
-int deliver_fl(net_data_t* data, msg_t* msg){
+int deliver_fl(net_data_t* data, msg_t msg){
     int error = deliver_pl(data, msg);
     return error;
 }
