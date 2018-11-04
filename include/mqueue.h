@@ -4,16 +4,18 @@
 
 
 #include <stdlib.h>
+#include <pthread.h>
 
 #include "error.h"
 #include "urb.h"
-
+#include "data.h"
+#include "flink.h"
 
 // represents an element of the queue, will just be equal to the msg_nr
 typedef struct{
     unsigned int pid_dest;
     // msg struct
-    urb_msg_t urb_msg;
+    msg_t msg;
 }queue_task_t;
 
 // structure representing a queue of messages to be sent. 1 per sender_thread
