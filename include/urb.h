@@ -34,12 +34,7 @@ int add_seen_urb(urb_table_t* table, unsigned int seen_id);
 int free_urb_table(urb_table_t* table);
 
 
-
-
 int init_urb_table(urb_table_t* table, unsigned int no_msgs, unsigned int no_process);
 
 
-// Main Algorithm methods
-
-int candeliver(net_data_t* msg);
 
