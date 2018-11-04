@@ -70,6 +70,36 @@ int realloc_pending(pending_t* pending){
     return 0;
 }
 
+int init_next(next_t* next,unsigned int no_process){
+    next->entries = calloc(no_process,sizeof(unsigned int));
+    if(next->entries == NULL){
+        return ERROR_MEMORY;
+    }
+    next->no_process = no_process;
+    return 0;
+}
+
+int get_next(next_t* next, unsigned int pid){
+    if(pid > next->no_process){
+        return ERROR_TABLE;
+    }
+    return next->entries[pid -1];
+}
+
+int incr_next(next_t* next,unsigned int pid){
+    if(pid > next->no_process){
+        return ERROR_TABLE;
+    }
+    next->entries[pid -1] += 1;
+    return 0;
+}
+
+int free_next(next_t* next){
+    free(next->entries);
+    next->entries = NULL;
+    return 0;
+}
+
 
 int send_fifo(net_data_t* data, int m){
     unsigned int self = data->self_pid;
@@ -91,10 +121,10 @@ int deliver_fifo(net_data_t* data, fifo_msg_t msg){
         return error;
     }
     unsigned int next_idx;
-    next_idx = get_next(msg.original_sender);
+    next_idx = get_next(data->next,msg.original_sender);
     
     while(get_pending(data->pending, (data->address_book->num_proc-1) * next_idx + msg.original_sender-1) == 1){
-        error = write_next(msg.original_sender, next_idx+1);
+        error = incr_next(data->next,msg.original_sender);
         if(error <0){
             return error;
         }

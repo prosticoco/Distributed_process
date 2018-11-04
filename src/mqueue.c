@@ -5,6 +5,8 @@
 #include "mqueue.h"
 #include "error.h"
 
+#define EMPTY_QUEUE -1
+
 
 // initializes a queue with an arbitrary restriction on the maximum number of elements
 int init_queue(msg_queue_t* queue, size_t size) {
@@ -84,7 +86,7 @@ int dequeue(msg_queue_t* queue, queue_task_t* elem) {
     pthread_mutex_lock(&(queue->queue_mutex));
     // if queue is empty
     if (queue_empty(queue)) {
-        return ERROR_QUEUE;
+        return EMPTY_QUEUE;
     }
     // update value pointed by elem argument
     *elem = queue->elems[queue->front];

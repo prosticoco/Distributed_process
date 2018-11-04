@@ -27,6 +27,11 @@ typedef struct{
     unsigned int total_entries;
 } pending_t;
 
+typedef struct{
+    unsigned int no_process;
+    unsigned int* entries;
+}next_t;
+
 typedef struct {
     unsigned int no_msgs;
     unsigned int no_process;
@@ -104,5 +109,6 @@ typedef struct {
     pthread_t* senders;
     pthread_t receiver;
     pending_t* pending;
+    next_t* next;
 } net_data_t;
 
