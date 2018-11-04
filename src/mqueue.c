@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "mqueue.h"
+#include "error.h"
+
 
 // initializes a queue with an arbitrary restriction on the maximum number of elements
 int init_queue(msg_queue_t* queue, size_t size) {

@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-
+#include "data.h"
 
 // initializes a queue with an arbitrary restriction on the maximum number of elements
 // should always return 0 lolol

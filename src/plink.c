@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "error.h"
-#include "plink.h"
+#include "layers.h"
 #include "mqueue.h"
 #include "data.h"
 
@@ -67,6 +68,7 @@ int init_ack_table(ack_table_t* acks, unsigned int no_entries, unsigned int no_p
     if(error){
         return error;
     }
+    return 0;
 }
 
 int is_ack(ack_table_t* acks,mid_t mid){
@@ -88,7 +90,7 @@ int free_ack_table(ack_table_t * acks){
     return 0;
 }
 
-int pl_send(unsigned int pid,net_data_t* data, msg_t msg){
+int send_pl(unsigned int pid,net_data_t* data, msg_t msg){
     int error = 0;
     int i = 0;
     while (!is_ack(data->pl_acks, msg.mid)) {
@@ -112,7 +114,7 @@ int pl_send(unsigned int pid,net_data_t* data, msg_t msg){
     return 0;
 }
 
-int pl_deliver(net_data_t* data, msg_t msg){
+int deliver_pl(net_data_t* data, msg_t msg){
     int error = 0;
 
     //IF ACK add ack to acklist. basta.
@@ -132,7 +134,7 @@ int pl_deliver(net_data_t* data, msg_t msg){
         ack.sender = data->self_pid;
 
 
-        error = beb_deliver(data, msg.urb_msg);
+        error = deliver_beb(data, msg.urb_msg);
         if(error < 0){
             return error;
         }

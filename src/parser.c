@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
+
+#include "parser.h"
+#include "error.h"
 
 static int cleanup(FILE* file, int result) {
     if (file) {
@@ -43,7 +47,7 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
     // TODO: fill data
 
     // Open file
-    FILE* membership_file = fopen(argv[2], 'r');
+    FILE* membership_file = fopen(argv[2], "r");
     if (!membership_file) {
         fprintf(stderr, "Error: parsing: could not open membership file\n");
         return cleanup(membership_file, ERROR_FILE);
@@ -69,9 +73,9 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
     }
     while (fgets(line, sizeof(line), membership_file)) {
         // Get line process uid, address and port
-        const char* pid_str = strtok(line, ' ');
-        const char* ipv4_str = strtok(NULL, ' ');
-        const char* port_str = strtok(NULL, ' ');
+        const char* pid_str = strtok(line, " ");
+        const char* ipv4_str = strtok(NULL, " ");
+        const char* port_str = strtok(NULL, " ");
         if (!pid_str || !ipv4_str || !port_str) {
             fprintf(stderr, "Error: parsing: invalid line format\n");
             return cleanup(membership_file, ERROR_FILE);

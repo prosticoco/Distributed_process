@@ -1,5 +1,7 @@
 #pragma once
 
+#include "data.h"
+
 /**
  * @brief Fill global data structure and allocate underlying address book
  *        using arguments and membership file.

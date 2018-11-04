@@ -27,7 +27,7 @@ int deliver_fl(net_data_t* data, msg_t msg);
  * @param msg msg to send
  * @return int 
  */
-int pl_send(unsigned int pid, net_data_t* data, msg_t msg);
+int send_pl(unsigned int pid, net_data_t* data, msg_t msg);
 
 /**
  * @brief perfect link deliver
@@ -36,4 +36,40 @@ int pl_send(unsigned int pid, net_data_t* data, msg_t msg);
  * @param msg 
  * @return int 
  */
-int pl_deliver(net_data_t* data, msg_t msg);
+int deliver_pl(net_data_t* data, msg_t msg);
+
+/**
+ * @brief 
+ * 
+ * @param data 
+ * @param msg 
+ * @return int 
+ */
+int send_beb(net_data_t* data, urb_msg_t msg);
+
+/**
+ * @brief 
+ * 
+ * @param data 
+ * @param msg 
+ * @return int 
+ */
+int deliver_beb(net_data_t* data, urb_msg_t msg);
+
+/**
+ * @brief 
+ * 
+ * @param data 
+ * @param msg 
+ * @return int 
+ */
+int send_urb(net_data_t* data, urb_msg_t msg);
+
+/**
+ * @brief 
+ * 
+ * @param data 
+ * @param msg 
+ * @return int 
+ */
+int deliver_urb(net_data_t* data, urb_msg_t msg);

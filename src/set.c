@@ -1,3 +1,8 @@
+#include <string.h>
+
+#include "set.h"
+#include "error.h"
+
 // Delivered methods
 
 int create_delivered(unsigned int no_process, delivered_t* delivered){

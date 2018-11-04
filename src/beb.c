@@ -2,10 +2,10 @@
 
 #include "data.h"
 #include "mqueue.h"
-#include "beb.h"
+#include "layers.h"
 #include "urb.h"
 
-int beb_send(net_data_t* data, urb_msg_t msg) {
+int send_beb(net_data_t* data, urb_msg_t msg) {
     size_t num_proc = data->address_book->num_proc;
     unsigned int self = data->self_pid;
     // Send message to all processes
@@ -34,6 +34,6 @@ int beb_send(net_data_t* data, urb_msg_t msg) {
 }
 
 
-int beb_deliver(net_data_t* data, urb_msg_t msg) {
-    return urb_deliver(data, msg);
+int deliver_beb(net_data_t* data, urb_msg_t msg) {
+    return deliver_urb(data, msg);
 }

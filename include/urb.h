@@ -1,5 +1,7 @@
 #pragma once
 
+#include "data.h"
+
 //Uniform reliable broadcast
 
 
@@ -38,10 +40,6 @@ int init_urb_table(urb_table_t* table, unsigned int no_msgs, unsigned int no_pro
 
 
 // Main Algorithm methods
-
-int urb_send(net_data_t* data, urb_msg_t msg);
-
-int urb_deliver(net_data_t* data, urb_msg_t msg);
 
 int candeliver(net_data_t* msg);
 
