@@ -33,20 +33,20 @@ int table_read_entry(uid_table_t* table,mid_t mid){
 
 int table_write_entry(uid_table_t* table,mid_t mid,unsigned int value){
     unsigned int new_size;
-    unsigned int old_size = table->total_entries;
+    
     if(mid > MAX_SIZE){
         return ERROR_TABLE;
     }
     while(mid >= table->total_entries){
+        unsigned int old_size = table->total_entries;
         new_size = table->total_entries * 2;
         table->entries = realloc(table->entries,sizeof(unsigned int)*new_size);
         if(table->entries == NULL){
             return ERROR_MEMORY;
-        }     
+        }        
+        memset(&(table->entries[old_size]),0,new_size - old_size);
         table->total_entries = new_size;
-        memset(&(table->entries[old_size]),0,table->total_entries - old_size);
         table->no_msgs = table->no_msgs*2;
-        return 0;
     }
     table->entries[mid] = value;
     return 0;

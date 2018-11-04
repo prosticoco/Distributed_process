@@ -21,18 +21,6 @@ typedef struct {
     uid_table_t table;
 } ack_table_t;
 
-typedef struct {
-    struct sockaddr_in* address;
-    int fd;
-} fl_data_t;
-
-typedef struct {
-
-} pl_data_t;
-
-typedef struct {
-    addr_book_t* address_book;
-} beb_data_t;
 
 typedef struct{
     unsigned int sequence_num;
@@ -86,6 +74,8 @@ typedef struct {
     size_t num_proc;
     size_t num_msg;
     int fd;
+    unsigned int total_no_process;
     ack_table_t* pl_acks;
     msg_queue_t* task_q;
+    urb_table_t* urb_table;
 } net_data_t;
