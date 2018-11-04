@@ -151,24 +151,27 @@ int deliver_pl(net_data_t* data, size_t thread_idx, msg_t msg){
         if (error < 0) {
             return error;
         }
-    }
-    //real message
-    else {
+    }else{
+        //it is a real message
         //create ack message      
         msg_t ack;
         ack.mid = msg.mid;
         ack.mtype = ACK_NO;
         ack.sender = data->self_pid;
-        
-        error = deliver_beb(data, msg.urb_msg);
-        if(error < 0){
-            return error;
-        }
         error = send_fl(data, thread_idx, msg.sender, ack);
         if (error < 0) {
             return error;
         }
-        
+        if(!is_delivered(data->pl_delivered,msg.mid)){
+            error = set_delivered(data->pl_delivered,msg.mid);
+            if(error){
+                return error;
+            }
+            error = deliver_beb(data, msg.urb_msg);
+            if(error < 0){
+                return error;
+            }
+        }     
     }
     return 0;
 
