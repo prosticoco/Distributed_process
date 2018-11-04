@@ -7,16 +7,16 @@ typedef struct {
     int fd;
 } fl_data_t;
 
-typedef struct{
+typedef struct {
 
-}pl_data_t;
+} pl_data_t;
+
+typedef struct {
+    addr_book_t* address_book;
+} beb_data_t;
 
 typedef struct{
-    addr_book_t address_book;
-}beb_data_t;
-
-typedef struct{
-    addr_book_t address_book;
+    addr_book_t* address_book;
 }urb_data_t;
 
 typedef struct{
