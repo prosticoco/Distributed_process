@@ -28,5 +28,18 @@ int send_fifo(net_data_t* data, int m){
 
 
 int deliver_fifo(net_data_t* data, fifo_msg_t msg){
-
+    unsigned int seen_id = (data->address_book->num_proc) * msg.sequence_num + msg.original_sender;
+    int error;
+    error = add_pending(data->pending, seen_id);
+    if(error <0){
+        return error;
+    }
+    unsigned next_idx;
+    next_idx = get_next(msg.original_sender);
+    if(next_idx <0){
+        return next_idx;
+    }
+    while(error = get_pending((data->address_book->num_proc) * next_idx + msg.original_sender) == 1){
+        error = 
+    }
 }

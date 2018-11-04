@@ -52,6 +52,7 @@ typedef struct {
     urb_msg_t urb_msg;
     mid_t mid;
     unsigned int sender;
+    // is 1 if ack, zero otherwise
     unsigned int mtype;
 } msg_t;
 
@@ -78,6 +79,10 @@ typedef struct {
     pthread_mutex_t queue_mutex;
 
 } msg_queue_t;
+
+typedef struct{
+    uid_table_t table;
+}pl_delivered_t;
 
 typedef struct {  
     addr_book_t* address_book;

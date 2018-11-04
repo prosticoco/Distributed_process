@@ -5,9 +5,7 @@
 #include "data.h"
 
 
-typedef struct{
-    uid_table_t table;
-}pl_delivered_t;
+
 
 
 // Interface for table handling
