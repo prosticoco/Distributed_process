@@ -3,23 +3,7 @@
 #include <pthread.h>
 
 #include "data.h"
-#include "flink.h"
-#include "beb.h"
-#include "urb.h"
 
-
-
-typedef struct{
-    unsigned int no_msgs;
-    unsigned int no_process;
-    unsigned int total_entries;
-    unsigned int* entries;
-}uid_table_t;
-
-typedef struct{
-    pthread_mutex_t table_mutex;
-    uid_table_t table;
-}ack_table_t;
 
 typedef struct{
     uid_table_t table;
@@ -55,22 +39,3 @@ int is_delivered(pl_delivered_t* delivered,mid_t mid);
 int set_delivered(pl_delivered_t* delivered,mid_t mid);
 
 int free_delivered(pl_delivered_t* delivered);
-
-/**
- * @brief perfect link send
- * 
- * @param pid pid of process we send to
- * @param data all data we need
- * @param msg msg to send
- * @return int 
- */
-int pl_send(unsigned int pid,net_data_t* data, msg_t* msg);
-
-/**
- * @brief perfect link deliver
- * 
- * @param data 
- * @param msg 
- * @return int 
- */
-int pl_deliver(net_data_t* data, msg_t* msg);

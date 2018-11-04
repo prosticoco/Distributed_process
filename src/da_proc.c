@@ -3,10 +3,8 @@
 #include <signal.h>
 #include <time.h>
 
-#include "addrbook.h"
 #include "data.h"
 #include "parser.h"
-
 
 /* ----- GLOBAL DATA ----- */
 net_data_t net_data = {

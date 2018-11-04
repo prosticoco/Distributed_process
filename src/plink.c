@@ -1,8 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "error.h"
-#include "plink.h"
-#include "mqueue.h"
+
 #define MAX_SIZE 1024*8
 #define THRESHOLD 50
 #define ACK_NO 11

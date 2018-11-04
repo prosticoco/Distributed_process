@@ -1,7 +1,5 @@
 #pragma once
 
-#include "data.h"
-
 //Uniform reliable broadcast
 
 
@@ -23,17 +21,15 @@ typedef struct{
     unsigned int total_entries;
 }urb_table_t;
 
-init_urb_table(urb_table_t* table, unsigned int no_msgs, unsigned int no_process);
+int is_delivered_urb(urb_table_t* table, unsigned int seen_id);
 
-is_delivered_urb(urb_table_t* table, unsigned int seen_id);
+int add_delivered_urb(urb_table_t* table,unsigned int seen_id);
 
-add_delivered_urb(urb_table_t* table,unsigned int seen_id);
+int is_seen_urb(urb_table_t* table,unsigned int seen_id);
 
-is_seen_urb(urb_table_t* table,unsigned int seen_id);
+int add_seen_urb(urb_table_t* table, unsigned int seen_id);
 
-add_seen_urb(urb_table_t* table, unsigned int seen_id);
-
-free_urb_table(urb_table_t* table);
+int free_urb_table(urb_table_t* table);
 
 
 
@@ -43,9 +39,9 @@ int init_urb_table(urb_table_t* table, unsigned int no_msgs, unsigned int no_pro
 
 // Main Algorithm methods
 
-int urb_send(net_data_t* data, urb_msg_t* msg);
+int urb_send(net_data_t* data, urb_msg_t msg);
 
-int urb_deliver(net_data_t* data, urb_msg_t* msg);
+int urb_deliver(net_data_t* data, urb_msg_t msg);
 
 int candeliver(net_data_t* msg);
 

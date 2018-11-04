@@ -1,36 +1,8 @@
 #pragma once
 
 #include <stdlib.h>
-#include <pthread.h>
 
-#include "error.h"
-#include "urb.h"
-#include "data.h"
-#include "flink.h"
 
-// represents an element of the queue, will just be equal to the msg_nr
-typedef struct{
-    unsigned int pid_dest;
-    // msg struct
-    msg_t msg;
-}queue_task_t;
-
-// structure representing a queue of messages to be sent. 1 per sender_thread
-typedef struct {
-    // the number of elements in the queue
-    unsigned int no_elem;
-    // the size of the queue
-    unsigned int qsize;
-    // index corresponding to the front of the queue
-    unsigned int front;
-    // index corresponding to the back of the queue
-    unsigned int back;
-    // pointer to the elements of the queue
-    queue_task_t* elems;
-
-    pthread_mutex_t queue_mutex;
-
-} msg_queue_t;
 
 // initializes a queue with an arbitrary restriction on the maximum number of elements
 // should always return 0 lolol
