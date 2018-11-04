@@ -57,6 +57,10 @@ static int init_data(int argc, char** argv) {
 	}
 
 	printf("Initializing sockets and threads...\n");
+	res = init_senders_and_sockets(&net_data, NUM_SENDER_THREADS);
+	if (res) {
+		return res;
+	}
 	// As many sockets as there are threads
 	net_data.fds = calloc(NUM_SENDER_THREADS, sizeof(int));
 	if (!net_data.fds) {
@@ -76,6 +80,7 @@ static void free_data(void) {
 	free_queue(net_data.task_q);
 	free_ack_table(net_data.pl_acks);
 	free(net_data.fds);
+	// TODO: sockets and sender threads
 }
 
 static void start(int signum) {
