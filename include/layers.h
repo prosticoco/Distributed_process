@@ -8,16 +8,17 @@
  * @param msg msg we want to send
  * @return int 
  */
-int send_fl(net_data_t* data, unsigned int dest_pid, msg_t msg);
+int send_fl(net_data_t* data, size_t thread_idx, unsigned int dest_pid, msg_t msg);
 
 /**
  * @brief fair loss deliver
  * 
  * @param data all data we need
+ * @param thread_idx
  * @param msg message we received
  * @return int 
  */
-int deliver_fl(net_data_t* data, msg_t msg);
+int deliver_fl(net_data_t* data, size_t thread_idx, msg_t msg);
 
 /**
  * @brief perfect link send
@@ -27,7 +28,7 @@ int deliver_fl(net_data_t* data, msg_t msg);
  * @param msg msg to send
  * @return int 
  */
-int send_pl(unsigned int pid, net_data_t* data, msg_t msg);
+int send_pl(unsigned int pid, size_t thread_idx, net_data_t* data, msg_t msg);
 
 /**
  * @brief perfect link deliver
@@ -36,7 +37,7 @@ int send_pl(unsigned int pid, net_data_t* data, msg_t msg);
  * @param msg 
  * @return int 
  */
-int deliver_pl(net_data_t* data, msg_t msg);
+int deliver_pl(net_data_t* data, size_t thread_idx, msg_t msg);
 
 /**
  * @brief 
