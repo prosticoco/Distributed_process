@@ -3,6 +3,7 @@
 #include "error.h"
 #include "plink.h"
 #include "mqueue.h"
+#include "data.h"
 #define MAX_SIZE 1024*8
 #define THRESHOLD 50
 #define ACK_NO 11
@@ -85,14 +86,14 @@ int free_ack_table(ack_table_t * acks){
     return 0;
 }
 
-int pl_send(unsigned int pid,net_data_t* data, msg_t* msg){
+int pl_send(unsigned int pid,net_data_t* data, msg_t msg){
     int error = 0;
     int i = 0;
-    while (!is_ack(data->pl_acks, msg->mid)) {
+    while (!is_ack(data->pl_acks, msg.mid)) {
         if(i >= THRESHOLD){
             queue_task_t task;
             task.pid_dest = pid;
-            task.msg = *msg;
+            task.msg = msg;
             error = enqueue(data->task_q, &task);
             if(error < 0){
                 return error;
@@ -109,12 +110,12 @@ int pl_send(unsigned int pid,net_data_t* data, msg_t* msg){
     return 0;
 }
 
-int pl_deliver(net_data_t* data, msg_t* msg){
+int pl_deliver(net_data_t* data, msg_t msg){
     int error = 0;
 
     //IF ACK add ack to acklist. basta.
-    if (msg->mtype == ACK_NO) {
-        error = set_ack(data->pl_acks, msg->mid); 
+    if (msg.mtype == ACK_NO) {
+        error = set_ack(data->pl_acks, msg.mid); 
         if (error < 0) {
             return error;
         }
@@ -124,15 +125,20 @@ int pl_deliver(net_data_t* data, msg_t* msg){
         //create ack message
         
         msg_t ack;
-        ack.mid = msg->mid;
+        ack.mid = msg.mid;
         ack.mtype = ACK_NO;
-        ack.sender_pid = data->self_pid;
-        ack.urb_msg = NULL;
+        ack.sender = data->self_pid;
 
-        error = send_fl(data, msg->sender_pid, &ack);
+
+        error = beb_deliver(data, msg.urb_msg);
+        if(error < 0){
+            return error;
+        }
+        error = send_fl(data, msg.sender, ack);
         if (error < 0) {
             return error;
         }
+        
     }
     return 0;
 

@@ -36,7 +36,7 @@ typedef struct {
  * @param msg msg we want to send
  * @return int 
  */
-int send_fl(net_data_t* data, unsigned int dest_pid, msg_t* msg);
+int send_fl(net_data_t* data, unsigned int dest_pid, msg_t msg);
 
 /**
  * @brief fair loss deliver
@@ -45,4 +45,4 @@ int send_fl(net_data_t* data, unsigned int dest_pid, msg_t* msg);
  * @param msg message we received
  * @return int 
  */
-int deliver_fl(net_data_t* data, msg_t* msg);
+int deliver_fl(net_data_t* data, msg_t msg);

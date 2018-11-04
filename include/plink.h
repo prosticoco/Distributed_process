@@ -64,7 +64,7 @@ int free_delivered(pl_delivered_t* delivered);
  * @param msg msg to send
  * @return int 
  */
-int pl_send(unsigned int pid,net_data_t* data, msg_t* msg);
+int pl_send(unsigned int pid,net_data_t* data, msg_t msg);
 
 /**
  * @brief perfect link deliver
@@ -73,4 +73,4 @@ int pl_send(unsigned int pid,net_data_t* data, msg_t* msg);
  * @param msg 
  * @return int 
  */
-int pl_deliver(net_data_t* data, msg_t* msg);
+int pl_deliver(net_data_t* data, msg_t msg);

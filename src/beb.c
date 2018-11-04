@@ -3,7 +3,7 @@
 #include "beb.h"
 #include "urb.h"
 #include "mqueue.h"
-int beb_send(net_data_t* data, urb_msg_t* msg) {
+int beb_send(net_data_t* data, urb_msg_t msg) {
     size_t num_proc = data->address_book->num_proc;
     unsigned int self = data->self_pid;
     // Send message to all processes
@@ -14,9 +14,9 @@ int beb_send(net_data_t* data, urb_msg_t* msg) {
         int res;
         if(i != self){
             msg_t message;
-            message.mid = (num_proc*num_proc*(msg->seen_id)+ num_proc*(msg->no_seen) + self);
+            message.mid = (num_proc*num_proc*(msg.seen_id)+ num_proc*(msg.no_seen) + self);
             message.mtype = 1;
-            message.sender_pid = self;
+            message.sender = self;
             message.urb_msg = msg;
             queue_task_t task;
             task.pid_dest = i;

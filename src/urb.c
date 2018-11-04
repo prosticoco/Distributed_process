@@ -48,13 +48,13 @@ int free_table_uid(uid_table_t* table){
     return 0;
 }
 
-int urb_send(urb_data_t* data, urb_msg_t* msg){
+int urb_send(urb_data_t* data, urb_msg_t msg){
     int error;
     //add self to pending
-    if(error=table_write_entry(data->pending, msg->beb_msg->mid, SELF) < 0){
+    if(error=table_write_entry(data->pending, msg.mid, SELF) < 0){
         return error;
     }
-    error = beb_send(msg->beb_msg);
+    error = beb_send(data, msg);
     return error;
 
 }
@@ -62,7 +62,7 @@ int urb_send(urb_data_t* data, urb_msg_t* msg){
 
 int urb_deliver(urb_data_t* data, urb_msg_t msg){
     int error;
-    if(error = write_ack_table(msg->beb_msg->mid, msg->sender_pid) < 0){
+    if(error = write_ack_table(msg.mid, msg.sender) < 0){
         return error;
     }//tout ce que je fais cest du caca
     /** urb deliver
@@ -80,7 +80,7 @@ int urb_deliver(urb_data_t* data, urb_msg_t msg){
 
 int candeliver(urb_data_t data, urb_msg_t* msg){
     int error;
-    if(error = read_ack_table(msg->beb_msg->mid) < 0){
+    if(error = read_ack_table(msg.mid) < 0){
         return error;
     }
     N = data->address_book->size;
