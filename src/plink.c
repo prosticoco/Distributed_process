@@ -13,7 +13,7 @@
 
 pthread_mutex_t ack_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-int init_table_uid(uid_table_t* table,unsigned int no_msgs, unsigned int no_process){
+int init_table_uid(uid_table_t* table, unsigned int no_msgs, unsigned int no_process){
     table->entries = calloc(no_msgs*no_process*no_process,sizeof(unsigned int));
     if(table->entries == NULL){
         return ERROR_MEMORY;
