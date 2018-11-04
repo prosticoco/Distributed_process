@@ -70,7 +70,6 @@ static void free_data(void) {
 	free_addr_book(net_data.address_book);
 	free_queue(net_data.task_q);
 	free_ack_table(net_data.pl_acks);
-	//free(net_data.fds);
 	// TODO: sockets and sender threads
 }
 

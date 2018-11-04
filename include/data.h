@@ -92,11 +92,11 @@ typedef struct {
 } pl_delivered_t;
 
 // Forward declaration to make it work.
-struct net_data_t;
+struct net_data;
 typedef struct {
     size_t idx;
     int socket_fd;
-    struct net_data_t* data;
+    struct net_data* data;
 } sender_thread_arg_t;
 
 typedef struct {
@@ -104,7 +104,7 @@ typedef struct {
     sender_thread_arg_t args;
 } sender_thread_t;
 
-typedef struct {  
+typedef struct net_data {  
     addr_book_t* address_book;
     size_t self_pid;
     size_t num_proc;

@@ -9,7 +9,7 @@
  * 
  * @param params Function parameters.
  */
-void sender_f(void* params);
+void *sender_f(void* params);
 
 /**
  * @brief Initialize sender threads and their sockets.

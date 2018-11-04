@@ -1,18 +1,39 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 #include "data.h"
 #include "error.h"
+#include "layers.h"
+#include "mqueue.h"
 #include "sender.h"
+
+#define EMPTY_QUEUE_WAIT 10000
 
 /**
  * @brief Callback function for sender threads.
  * 
  * @param params Function parameters.
  */
-void sender_f(void* params) {
+void *sender_f(void* params) {
+    sender_thread_arg_t* args = params;
+    net_data_t* data = args->data;
+    msg_queue_t* msg_queue = data->task_q;
 
+    while (1) {
+        queue_task_t msg_task;
+        while (dequeue(msg_queue, &msg_task)) {
+            usleep(EMPTY_QUEUE_WAIT);
+        }
+
+        int res = send_pl(msg_task.pid_dest, args->socket_fd, data, msg_task.msg);
+        if (res) {
+            pthread_exit((void *) ERROR_SEND);
+        }
+    }
+
+    return NULL;
 }
 
 
@@ -41,7 +62,6 @@ static int setup_threads(net_data_t* data, size_t num_senders) {
     for (size_t i = 0; i < num_senders; ++i) {
         pthread_t* thread = &(data->senders[i].thread);
         void* args = &(data->senders[i].args);
-        void (*callback)(void *) = sender_f;
         int res = pthread_create(thread, NULL, sender_f, args);
         if (res) {
             return ERROR_THREAD;
