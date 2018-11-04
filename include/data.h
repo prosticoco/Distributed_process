@@ -24,17 +24,11 @@ typedef struct{
 }fifo_msg_t;
 
 
-typedef struct{
-    fl_data_t* fldata;
-    pl_data_t* pldata;
-    beb_data_t* bebdata;
-    urb_data_t* urbdata;
-    fifo_data_t* fifodata;    
-}net_data_t;
+
 
 
 typedef struct{  
-    struct sockaddr_in* address;
+    addr_book_t* address;
     addr_book_t address_book;
     int fd;
-}net_data_t
+}net_data_t;
