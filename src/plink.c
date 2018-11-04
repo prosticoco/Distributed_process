@@ -100,9 +100,9 @@ int send_pl(unsigned int pid, size_t thread_idx, net_data_t* data, msg_t msg) {
             task.msg = msg;
             error = enqueue(data->task_q, &task);
             if(error < 0){
-                return error;
-            return 0;
+                return error;     
             }
+            return 0;
         }
         error = send_fl(data, thread_idx, pid, msg);
         i+= 1;
