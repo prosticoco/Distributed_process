@@ -12,14 +12,61 @@
 #include "data.h"
 #include "layers.h"
 
+#define MAX_SIZE_PENDING 1024*8
 
-int add_pending(pending_t* pending,unsigned int seen_id);
 
-int get_pending(pending_t* pending, unsigned int seen_id);
+int add_pending(pending_t* pending,unsigned int seen_id){
+    int error;
+    if(seen_id > MAX_SIZE_PENDING){
+        return ERROR_TABLE;
+    }
+    while(seen_id >= pending->total_entries){
+        error = realloc_table(pending);
+        if(error){
+            return error;
+        }    
+    }
+    pending->bol[seen_id] = 1;
+    return 0;
+}
 
-int free_pending(pending_t* pending);
+int get_pending(pending_t* pending, unsigned int seen_id){
+    if(seen_id >= pending->total_entries){
+        return 0;
+    }
+    return pending->bol[seen_id];
+}
 
-int init_pending(pending_t* pending, unsigned int no_msgs, unsigned int no_process);
+int free_pending(pending_t* pending){
+    free(pending->bol);
+    pending->bol = NULL;
+    return 0;
+}
+}
+
+int init_pending(pending_t* pending, unsigned int no_msgs, unsigned int no_process){
+    pending->total_entries = no_msgs*no_process;
+    pending->bol = calloc(pending->total_entries,sizeof(uint32_t));
+    if(pending->bol == NULL){
+        return ERROR_MEMORY;
+    }
+    pending->no_msgs = no_msgs;
+    pending->no_process = no_process;
+    return 0;
+}
+
+int realloc_pending(pending_t* pending){
+    unsigned int old_size = pending->total_entries;
+    unsigned int new_size = pending->total_entries*2;
+    pending->bol = realloc(pending->bol,new_size);
+    if(pending->bol == NULL){
+        return ERROR_MEMORY;
+    }
+    memset(&(pending->bol[old_size]),0,new_size - old_size);
+    pending->total_entries *= 2;
+    pending->no_msgs *= 2;
+    return 0;
+}
 
 
 int send_fifo(net_data_t* data, int m){

@@ -21,7 +21,7 @@ typedef struct{
 }urb_table_t;
 
 typedef struct{
-    unsigned int bol;
+    unsigned int* bol;
     unsigned int no_msgs;
     unsigned int no_process;
     unsigned int total_entries;
