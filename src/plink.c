@@ -89,19 +89,22 @@ int pl_send(unsigned int pid,net_data_t* data, msg_t* msg){
     int i = 0;
     while (!is_ack(data->pl_acks, msg->mid)) {
         if(i >= THRESHOLD){
-            queue_task_t* task = malloc(sizeof(queue_task_t));
-            
-            error = enqueue(data->task_q, queue_task_t{pid, msg});
+            queue_task_t task;
+            task.pid_dest = pid;
+            task.msg = *msg;
+            error = enqueue(data->task_q, &task);
+            if(error < 0){
+                return error;
+            return 0;
+            }
         }
+        error = send_fl(data, pid, msg);
         i+= 1;
-        error = send_fl(data->fd, &(data->process_address->address), msg);
-        printf("just sent a message via fair loss link, what a story mark\n");
         if (error < 0){
             return ERROR_SEND;
         }
         usleep(2000);
     }
-    printf("exiting perfect link, number of iterations in while loop = %d\n",i);
     return 0;
 }
 

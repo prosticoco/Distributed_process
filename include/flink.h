@@ -28,7 +28,7 @@ typedef struct {
 } msg_t;
 
 // fair loss send
-int send_fl(net_data_t* data, msg_t* msg);
+int send_fl(net_data_t* data, unsigned int dest_pid, msg_t* msg);
 
 //fair loss receive/deliver
 int deliver_fl(net_data_t* data, msg_t* msg);
