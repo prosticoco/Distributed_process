@@ -30,6 +30,7 @@ typedef struct{
 
 typedef struct{  
     addr_book_t* address_book;
+    size_t self_pid;
     int fd;
 
     ack_table_t* pl_acks;
