@@ -104,9 +104,18 @@ int is_delivered(pl_delivered_t* delivered,mid_t mid){
     return table_read_entry(&(delivered->table),mid);
 }
 
-int set_delivered(pl_delivered_t* delivered,mid_t mid);
+int set_delivered(pl_delivered_t* delivered,mid_t mid){
+    int error = table_write_entry(&(delivered->table),mid,1);
+    if(error){
+        return error;
+    }
+    return 0;
+}
 
-int free_delivered(pl_delivered_t* delivered);
+int free_delivered(pl_delivered_t* delivered){
+    free(&(delivered->table));
+    return 0;
+}
 
 
 
