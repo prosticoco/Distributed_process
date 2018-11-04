@@ -7,8 +7,12 @@
 
 // initializes a queue with an arbitrary restriction on the maximum number of elements
 int init_queue(msg_queue_t* queue, size_t size) {
+    int error = pthread_mutex_init(&(queue->queue_mutex),NULL);
+    if(error){
+        return ERROR_MUTEX;
+    }
     queue->no_elem = 0;
-    queue->elems = calloc(size, sizeof(queue_elem_t));
+    queue->elems = calloc(size, sizeof(queue_task_t));
     if (queue->elems == NULL) {
         return ERROR_MEMORY;
     }
@@ -25,7 +29,7 @@ int queue_empty(msg_queue_t* queue) {
 
 // adds an element at the back of the queue
 // returns 0 on success. -1 when queue is full, other errors in other cases
-int enqueue(msg_queue_t* queue, queue_elem_t* elem) {
+int enqueue(msg_queue_t* queue, queue_task_t* elem) {
     // check if the queue is full
     if (queue->no_elem == queue->qsize) {
         return ERROR_QUEUE;
@@ -44,7 +48,7 @@ int enqueue(msg_queue_t* queue, queue_elem_t* elem) {
 }
 
 // pops the next element of the queue
-int dequeue(msg_queue_t* queue, queue_elem_t* elem) {
+int dequeue(msg_queue_t* queue, queue_task_t* elem) {
     // if queue is empty
     if (queue_empty(queue)) {
         return ERROR_QUEUE;
