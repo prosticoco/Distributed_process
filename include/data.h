@@ -80,6 +80,10 @@ typedef struct {
 
 } msg_queue_t;
 
+typedef struct{
+    uid_table_t table;
+}pl_delivered_t;
+
 typedef struct {  
     addr_book_t* address_book;
     size_t self_pid;
