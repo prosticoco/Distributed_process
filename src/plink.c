@@ -9,7 +9,7 @@
 
 #define MAX_SIZE 1024*8
 #define THRESHOLD 50
-#define ACK_NO 11
+#define ACK_NO 1
 
 pthread_mutex_t ack_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -90,6 +90,26 @@ int free_ack_table(ack_table_t * acks){
     return 0;
 }
 
+// Interface for delivered table
+
+int init_deliver_pl(pl_delivered_t* delivered,unsigned int no_entries, unsigned int no_process){
+    int error = init_table_uid(&(delivered->table),no_entries, no_process);
+    if(error){
+        return error;
+    }
+    return 0;
+}
+
+int is_delivered(pl_delivered_t* delivered,mid_t mid){
+    return table_read_entry(&(delivered->table),mid);
+}
+
+int set_delivered(pl_delivered_t* delivered,mid_t mid);
+
+int free_delivered(pl_delivered_t* delivered);
+
+
+
 int send_pl(unsigned int pid, size_t thread_idx, net_data_t* data, msg_t msg) {
     int error = 0;
     int i = 0;
@@ -116,7 +136,6 @@ int send_pl(unsigned int pid, size_t thread_idx, net_data_t* data, msg_t msg) {
 
 int deliver_pl(net_data_t* data, size_t thread_idx, msg_t msg){
     int error = 0;
-
     //IF ACK add ack to acklist. basta.
     if (msg.mtype == ACK_NO) {
         error = set_ack(data->pl_acks, msg.mid); 
@@ -126,14 +145,12 @@ int deliver_pl(net_data_t* data, size_t thread_idx, msg_t msg){
     }
     //real message
     else {
-        //create ack message
-        
+        //create ack message      
         msg_t ack;
         ack.mid = msg.mid;
         ack.mtype = ACK_NO;
         ack.sender = data->self_pid;
-
-
+        
         error = deliver_beb(data, msg.urb_msg);
         if(error < 0){
             return error;

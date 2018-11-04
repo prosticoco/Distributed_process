@@ -9,9 +9,9 @@ ODIR = src/obj
 CC = gcc
 CFLAGS = -Wall -I$(IDIR)
 
-_DEPS = addrbook.h data.h error.h mqueue.h layers.h parser.h set.h plink.h urb.h
+_DEPS = addrbook.h data.h error.h mqueue.h layers.h parser.h plink.h sender.h set.h urb.h
 DEPS = $(patsubst %, $(IDIR)/%, $(_DEPS))
-_OBJ = addrbook.o beb.o da_proc.o flink.o mqueue.o parser.o plink.o set.o urb.o
+_OBJ = addrbook.o beb.o da_proc.o flink.o mqueue.o parser.o plink.o sender.o set.o urb.o
 OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
 
 # Recompile C files automatically if header files change
