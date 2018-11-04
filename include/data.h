@@ -85,7 +85,7 @@ typedef struct {
     size_t self_pid;
     size_t num_proc;
     size_t num_msg;
-    int* fd;
+    int fd;
     ack_table_t* pl_acks;
     msg_queue_t* task_q;
 } net_data_t;
