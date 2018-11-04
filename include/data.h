@@ -27,11 +27,11 @@ typedef struct{
 
 
 typedef struct{
-    fl_data_t fldata;
-    pl_data_t pldata;
-    beb_data_t bebdata;
-    urb_data_t urbdata;
-    fifo_data_t fifodata;    
+    fl_data_t* fldata;
+    pl_data_t* pldata;
+    beb_data_t* bebdata;
+    urb_data_t* urbdata;
+    fifo_data_t* fifodata;    
 }net_data_t;
 
 

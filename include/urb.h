@@ -12,7 +12,7 @@
 typedef struct{
     size_t orig_sender_pid;
     size_t sender_pid;
-    beb_msg_t beb_msg;
+    beb_msg_t* beb_msg;
 }urb_msg_t;
 
 //list of uids that are delivered in urb
@@ -26,12 +26,12 @@ typedef struct{
     unsigned int no_process;
     unsigned int total_entries;
     unsigned int* entries;
-}table_uid_t
+} table_uid_t;
 
 //for all m we need to make an ack table to know which process has seen the message
 typedef struct{
     //JE SAIS POOOOOOOOOO
-}ack_table_t;
+} ack_table_t;
 
 
 int urb_send(urb_data_t* data, urb_msg_t* msg)
