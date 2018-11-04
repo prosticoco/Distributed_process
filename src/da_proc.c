@@ -8,6 +8,8 @@
 #include "mqueue.h"
 #include "parser.h"
 #include "plink.h"
+#include "sender.h"
+#include "urb.h"
 
 #define QUEUE_LEN 2000
 #define NUM_SENDER_THREADS 10
@@ -34,23 +36,38 @@ static int init_data(int argc, char** argv) {
 	if (res) {
 		return res;
 	}
+
 	printf("Initializing message queue...\n");
 	// TODO: do something
 	res = init_queue(net_data.task_q, QUEUE_LEN);
 	if (res) {
 		return res;
 	}
+
 	printf("Initializing ack table...\n");
 	res = init_ack_table(net_data.pl_acks, net_data.num_msg, net_data.num_proc);
 	if (res) {
 		return res;
 	}
-	printf("Initializing sockets...\n");
+
+	printf("Initializing URB table...\n");
+	res = init_urb_table(net_data.urb_table, net_data.num_msg, net_data.num_proc);
+	if (res) {
+		return res;
+	}
+
+	printf("Initializing sockets and threads...\n");
 	// As many sockets as there are threads
 	net_data.fds = calloc(NUM_SENDER_THREADS, sizeof(int));
 	if (!net_data.fds) {
 		return ERROR_MEMORY;
 	}
+	net_data.senders = calloc(NUM_SENDER_THREADS, sizeof(pthread_t));
+	if (!net_data.senders) {
+		return ERROR_MEMORY;
+	}
+
+
 	return res;
 }
 
