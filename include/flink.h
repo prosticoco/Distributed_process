@@ -25,6 +25,7 @@ typedef struct {
     urb_msg_t* urb_msg;
     mid_t mid;
     unsigned int mtype;
+    unsigned int sender_pid;
 } msg_t;
 
 /**

@@ -126,9 +126,10 @@ int pl_deliver(net_data_t* data, msg_t* msg){
         msg_t ack;
         ack.mid = msg->mid;
         ack.mtype = ACK_NO;
+        ack.sender_pid = data->self_pid;
         ack.urb_msg = NULL;
 
-        error = send_fl(data, msg->urb_msg->sender, &ack);
+        error = send_fl(data, msg->sender_pid, &ack);
         if (error < 0) {
             return error;
         }

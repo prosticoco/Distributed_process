@@ -60,7 +60,7 @@ int urb_send(urb_data_t* data, urb_msg_t* msg){
 }
 
 
-int urb_deliver(urb_data_t* data, urb_msg_t* msg){
+int urb_deliver(urb_data_t* data, urb_msg_t msg){
     int error;
     if(error = write_ack_table(msg->beb_msg->mid, msg->sender_pid) < 0){
         return error;

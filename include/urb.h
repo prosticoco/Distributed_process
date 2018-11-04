@@ -11,7 +11,8 @@
  */
 typedef struct{
     fifo_msg_t* fifo_msg;
-    unsigned int sender;
+    unsigned int seen_id;
+    unsigned int no_seen;
 } urb_msg_t;
 
 //list of uids that are delivered in urb
@@ -36,7 +37,7 @@ typedef struct{
 
 int urb_send(urb_data_t* data, urb_msg_t* msg);
 
-int urb_deliver(urb_data_t* data, urb_msg_t* msg);
+int urb_deliver(urb_data_t* data, urb_msg_t msg);
 
 int candeliver(urb_msg_t* msg);
 
