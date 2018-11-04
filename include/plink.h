@@ -4,12 +4,8 @@
 
 #include "data.h"
 
-typedef unsigned int mid_t;
 
-typedef struct{
-    mid_t mid;
-    fl_msg_t fl_msg;
-}plink_msg_t;
+
 
 typedef struct{
     unsigned int no_msgs;
