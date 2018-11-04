@@ -2,8 +2,9 @@
 #include <string.h>
 #include "error.h"
 #include "plink.h"
-
+#include "mqueue.h"
 #define MAX_SIZE 1024*8
+#define THRESHOLD 50
 
 pthread_mutex_t ack_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -83,3 +84,25 @@ int free_ack_table(ack_table_t * acks){
     return 0;
 }
 
+int pl_send(unsigned int pid,net_data_t* data, msg_t* msg){
+    int error = 0;
+    int i = 0;
+    while (!is_ack(data->pl_acks, msg->mid)) {
+        if(i >= THRESHOLD){
+            queue_task_t* task = malloc(sizeof(queue_task_t));
+            
+            error = enqueue(data->task_q, queue_task_t{pid, msg});
+        }
+        i+= 1;
+        error = send_fl(data->fd, &(data->process_address->address), msg);
+        printf("just sent a message via fair loss link, what a story mark\n");
+        if (error < 0){
+            return ERROR_SEND;
+        }
+        usleep(2000);
+    }
+    printf("exiting perfect link, number of iterations in while loop = %d\n",i);
+    return 0;
+}
+
+int pl_deliver(net_data_t* data, msg_t* msg);

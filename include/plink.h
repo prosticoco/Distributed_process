@@ -2,12 +2,12 @@
 
 #include <pthread.h>
 
-typedef unsigned int mid_t;
+#include "data.h"
+#include "flink.h"
+#include "beb.h"
+#include "urb.h"
 
-typedef struct{
-    mid_t mid;
-    fl_msg_t fl_msg;
-}plink_msg_t;
+
 
 typedef struct{
     unsigned int no_msgs;
@@ -58,3 +58,6 @@ int free_delivered(pl_delivered_t* delivered);
 
 // Send and Receive
 
+int pl_send(unsigned int pid,net_data_t* data, msg_t* msg);
+
+int pl_deliver(net_data_t* data, msg_t* msg);

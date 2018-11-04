@@ -5,7 +5,7 @@ LDLIBS = -pthread
 IDIR = ../include
 # Oh dear
 ODIR = obj
-CC = clang
+CC = gcc
 CFLAGS = -Wall -I$(IDIR)
 
 _DEPS = addrbook.h beb.h data.h error.h flink.h parser.h plink.h set.h urb.h

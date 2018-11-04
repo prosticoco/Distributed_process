@@ -10,10 +10,9 @@
  *  and the pid of the original sender and the current sender
  */
 typedef struct{
-    size_t orig_sender_pid;
-    size_t sender_pid;
-    beb_msg_t* beb_msg;
-}urb_msg_t;
+    fifo_msg_t* fifo_msg;
+    unsigned int sender;
+} urb_msg_t;
 
 //list of uids that are delivered in urb
 //AND list of uids that are pending to be delivered 
@@ -34,11 +33,12 @@ typedef struct{
 } ack_table_t;
 
 
+
 int urb_send(urb_data_t* data, urb_msg_t* msg);
 
 int urb_deliver(urb_data_t* data, urb_msg_t* msg);
 
-bool candeliver(urb_msg_t* msg);
+int candeliver(urb_msg_t* msg);
 
 int init_table_uid(uid_table_t* table,unsigned int no_entries, unsigned int no_process);
 

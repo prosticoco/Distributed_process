@@ -1,6 +1,7 @@
 #pragma once
 
 #include "addrbook.h"
+#include "mqueue.h"
 
 typedef struct {
     struct sockaddr_in* address;
@@ -20,18 +21,18 @@ typedef struct{
 }urb_data_t;
 
 typedef struct{
-
-}fifo_data_t;
-
-
+    unsigned int sequence_num;
+}fifo_msg_t;
 
 
-typedef struct{
-    fl_data_t* fldata;
-    pl_data_t* pldata;
-    beb_data_t* bebdata;
-    urb_data_t* urbdata;
-    fifo_data_t* fifodata;    
+
+
+
+typedef struct{  
+    addr_book_t* address;
+    addr_book_t address_book;
+    int fd;
+
+    ack_table_t* pl_acks;
+    msg_queue_t* task_q;
 }net_data_t;
-
-
