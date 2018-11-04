@@ -39,12 +39,12 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
     data->self_pid = self_pid;
 
     // ----- GET NUMBER OF MESSAGES TO SEND -----
-    int num_msg_to_send = atoi(argv[3]);
-    if (num_msg_to_send == 0) {
+    int num_msg = atoi(argv[3]);
+    if (num_msg == 0) {
         fprintf(stderr, "Error: parsing: invalid number of messages to send\n");
         return cleanup(NULL, ERROR_ARGS);
     }
-    // TODO: fill data
+    data->num_msg = num_msg;
 
     // Open file
     FILE* membership_file = fopen(argv[2], "r");
@@ -64,6 +64,7 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
         fprintf(stderr, "Error: parsing: invalid total process number\n");
         return cleanup(membership_file, ERROR_FILE);
     }
+    data->num_proc = num_proc;
 
     // ----- FILL ADDRESS BOOK -----
     data->address_book = alloc_addr_book(num_proc);
