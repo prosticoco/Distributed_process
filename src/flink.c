@@ -31,7 +31,7 @@ int send_fl(net_data_t* data, size_t thread_idx, unsigned int dest_pid, msg_t ms
         return error;
     }
     // sends a message to the corresponding address pointed by data
-    error = sendto(data->fds[thread_idx],(const char*) &msg, sizeof(msg_t),
+    error = sendto(data->senders[thread_idx].args.socket_fd,(const char*) &msg, sizeof(msg_t),
                     MSG_DONTWAIT,
                     (const struct sockaddr *) &address,
                     sizeof(struct sockaddr_in));
