@@ -3,7 +3,27 @@
 #include <signal.h>
 #include <time.h>
 
+#include "addrbook.h"
+#include "data.h"
+#include "parser.h"
+
+
+/* ----- GLOBAL DATA ----- */
+net_data_t net_data;
+net_data.address_book = NULL;
+net_data.pl_acks = NULL;
+net_data.task_q = NULL;
+
 static int wait_for_start = 1;
+
+
+static int init_data(int argc, char** argv) {
+	return parse_membership_args(argc, argv, &net_data);
+}
+
+static void free_data(void) {
+	free_addr_book(net_data.address_book);
+}
 
 static void start(int signum) {
 	wait_for_start = 0;
@@ -32,7 +52,12 @@ int main(int argc, char** argv) {
 	signal(SIGINT, stop);
 
 
-	//parse arguments, including membership
+	// Parse arguments, membership file and initialize address book
+	int res = init_data(argc, argv);
+	if (res) {
+		return res;
+	}
+
 	//initialize application
 	//start listening for incoming UDP packets
 	printf("Initializing.\n");
@@ -58,4 +83,9 @@ int main(int argc, char** argv) {
 		sleep_time.tv_nsec = 0;
 		nanosleep(&sleep_time, NULL);
 	}
+
+	// Free data
+	free_data();
+
+	return 0;
 }
