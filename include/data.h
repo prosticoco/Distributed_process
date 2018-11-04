@@ -8,6 +8,17 @@
 typedef unsigned int mid_t;
 
 
+typedef struct {
+    unsigned int seen;
+    unsigned int delivered;
+} urb_entry_t;
+
+typedef struct{
+    urb_entry_t* values;
+    unsigned int no_msgs;
+    unsigned int no_process;
+    unsigned int total_entries;
+}urb_table_t;
 
 typedef struct {
     unsigned int no_msgs;
@@ -79,3 +90,4 @@ typedef struct {
     msg_queue_t* task_q;
     urb_table_t* urb_table;
 } net_data_t;
+

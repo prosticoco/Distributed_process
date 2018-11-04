@@ -95,8 +95,22 @@ int free_urb_table(urb_table_t* table){
  * @return int 
  */
 int send_urb(net_data_t* data, fifo_msg_t msg){
+    // compute the URB's unique id
     unsigned int seen_id = (data->total_no_process)*(msg.sequence_num -1) + msg.original_sender;
-    
+    // add the message to the seen messages
+    int error = add_seen_urb(data->urb_table,seen_id);
+    if(error){
+        return error;
+    }
+    urb_msg_t new_msg;
+    new_msg.fifo_msg = msg;
+    new_msg.no_seen = 1;
+    new_msg.seen_id = seen_id;
+    error = send_beb(data,new_msg);
+    if(error){
+        return error;
+    }
+    return 0;
 }
 
 /**
