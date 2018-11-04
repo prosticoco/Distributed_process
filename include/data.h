@@ -29,7 +29,6 @@ typedef struct{
 
 
 typedef struct{  
-    addr_book_t* address;
     addr_book_t address_book;
     int fd;
 
