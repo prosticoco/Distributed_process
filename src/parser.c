@@ -64,7 +64,6 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
         fprintf(stderr, "Error: parsing: invalid total process number\n");
         return cleanup(membership_file, ERROR_FILE);
     }
-    // TODO: fill data
 
     // ----- FILL ADDRESS BOOK -----
     data->address_book = alloc_addr_book(num_proc);
