@@ -6,7 +6,7 @@
 #include "urb.h"
 
 int send_beb(net_data_t* data, urb_msg_t msg) {
-    unsigned int num_proc = data->total_no_process;
+    unsigned int num_proc = data->num_proc;
     unsigned int self = data->self_pid;
     // Send message to all processes
     for (size_t i = 1; i <= num_proc; ++i){
