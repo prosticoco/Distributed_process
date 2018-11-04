@@ -20,7 +20,7 @@ net_data_t net_data = {
 	.address_book = NULL,
 	.num_msg = 0,
 	.self_pid = 0,
-	.fds = NULL,
+	.senders = NULL,
 	.pl_acks = NULL,
 	.task_q = NULL
 };
@@ -57,18 +57,9 @@ static int init_data(int argc, char** argv) {
 	}
 
 	printf("Initializing sockets and threads...\n");
-	res = init_senders_and_sockets(&net_data, NUM_SENDER_THREADS);
+	res = init_senders(&net_data, NUM_SENDER_THREADS);
 	if (res) {
 		return res;
-	}
-	// As many sockets as there are threads
-	net_data.fds = calloc(NUM_SENDER_THREADS, sizeof(int));
-	if (!net_data.fds) {
-		return ERROR_MEMORY;
-	}
-	net_data.senders = calloc(NUM_SENDER_THREADS, sizeof(pthread_t));
-	if (!net_data.senders) {
-		return ERROR_MEMORY;
 	}
 
 
@@ -79,7 +70,7 @@ static void free_data(void) {
 	free_addr_book(net_data.address_book);
 	free_queue(net_data.task_q);
 	free_ack_table(net_data.pl_acks);
-	free(net_data.fds);
+	//free(net_data.fds);
 	// TODO: sockets and sender threads
 }
 
