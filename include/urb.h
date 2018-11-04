@@ -10,10 +10,9 @@
  *  and the pid of the original sender and the current sender
  */
 typedef struct{
-    size_t orig_sender_pid;
-    size_t sender_pid;
-    beb_msg_t* beb_msg;
-}urb_msg_t;
+    fifo_msg_t* fifo_msg;
+    unsigned int sender;
+} urb_msg_t;
 
 //list of uids that are delivered in urb
 //AND list of uids that are pending to be delivered 
@@ -33,10 +32,7 @@ typedef struct{
     //JE SAIS POOOOOOOOOO
 } ack_table_t;
 
-typedef struct{
-    fifo_msg_t* fifo_msg;
-    unsigned int sender;
-} urb_msg_t;
+
 
 int urb_send(urb_data_t* data, urb_msg_t* msg)
 

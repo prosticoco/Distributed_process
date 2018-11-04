@@ -83,3 +83,6 @@ int free_ack_table(ack_table_t * acks){
     return 0;
 }
 
+int pl_send(unsigned int pid,net_data_t* data, msg_t* msg);
+
+int pl_deliver(net_data_t* data, msg_t* msg);

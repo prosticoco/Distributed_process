@@ -12,7 +12,7 @@
 #include <unistd.h>
 
 #include "plink.h"
-
+#include "urb.h"
 #include "data.h"
 #include "error.h"
 
@@ -22,7 +22,7 @@
 typedef unsigned int mid_t;
 
 typedef struct {
-    urb_msg_t* pl_msg;
+    urb_msg_t* urb_msg;
     mid_t mid;
     unsigned int mtype;
 } msg_t;
