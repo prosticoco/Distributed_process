@@ -2,13 +2,18 @@
 #define MQUEUE_H
 
 
-#include "error.h"
+
 #include <stdlib.h>
+
+#include "error.h"
+#include "urb.h"
+
 
 // represents an element of the queue, will just be equal to the msg_nr
 typedef struct{
     unsigned int pid_dest;
     // msg struct
+    urb_msg_t urb_msg;
 }queue_task_t;
 
 // structure representing a queue of messages to be sent. 1 per sender_thread
