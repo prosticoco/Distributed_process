@@ -115,6 +115,7 @@ typedef struct{
     size_t buf_current_size;
     char* buffer;
     FILE* file;
+    pthread_mutex_t loglok;
 }log_data_t;
 
 typedef struct net_data {  

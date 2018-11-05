@@ -66,3 +66,16 @@ int init_receiver(net_data_t* data){
     }
     return 0;
 }
+
+int terminate_receiver(net_data_t* data){
+    int error;
+    pthread_mutex_lock(&(data->logdata->loglok));
+    error = pthread_cancel(data->receiver);
+    if(error){
+        fprintf(stderr,"Could not cancel Receiver\n");
+        return ERROR_THREAD;
+    }
+    pthread_join(data->receiver,NULL);
+    pthread_mutex_unlock(&(data->logdata->loglok));
+    return 0;
+}

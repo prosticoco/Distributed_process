@@ -1,9 +1,12 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
+
 
 #include "log.h"
 #include "error.h"
+
 
 
 // Inits the logging data, opens a file to write in output, filename should be null-terminated
@@ -25,6 +28,7 @@ int init_log_data(log_data_t* logdata,size_t buf_max_size,char* filename){
 // writes to the buffer, if the buffer is full then copies the buffer to the file
 // the line should end with '\n' 
 int write_log(log_data_t* logdata, char* line,size_t size){
+    pthread_mutex_lock(&(logdata->loglok));
     int error;
     if(size + logdata->buf_current_size > logdata->buf_max_size){
         error = write_to_file(logdata);
@@ -37,6 +41,7 @@ int write_log(log_data_t* logdata, char* line,size_t size){
         return ERROR_MEMORY;
     }
     logdata->buf_current_size += size;
+    pthread_mutex_unlock(&(logdata->loglok));
     return 0;
 }
 
