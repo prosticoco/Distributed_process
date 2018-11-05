@@ -146,5 +146,7 @@ typedef struct net_data {
     int receiver_fd;
     // log data pointer
     log_data_t* logdata;
+    // log file name
+    char log_filename[14];
 } net_data_t;
 
