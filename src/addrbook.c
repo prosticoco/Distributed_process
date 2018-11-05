@@ -21,6 +21,7 @@ addr_book_t* alloc_addr_book(size_t num_entries) {
 
     struct sockaddr_in* addresses = calloc(num_entries, sizeof(struct sockaddr_in));
     if (!addresses) {
+        printf("**** ERROR FREEING ADDRESS BOOK ****\n");
         free(new_addr_book);
         return NULL;
     }
@@ -36,6 +37,7 @@ addr_book_t* alloc_addr_book(size_t num_entries) {
  */
 void free_addr_book(addr_book_t* addr_book) {
     if (addr_book != NULL) {
+        printf("**** FREEING ADDRESS BOOK ****\n");
         free(addr_book->addresses);
         free(addr_book);
     }

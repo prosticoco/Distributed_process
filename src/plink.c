@@ -96,6 +96,7 @@ int free_ack_table(ack_table_t * acks){
 int init_deliver_pl(pl_delivered_t* delivered,unsigned int no_entries, unsigned int no_process){
     int error = init_table_uid(&(delivered->table),no_entries, no_process);
     if(error){
+        printf("Error initializing delivered table\n");
         return error;
     }
     return 0;
@@ -108,13 +109,16 @@ int is_delivered(pl_delivered_t* delivered,mid_t mid){
 int set_delivered(pl_delivered_t* delivered,mid_t mid){
     int error = table_write_entry(&(delivered->table),mid,1);
     if(error){
+        printf("Error writing in delivered table\n");
         return error;
     }
     return 0;
 }
 
 int free_delivered(pl_delivered_t* delivered){
-    free(&(delivered->table));
+    printf("TRYING TO FREE DELIVERED\n");
+    free(delivered->table.entries);
+    printf("FREED DELIVERED\n");
     return 0;
 }
 
@@ -168,7 +172,6 @@ int deliver_pl(net_data_t* data, msg_t msg){
             return error;
         }
         if(!is_delivered(data->pl_delivered,msg.mid)){
-            printf("PID %zu , call set_deliv with mid : %u to table with total entries %u\n",data->self_pid,msg.mid,data->pl_delivered->table.total_entries);
             error = set_delivered(data->pl_delivered,msg.mid);
             if(error){
                 printf("Error set_delivery\n");

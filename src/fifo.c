@@ -43,6 +43,7 @@ int get_pending(pending_t* pending, unsigned int seen_id){
 }
 
 int free_pending(pending_t* pending){
+    printf("****  FREEING PENDING ****\n");
     free(pending->bol);
     pending->bol = NULL;
     return 0;
@@ -98,6 +99,7 @@ int incr_next(next_t* next,unsigned int pid){
 }
 
 int free_next(next_t* next){
+    printf("****  FREEING NEXT ****\n");
     free(next->entries);
     next->entries = NULL;
     return 0;
@@ -117,6 +119,7 @@ int send_fifo(net_data_t* data, int m){
 
 
 int deliver_fifo(net_data_t* data, fifo_msg_t msg){
+    //printf("PID : %zu Deliver fifo called\n",data->self_pid);
     unsigned int seen_id = (data->address_book->num_proc-1) * msg.sequence_num + msg.original_sender-1;
     int error;
     error = add_pending(data->pending, seen_id,1);

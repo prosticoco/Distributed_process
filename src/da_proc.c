@@ -95,7 +95,6 @@ static int init_data(int argc, char** argv) {
 	if (res < 0) {
 		return res;
 	}
-	printf("calling log function\n");
 	fflush(stdout);
 	res = init_log_data(net_data.logdata, MSG_BUF_MAX_SIZE, net_data.log_filename);
 	if (res) {

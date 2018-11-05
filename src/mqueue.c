@@ -51,6 +51,7 @@ int realloc_queue(msg_queue_t* queue){
     queue->qsize = old_queue.qsize*2;
     queue->no_elem = old_queue.no_elem;
     // free memory of old queue
+    printf("**** FREEING OLD QUEUE ****\n");
     free(old_queue.elems);
     return 0;
 }

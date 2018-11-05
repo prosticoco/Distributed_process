@@ -70,9 +70,6 @@ int init_receiver(net_data_t* data){
     if(error){
         return ERROR_THREAD;
     }
-    printf(" \n");
-    printf("Thread creation succeeded for PID : %u\n",data->self_pid);
-    printf(" \n");
     return 0;
 }
 
