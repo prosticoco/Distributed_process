@@ -8,11 +8,12 @@
 #define EMPTY_QUEUE -1
 
 
+
 // initializes a queue with an arbitrary restriction on the maximum number of elements
 int init_queue(msg_queue_t* queue, size_t size) {
-    fflush(stdout);
     int error = pthread_mutex_init(&(queue->queue_mutex),NULL);
     if(error){
+        printf("Error initializing mutex \n");
         return ERROR_MUTEX;
     }
     queue->no_elem = 0;
@@ -57,7 +58,6 @@ int realloc_queue(msg_queue_t* queue){
 // adds an element at the back of the queue
 // returns 0 on success. -1 when queue is full, other errors in other cases
 int enqueue(msg_queue_t* queue, queue_task_t* elem) {
-
     pthread_mutex_lock(&(queue->queue_mutex));
     // check if the queue is full
     int error;
@@ -83,10 +83,10 @@ int enqueue(msg_queue_t* queue, queue_task_t* elem) {
 
 // pops the next element of the queue
 int dequeue(msg_queue_t* queue, queue_task_t* elem) {
-
     pthread_mutex_lock(&(queue->queue_mutex));
     // if queue is empty
     if (queue_empty(queue)) {
+        pthread_mutex_unlock(&(queue->queue_mutex));
         return EMPTY_QUEUE;
     }
     // update value pointed by elem argument
