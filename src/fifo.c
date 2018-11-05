@@ -117,6 +117,7 @@ int send_fifo(net_data_t* data, int m){
 
 
 int deliver_fifo(net_data_t* data, fifo_msg_t msg){
+    
     unsigned int seen_id = (data->num_proc) * (msg.sequence_num-1) + msg.original_sender-1;
     int error;
     error = add_pending(data->pending, seen_id,1);
@@ -131,11 +132,8 @@ int deliver_fifo(net_data_t* data, fifo_msg_t msg){
         //printf("sequence = %u \n",msg.sequence_num);
     }
     next_idx = get_next(data->next,msg.original_sender);
-    size_t i = 0;
     while(get_pending(data->pending, (data->num_proc) * (next_idx-1) + msg.original_sender-1) == 1){
-        if(data->self_pid == 1){
-            printf(" i : %zu\n",i);
-        }
+        
         error = incr_next(data->next,msg.original_sender);
         if(error <0){
             return error;
@@ -145,12 +143,13 @@ int deliver_fifo(net_data_t* data, fifo_msg_t msg){
             return error;
         }
         //write to log
+        
         error = log_deliver(data,msg);
+        msg.sequence_num ++;
         if(error){
             return error;
         }
         next_idx = next_idx+1;
-        i++;
         
     }
     return 0;
