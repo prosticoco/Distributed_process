@@ -21,6 +21,13 @@ void *sender_f(void* params) {
     net_data_t* data = args->data;
     msg_queue_t* msg_queue = data->task_q;
 
+    // Set own cancelability state to asynchronous to allow for
+    // (hopefully) immediate cancellation upon pthread_cancel.
+    int dump;
+    if (!pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &dump)) {
+        return ERROR_THREAD;
+    }
+
     while (1) {
         queue_task_t msg_task;
         while (dequeue(msg_queue, &msg_task)) {
@@ -94,4 +101,15 @@ int init_senders(net_data_t* data, size_t num_senders) {
     }
 
     return 0;
+}
+
+
+/**
+ * @brief Immediately terminate all sender threads.
+ * 
+ * @param data Global data structure containing the array of threads and the sockets.
+ * @param num_senders Number of threads and sockets (equal).
+ */
+void terminate_senders(net_data_t* data, size_t num_senders) {
+    
 }
