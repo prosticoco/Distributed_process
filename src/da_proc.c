@@ -19,6 +19,7 @@
 #define NUM_SENDER_THREADS 10
 #define MSG_BUF_MAX_SIZE 1024
 #define LOG_FILENAME "da_proc_%zu.out"
+#define ORIG_TABLE_SIZE 150
 
 /* ----- GLOBAL DATA ----- */
 msg_queue_t main_queue;
@@ -65,19 +66,19 @@ static int init_data(int argc, char** argv) {
 	}
 
 	printf("PID %zu: Initializing ack table...\n", net_data.self_pid);
-	res = init_ack_table(net_data.pl_acks, net_data.num_msg, net_data.num_proc);
+	res = init_ack_table(net_data.pl_acks, ORIG_TABLE_SIZE, net_data.num_proc);
 	if (res) {
 		return res;
 	}
 
 	printf("PID %zu: Initializing URB table...\n", net_data.self_pid);
-	res = init_urb_table(net_data.urb_table, net_data.num_msg, net_data.num_proc);
+	res = init_urb_table(net_data.urb_table, ORIG_TABLE_SIZE, net_data.num_proc);
 	if (res) {
 		return res;
 	}
 
 	printf("PID %zu: Initializing pending messages and next messages tables...\n", net_data.self_pid);
-	res = init_pending(net_data.pending, net_data.num_msg, net_data.num_proc);
+	res = init_pending(net_data.pending, ORIG_TABLE_SIZE, net_data.num_proc);
 	res += init_next(net_data.next, net_data.num_proc);
 	if (res) {
 		return res;
