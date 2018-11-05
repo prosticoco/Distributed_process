@@ -112,9 +112,8 @@ typedef struct {
 typedef struct{
     size_t buf_max_size;
     size_t buf_current_size;
-    char* filename;
-    size_t filename_size;
     char* buffer;
+    FILE* file;
 }log_data_t;
 
 typedef struct net_data {  
