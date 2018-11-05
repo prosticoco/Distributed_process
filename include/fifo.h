@@ -22,6 +22,6 @@ int incr_next(next_t* next,unsigned int pid);
 
 int free_next(next_t* next);
 
-int init_fifo_structures(net_data_t* data,unsigned int no_process, unsigned int no_msgs);
+//int init_fifo_structures(net_data_t* data,unsigned int no_process, unsigned int no_msgs);
 
-int free_fifo_structures(net_data_t* data);
+//int free_fifo_structures(net_data_t* data);
