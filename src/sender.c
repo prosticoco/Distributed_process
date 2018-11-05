@@ -11,12 +11,23 @@
 
 #define EMPTY_QUEUE_WAIT 10000
 
+
+/**
+ * @brief Thread termination callback. Releases any held lock and exits.
+ * 
+ * @param params 
+ * @return void* 
+ */
+static void *sender_terminate(void* params) {
+    // WARNING: can only call 'safe' function, check man 7 signal
+}
+
 /**
  * @brief Callback function for sender threads.
  * 
  * @param params Function parameters.
  */
-void *sender_f(void* params) {
+static void *sender_f(void* params) {
     sender_thread_arg_t* args = params;
     net_data_t* data = args->data;
     msg_queue_t* msg_queue = data->task_q;
@@ -25,7 +36,7 @@ void *sender_f(void* params) {
     // (hopefully) immediate cancellation upon pthread_cancel.
     int dump;
     if (!pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &dump)) {
-        return ERROR_THREAD;
+        pthread_exit((void *) ERROR_THREAD);
     }
 
     while (1) {
@@ -111,5 +122,10 @@ int init_senders(net_data_t* data, size_t num_senders) {
  * @param num_senders Number of threads and sockets (equal).
  */
 void terminate_senders(net_data_t* data, size_t num_senders) {
-    
+    for (size_t i = 0; i < num_senders; ++i) {
+        // send signal to all threads
+    }
+    for (size_t i = 0; i < num_senders; ++i) {
+
+    }
 }
