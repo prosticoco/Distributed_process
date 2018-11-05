@@ -86,7 +86,7 @@ int set_ack(ack_table_t* acks,mid_t mid){
 }
 
 int free_ack_table(ack_table_t * acks){
-    free(&(acks->table));
+    free_table_uid(&(acks->table));
     return 0;
 }
 

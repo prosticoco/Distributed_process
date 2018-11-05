@@ -9,7 +9,7 @@
 #include "error.h"
 
 static int cleanup(FILE* file, int result) {
-    if (file) {
+    if (file != NULL) {
         fclose(file);
     }
     return result;
@@ -72,7 +72,9 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
         fprintf(stderr, "Error: parsing: could not allocate address book\n");
         return cleanup(membership_file, ERROR_MEMORY);
     }
-    while (fgets(line, sizeof(line), membership_file)) {
+
+    size_t line_counter = 0;
+    while (fgets(line, sizeof(line), membership_file) && line_counter < num_proc) {
         // Get line process uid, address and port
         const char* pid_str = strtok(line, " ");
         const char* ipv4_str = strtok(NULL, " ");
@@ -107,6 +109,8 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
             fprintf(stderr, "Error: parsing: could not add entry to address book\n");
             return cleanup(membership_file, ERROR_FILE);
         }
+
+        line_counter++;
     }
 
     return cleanup(membership_file, 0);

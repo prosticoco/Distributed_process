@@ -7,7 +7,7 @@ SDIR = src
 # Oh dear
 ODIR = src/obj
 CC = gcc
-CFLAGS = -Wall -I$(IDIR)
+CFLAGS = -Wall -I$(IDIR) -g
 
 _DEPS = addrbook.h data.h error.h fifo.h log.h layers.h mqueue.h parser.h plink.h receiver.h sender.h urb.h
 DEPS = $(patsubst %, $(IDIR)/%, $(_DEPS))
