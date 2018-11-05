@@ -110,17 +110,31 @@ typedef struct {
 } sender_thread_t;
 
 typedef struct net_data {  
+    // rlist of process addresses
     addr_book_t* address_book;
+    // pid of current process
     size_t self_pid;
+    // total number of processes
     size_t num_proc;
+    // number of messages to be originally sent by current process
     size_t num_msg;
+    // table to keep track of acks received (perfect link)
     ack_table_t* pl_acks;
+    // delivered table for perfect link
     pl_delivered_t* pl_delivered;
+    // task queue for sender threads
     msg_queue_t* task_q;
+    // urb table for urb layer
     urb_table_t* urb_table;
+    // list of sender threads
     sender_thread_t* senders;
+    // receiver thread
     pthread_t receiver;
+    // pending table for fifo layer
     pending_t* pending;
+    // next table for fifo layer
     next_t* next;
+    // file descriptor for receiver socket
+    int receiver_fd;
 } net_data_t;
 

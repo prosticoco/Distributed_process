@@ -17,10 +17,10 @@
 // fair loss send
 
 
-int send_fl(int fd, struct sockaddr_in* address, fl_msg_t* msg) {
+int send_fl(int fd, struct sockaddr_in* address, msg_t msg) {
     int error;
     // sends a message to the corresponding address pointed by data
-    error = sendto(fd,(const char*) msg, sizeof(fl_msg_t),
+    error = sendto(fd,(const char*) &msg, sizeof(msg_t),
                     MSG_DONTWAIT,
                     (const struct sockaddr *) address,
                     sizeof(struct sockaddr_in));
@@ -33,8 +33,8 @@ int send_fl(int fd, struct sockaddr_in* address, fl_msg_t* msg) {
 
 //fair loss receive/deliver
 
-int deliver_fl(struct sockaddr_in* sender, msg_t* msg){
+int deliver_fl(net_data_t* data, msg_t msg){
     int error;
-    error = deliver_pl(struct sockaddr_in* sender, msg_t* msg);
+    error = deliver_pl(data, msg);
     return error;
 }

@@ -18,7 +18,7 @@ int send_fl(net_data_t* data, int socket_fd, unsigned int dest_pid, msg_t msg);
  * @param msg message we received
  * @return int 
  */
-int deliver_fl(net_data_t* data, size_t thread_idx, msg_t msg);
+int deliver_fl(net_data_t* data, msg_t msg);
 
 /**
  * @brief perfect link send
