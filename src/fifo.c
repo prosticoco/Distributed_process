@@ -13,6 +13,9 @@
 #include "data.h"
 #include "layers.h"
 #include "fifo.h"
+#include "log.h"
+
+
 
 #define MAX_SIZE_PENDING 1024*8
 
@@ -122,7 +125,6 @@ int deliver_fifo(net_data_t* data, fifo_msg_t msg){
     }
     unsigned int next_idx;
     next_idx = get_next(data->next,msg.original_sender);
-    
     while(get_pending(data->pending, (data->address_book->num_proc-1) * next_idx + msg.original_sender-1) == 1){
         error = incr_next(data->next,msg.original_sender);
         if(error <0){
@@ -133,9 +135,28 @@ int deliver_fifo(net_data_t* data, fifo_msg_t msg){
             return error;
         }
         //write to log
-        //error = deliver(BUFFER TYPE BUFFERmsg.original_sender, next_idx);
+        error = log_deliver(data,msg);
+        if(error){
+            return error;
+        }
         next_idx = next_idx+1;
         
+    }
+    return 0;
+}
+
+int log_deliver(net_data_t* data,fifo_msg_t msg){
+    unsigned int snr = msg.sequence_num;
+    unsigned int pid = msg.original_sender;
+    char line[LINE_MAX_LENGTH];
+    int error = sprinf(line,"d %u %u\n",pid,snr);
+    if(error < 0){
+        return ERROR_IO;
+    }
+    size_t size = strlen(line);
+    error =write_log(data->logdata,line,size);
+    if(error){
+        return error;
     }
     return 0;
 }

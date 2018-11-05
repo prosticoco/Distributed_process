@@ -5,6 +5,7 @@
 #include "data.h"
 #include "error.h"
 #include "layers.h"
+#include "log.h"
 
 #define MAX_SIZE_URB 1024*8
 
@@ -102,6 +103,10 @@ int send_urb(net_data_t* data, fifo_msg_t msg){
     if(error){
         return error;
     }
+    error = log_urb_broadcast(data,msg);
+    if(error){
+        return error;
+    }
     urb_msg_t new_msg;
     new_msg.fifo_msg = msg;
     new_msg.no_seen = 1;
@@ -140,6 +145,23 @@ int deliver_urb(net_data_t* data, urb_msg_t msg){
              return error;
          }
          deliver_fifo(data,msg.fifo_msg);
+    }
+    return 0;
+}
+
+
+int log_urb_broadcast(net_data_t* data,fifo_msg_t msg){
+    int error;
+    unsigned int snr = msg.sequence_num;
+    char line[LINE_MAX_LENGTH];
+    error = sprintf(line,"b %u\n",snr);
+    if(error < 0){
+        return ERROR_IO;
+    }
+    size_t size = strlen(line);
+    error = write_log(data->logdata,line,size);
+    if(error){
+        return error;
     }
     return 0;
 }
