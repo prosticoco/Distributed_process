@@ -11,6 +11,7 @@
 #include "mqueue.h"
 #include "parser.h"
 #include "plink.h"
+#include "receiver.h"
 #include "sender.h"
 #include "urb.h"
 
@@ -84,12 +85,17 @@ static int init_data(int argc, char** argv) {
 		return res;
 	}
 
+	printf("Initializing receiver thread...\n");
+	res = init_receiver(&net_data);
+	if (res) {
+		return res;
+	}
+
 	printf("Initializing sockets and threads...\n");
 	res = init_senders(&net_data, NUM_SENDER_THREADS);
 	if (res) {
 		return res;
 	}
-
 
 	return res;
 }
@@ -101,9 +107,9 @@ static void free_data(void) {
 	free_queue(net_data.task_q);
 	free_ack_table(net_data.pl_acks);
 	free_urb_table(net_data.urb_table);
-	free_log_data(net_data.logdata);
 	free_pending(net_data.pending);
 	free_next(net_data.next);
+	free_log_data(net_data.logdata);
 }
 
 static void start(int signum) {
@@ -118,6 +124,7 @@ static void stop(int signum) {
 	//immediately stop network packet processing
 	printf("Immediately stopping network packet processing.\n");
 	terminate_senders(&net_data, NUM_SENDER_THREADS);
+	terminate_receiver(&net_data);
 
 	//write/flush output file if necessary
 	printf("Writing output...\n");
