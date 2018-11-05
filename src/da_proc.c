@@ -15,7 +15,7 @@
 #include "sender.h"
 #include "urb.h"
 
-#define QUEUE_LEN 2000
+#define QUEUE_LEN 200
 #define NUM_SENDER_THREADS 10
 #define MSG_BUF_MAX_SIZE 1024
 #define LOG_FILENAME "da_proc_%zu.out"
@@ -49,33 +49,33 @@ static int init_data(int argc, char** argv) {
 		return res;
 	}
 
-	printf("Initializing message queue...\n");
+	printf("PID %zu: Initializing message queue...\n", net_data.self_pid);
 	// TODO: do something
 	res = init_queue(net_data.task_q, QUEUE_LEN);
 	if (res) {
 		return res;
 	}
 
-	printf("Initializing ack table...\n");
+	printf("PID %zu: Initializing ack table...\n", net_data.self_pid);
 	res = init_ack_table(net_data.pl_acks, net_data.num_msg, net_data.num_proc);
 	if (res) {
 		return res;
 	}
 
-	printf("Initializing URB table...\n");
+	printf("PID %zu: Initializing URB table...\n", net_data.self_pid);
 	res = init_urb_table(net_data.urb_table, net_data.num_msg, net_data.num_proc);
 	if (res) {
 		return res;
 	}
 
-	printf("Initializing pending messages and next messages tables...\n");
+	printf("PID %zu: Initializing pending messages and next messages tables...\n", net_data.self_pid);
 	res = init_pending(net_data.pending, net_data.num_msg, net_data.num_proc);
 	res += init_next(net_data.next, net_data.num_proc);
 	if (res) {
 		return res;
 	}
 
-	printf("Initializing message log...\n");
+	printf("PID %zu: Initializing message log...\n", net_data.self_pid);
 	res = sprintf(net_data.log_filename, LOG_FILENAME, net_data.self_pid);
 	if (res) {
 		return res;
@@ -85,13 +85,13 @@ static int init_data(int argc, char** argv) {
 		return res;
 	}
 
-	printf("Initializing receiver thread...\n");
+	printf("PID %zu: Initializing receiver thread...\n", net_data.self_pid);
 	res = init_receiver(&net_data);
 	if (res) {
 		return res;
 	}
 
-	printf("Initializing sockets and threads...\n");
+	printf("PID %zu: Initializing sockets and threads...\n", net_data.self_pid);
 	res = init_senders(&net_data, NUM_SENDER_THREADS);
 	if (res) {
 		return res;
@@ -142,7 +142,6 @@ static void stop(int signum) {
 /* ----- MAIN ----- */
 
 int main(int argc, char** argv) {
-
 	// Set signal handlers
 	signal(SIGUSR2, start);
 	signal(SIGTERM, stop);
