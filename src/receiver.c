@@ -39,6 +39,16 @@ void *receiver_f(void* params){
 }
 
 int process_msg(net_data_t* data, msg_t msg){
+    /**
+        if(data->self_pid == 5 && msg.mtype == 0){
+            printf("\n");
+            printf("-----PREPARING TO PROCESS-----\n");
+            printf("msg is from original %u\n",msg.urb_msg.fifo_msg.original_sender);
+            printf("sent directly by %u\n",msg.sender);
+            printf("Sequence num : %u\n",msg.urb_msg.fifo_msg.sequence_num);
+            printf("\n");
+        }    
+        */
     int error = deliver_fl(data,msg);
     return error;
 }

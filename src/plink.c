@@ -8,7 +8,7 @@
 #include "data.h"
 
 #define MAX_SIZE 1024*8
-#define THRESHOLD 3
+#define THRESHOLD 10
 #define ACK_NO 1
 
 pthread_mutex_t ack_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -125,7 +125,7 @@ int free_delivered(pl_delivered_t* delivered){
 int send_pl(unsigned int pid, int socket_fd, net_data_t* data, msg_t msg) {
     int error = 0;
     int i = 0;
-    while (!is_ack(data->pl_acks, msg.mid)) {
+    while (!is_ack(data->pl_acks, msg.ackid)) {
         if(i >= THRESHOLD){
             queue_task_t task;
             task.pid_dest = pid;
@@ -144,7 +144,7 @@ int send_pl(unsigned int pid, int socket_fd, net_data_t* data, msg_t msg) {
             return ERROR_SEND;
         }
         usleep(200);
-    }
+    }    
     return 0;
 }
 
@@ -152,16 +152,18 @@ int deliver_pl(net_data_t* data, msg_t msg){
     int error = 0;
     //IF ACK add ack to acklist. basta.
     if (msg.mtype == ACK_NO) {
-        error = set_ack(data->pl_acks, msg.mid); 
+        error = set_ack(data->pl_acks, msg.ackid); 
         if (error < 0) {
             printf("Error while setting ACK Error num %d\n",error);
             return error;
         }
     }else{
         //it is a real message
-        //create ack message      
+        //create ack message     
         msg_t ack;
+        //ack.mid = msg.mid - (msg.sender -1) + (data->self_pid -1);
         ack.mid = msg.mid;
+        ack.ackid = msg.ackid;
         ack.mtype = ACK_NO;
         ack.sender = data->self_pid;
         error = send_fl(data, data->receiver_fd, msg.sender, ack);
@@ -170,6 +172,7 @@ int deliver_pl(net_data_t* data, msg_t msg){
             return error;
         }
         if(!is_delivered(data->pl_delivered,msg.mid)){
+            
             error = set_delivered(data->pl_delivered,msg.mid);
             if(error){
                 printf("Error set_delivery\n");

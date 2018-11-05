@@ -162,9 +162,6 @@ int deliver_urb(net_data_t* data, urb_msg_t msg){
             return error;
         }
     }
-    if(data->self_pid == 5){
-        printf("message received from %u sequence num = %u\n",msg.fifo_msg.original_sender,msg.fifo_msg.sequence_num);
-    }
     if(can_deliver(data->urbacks,msg.seen_id) &&
      !is_delivered_urb(data->urb_table,msg.seen_id)){
          error = add_delivered_urb(data->urb_table,msg.seen_id);
