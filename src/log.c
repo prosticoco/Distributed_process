@@ -56,7 +56,11 @@ int write_to_file(log_data_t* logdata){
 }
 
 int free_log_data(log_data_t* logdata){
-    free(logdata->buffer);
-    fclose(logdata->file);
+    if (logdata->buffer != NULL) {
+        free(logdata->buffer);
+    }
+    if (logdata->file != NULL) {
+        fclose(logdata->file);
+    }
     return 0;
 }
