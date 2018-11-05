@@ -109,6 +109,14 @@ typedef struct {
     sender_thread_arg_t args;
 } sender_thread_t;
 
+typedef struct{
+    size_t buf_max_size;
+    size_t buf_current_size;
+    char* filename;
+    size_t filename_size;
+    char* buffer;
+}log_data_t;
+
 typedef struct net_data {  
     // rlist of process addresses
     addr_book_t* address_book;
@@ -136,5 +144,7 @@ typedef struct net_data {
     next_t* next;
     // file descriptor for receiver socket
     int receiver_fd;
+    // log data pointer
+    log_data_t* logdata;
 } net_data_t;
 

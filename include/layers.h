@@ -92,3 +92,10 @@ int send_fifo(net_data_t* data, int m);
  * @return int 
  */
 int deliver_fifo(net_data_t* data, fifo_msg_t msg);
+
+// method will write that a message was delivered to the log-buffer
+int log_deliver(net_data_t* data,fifo_msg_t msg);
+
+// method will write that a message was urb broadcast from this current node
+int log_urb_broadcast(net_data_t* data,fifo_msg_t msg);
+

@@ -32,7 +32,10 @@ void *receiver_f(void* params){
     return NULL;
 }
 
-int process_msg(net_data_t* data, msg_t msg);
+int process_msg(net_data_t* data, msg_t msg){
+    int error = deliver_fl(data,msg);
+    return error;
+}
 
 int init_receiver(net_data_t* data){
     return 0;
