@@ -16,6 +16,9 @@ int send_beb(net_data_t* data, urb_msg_t msg) {
         int res;
         
         if(i != self){
+            if(msg.fifo_msg.original_sender == 3 && msg.fifo_msg.sequence_num == 1 && data->self_pid == 1){
+                printf("Sending message ori3 seq1 with no seen : %u to proc %zu\n",msg.no_seen,i);
+            }
             msg_t message;
             message.mid = (num_proc * (msg.seen_id))  + self - 1;
             message.mtype = 0;

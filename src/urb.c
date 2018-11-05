@@ -6,6 +6,7 @@
 #include "error.h"
 #include "layers.h"
 #include "log.h"
+#include "plink.h"
 
 #define MAX_SIZE_URB 1024*8
 
@@ -132,9 +133,7 @@ int deliver_urb(net_data_t* data, urb_msg_t msg){
     
     int error;
     if(!is_seen_urb(data->urb_table,msg.seen_id)){
-        if(msg.fifo_msg.original_sender == 3 && msg.fifo_msg.sequence_num == 1){
-           printf("Got message snr 1 from origin 3, no seen = %u\n",msg.no_seen); 
-        }
+        
         error = add_seen_urb(data->urb_table,msg.seen_id);
         if(error){
             printf("URB : Error in add_seen_urb\n");
@@ -173,6 +172,49 @@ int log_urb_broadcast(net_data_t* data,fifo_msg_t msg){
     error = write_log(data->logdata,line,size);
     if(error){
         return error;
+    }
+    return 0;
+}
+
+
+// interface for ack[m] table 
+
+int init_ack_urb(urb_ack_table_t* delivered,unsigned int no_entries, unsigned int no_process){
+    int error = init_table_uid(&(delivered->table),no_entries, no_process);
+    if(error){
+        printf("Error initializing delivered table\n");
+        return error;
+    }
+    return 0;
+}
+
+int set_ack_urb(urb_ack_table_t* delivered,mid_t mid){
+    int error = table_write_entry(&(delivered->table),mid,1);
+    if(error){
+        printf("Error writing in delivered table\n");
+        return error;
+    }
+    return 0;
+}
+
+int free_ack_urb(urb_ack_table_t* delivered){
+    free(delivered->table.entries);
+    return 0;
+}
+
+int can_deliver(urb_ack_table_t* delivered,unsigned int seen_id){
+    unsigned int no_proc = delivered->table.no_process;
+    if(no_proc*seen_id + no_proc >= delivered->table.total_entries){
+        return 0;
+    }
+    size_t counter = 0;
+    for(int i = seen_id; i < (seen_id + no_proc); i++){
+        if(delivered->table.entries[i] == 1){
+            counter += 1;
+        }
+    }
+    if(counter > (no_proc / 2)){
+        return 1;
     }
     return 0;
 }

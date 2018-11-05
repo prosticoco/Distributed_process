@@ -29,6 +29,7 @@ urb_table_t urb_table;
 pending_t pending_table;
 next_t next_table;
 log_data_t log_data;
+urb_ack_table_t urbacks;
 char filename[14];
 
 
@@ -44,7 +45,8 @@ net_data_t net_data = {
 	.next = &next_table,
 	.urb_table = &urb_table,
 	.task_q = &main_queue,
-	.logdata = &log_data
+	.logdata = &log_data,
+	.urbacks = &urbacks
 };
 
 static int wait_for_start = 1;
@@ -73,7 +75,10 @@ static int init_data(int argc, char** argv) {
 	if (res) {
 		return res;
 	}
-
+	res = init_ack_urb(net_data.urbacks,ORIG_TABLE_SIZE,net_data.num_proc);
+	if(res){
+		return res;
+	}
 	res = init_pending(net_data.pending, ORIG_TABLE_SIZE, net_data.num_proc);
 	res += init_next(net_data.next, net_data.num_proc);
 	if (res) {
@@ -114,6 +119,7 @@ static void free_data(void) {
 	free_next(net_data.next);
 	free_log_data(net_data.logdata);
 	free_delivered(net_data.pl_delivered);
+	free_ack_urb(net_data.urbacks);
 }
 
 static void start(int signum) {

@@ -57,7 +57,7 @@ typedef struct{
 typedef struct{
     fifo_msg_t fifo_msg;
     unsigned int seen_id;
-    unsigned int no_seen;
+    mid_t mid;
 } urb_msg_t;
 
 
@@ -96,6 +96,10 @@ typedef struct {
 typedef struct {
     uid_table_t table;
 } pl_delivered_t;
+
+typedef struct{
+    uid_table_t table;
+} urb_ack_table_t;
 
 // Forward declaration to make it work.
 struct net_data;
@@ -143,6 +147,8 @@ typedef struct net_data {
     pending_t* pending;
     // next table for fifo layer
     next_t* next;
+    // table for ack[m]
+    urb_ack_table_t* urbacks;
     // file descriptor for receiver socket
     int receiver_fd;
     // log data pointer

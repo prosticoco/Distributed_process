@@ -23,5 +23,13 @@ int free_urb_table(urb_table_t* table);
 
 int init_urb_table(urb_table_t* table, unsigned int no_msgs, unsigned int no_process);
 
+int init_ack_urb(urb_ack_table_t* delivered,unsigned int no_entries, unsigned int no_process);
+
+int set_ack_urb(urb_ack_table_t* delivered,mid_t mid);
+
+int free_ack_urb(urb_ack_table_t* delivered);
+
+int can_deliver(urb_ack_table_t* delivered,unsigned int seen_id);
+
 
 
