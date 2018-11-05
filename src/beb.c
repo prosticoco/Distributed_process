@@ -14,7 +14,9 @@ int send_beb(net_data_t* data, urb_msg_t msg) {
         // TODO: maybe avoid broadcasting to ourselves ?
         // This would require knowing our own pid.
         int res;
+        
         if(i != self){
+            printf("Bebby broadcasting to process no %zu \n",i);
             msg_t message;
             message.mid = (num_proc * (msg.seen_id)  + self-1);
             message.mtype = 0;
@@ -25,6 +27,7 @@ int send_beb(net_data_t* data, urb_msg_t msg) {
             task.msg = message;
             res = enqueue(data->task_q, &task);
             if(res){
+                printf("COULD NOT PUT SHIT ON MY DICK\n");
                 return res;
             }
         }

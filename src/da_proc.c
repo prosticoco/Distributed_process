@@ -30,6 +30,7 @@ next_t next_table;
 log_data_t log_data;
 char filename[14];
 
+
 net_data_t net_data = {
 	.address_book = NULL,
 	.num_msg = 0,
@@ -58,7 +59,6 @@ static int init_data(int argc, char** argv) {
 	}
 
 	printf("PID %zu: Initializing message queue...\n", net_data.self_pid);
-	// TODO: do something
 	res = init_queue(net_data.task_q, QUEUE_LEN);
 	if (res) {
 		return res;

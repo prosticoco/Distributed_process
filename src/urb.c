@@ -102,6 +102,7 @@ int send_urb(net_data_t* data, fifo_msg_t msg){
     // add the message to the seen messages
     int error = add_seen_urb(data->urb_table,seen_id);
     if(error){
+        printf("Error in add:seen URB SEND\n");
         return error;
     }
     error = log_urb_broadcast(data,msg);
@@ -114,6 +115,7 @@ int send_urb(net_data_t* data, fifo_msg_t msg){
     new_msg.seen_id = seen_id;
     error = send_beb(data,new_msg);
     if(error){
+        printf("URB SEND error in send babe\n");
         return error;
     }
     return 0;
@@ -131,11 +133,13 @@ int deliver_urb(net_data_t* data, urb_msg_t msg){
     if(!is_seen_urb(data->urb_table,msg.seen_id)){
         error = add_seen_urb(data->urb_table,msg.seen_id);
         if(error){
+            printf("URB : Error in add_seen_urb\n");
             return error;
         }
         msg.no_seen += 1;
         error = send_beb(data,msg);
         if(error){
+            printf("URB : Error in send babe\n");
             return error;
         }
     }
@@ -143,6 +147,7 @@ int deliver_urb(net_data_t* data, urb_msg_t msg){
      !is_delivered_urb(data->urb_table,msg.seen_id)){
          error = add_delivered_urb(data->urb_table,msg.seen_id);
          if(error){
+             printf("URB : Error in add_delivered\n");
              return error;
          }
          deliver_fifo(data,msg.fifo_msg);
