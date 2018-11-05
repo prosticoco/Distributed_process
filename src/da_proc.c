@@ -53,44 +53,33 @@ static int wait_for_start = 1;
 /* ----- UTILITY FUNCTIONS ----- */
 
 static int init_data(int argc, char** argv) {
-	printf("Parsing arguments, membership file and filling address book...\n");
 	int res = parse_membership_args(argc, argv, &net_data);
 	if (res) {
 		return res;
 	}
-
-	printf("PID %zu: Initializing message queue...\n", net_data.self_pid);
 	res = init_queue(net_data.task_q, QUEUE_LEN);
 	if (res) {
 		return res;
 	}
-
-	printf("PID %zu: Initializing ack table...\n", net_data.self_pid);
 	res = init_ack_table(net_data.pl_acks, ORIG_TABLE_SIZE, net_data.num_proc);
 	if (res) {
 		return res;
 	}
-
-	printf("PID %zu: Initializing deliver table...\n", net_data.self_pid);
 	res = init_deliver_pl(net_data.pl_delivered, ORIG_TABLE_SIZE, net_data.num_proc);
 	if (res) {
 		return res;
 	}
-
-	printf("PID %zu: Initializing URB table...\n", net_data.self_pid);
 	res = init_urb_table(net_data.urb_table, ORIG_TABLE_SIZE, net_data.num_proc);
 	if (res) {
 		return res;
 	}
 
-	printf("PID %zu: Initializing pending messages and next messages tables...\n", net_data.self_pid);
 	res = init_pending(net_data.pending, ORIG_TABLE_SIZE, net_data.num_proc);
 	res += init_next(net_data.next, net_data.num_proc);
 	if (res) {
 		return res;
 	}
 
-	printf("PID %zu: Initializing message log...\n", net_data.self_pid);
 	res = sprintf(net_data.log_filename, LOG_FILENAME, net_data.self_pid);
 	if (res < 0) {
 		return res;
@@ -101,13 +90,11 @@ static int init_data(int argc, char** argv) {
 		return res;
 	}
 
-	printf("PID %zu: Initializing receiver thread...\n", net_data.self_pid);
 	res = init_receiver(&net_data);
 	if (res) {
 		return res;
 	}
 
-	printf("PID %zu: Initializing sockets and threads...\n", net_data.self_pid);
 	res = init_senders(&net_data, NUM_SENDER_THREADS);
 	if (res) {
 		return res;

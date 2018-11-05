@@ -56,13 +56,11 @@ int write_to_file(log_data_t* logdata){
 }
 
 int free_log_data(log_data_t* logdata){
-    printf("****  FREEING LOG DATA ****\n");
     if (logdata->buffer != NULL) {
         free(logdata->buffer);
     }
     if (logdata->file != NULL) {
         fclose(logdata->file);
     }
-    printf("**** FREEEEEEEEED LOG ************************************\n");
     return 0;
 }

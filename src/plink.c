@@ -116,9 +116,7 @@ int set_delivered(pl_delivered_t* delivered,mid_t mid){
 }
 
 int free_delivered(pl_delivered_t* delivered){
-    printf("TRYING TO FREE DELIVERED\n");
     free(delivered->table.entries);
-    printf("FREED DELIVERED\n");
     return 0;
 }
 

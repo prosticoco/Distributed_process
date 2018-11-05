@@ -43,7 +43,6 @@ int get_pending(pending_t* pending, unsigned int seen_id){
 }
 
 int free_pending(pending_t* pending){
-    printf("****  FREEING PENDING ****\n");
     free(pending->bol);
     pending->bol = NULL;
     return 0;
@@ -99,7 +98,6 @@ int incr_next(next_t* next,unsigned int pid){
 }
 
 int free_next(next_t* next){
-    printf("****  FREEING NEXT ****\n");
     free(next->entries);
     next->entries = NULL;
     return 0;
