@@ -17,7 +17,7 @@
 #define QUEUE_LEN 2000
 #define NUM_SENDER_THREADS 10
 #define MSG_BUF_MAX_SIZE 1024
-#define LOG_FILENAME "da_proc %zu.out"
+#define LOG_FILENAME "da_proc_%zu.out"
 
 
 /* ----- GLOBAL DATA ----- */
@@ -117,9 +117,14 @@ static void stop(int signum) {
 
 	//immediately stop network packet processing
 	printf("Immediately stopping network packet processing.\n");
+	terminate_senders(&net_data, NUM_SENDER_THREADS);
 
 	//write/flush output file if necessary
 	printf("Writing output.\n");
+	write_to_file(net_data.logdata);
+
+	// Free resources.
+	free_data();
 
 	//exit directly from signal handler
 	exit(0);
