@@ -5,13 +5,6 @@
 #include "data.h"
 
 /**
- * @brief Callback function for sender threads.
- * 
- * @param params Function parameters.
- */
-void *sender_f(void* params);
-
-/**
  * @brief Initialize sender threads and their sockets.
  * 
  * @param data Global data structure containing the array of threads and the sockets.

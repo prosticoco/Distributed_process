@@ -120,10 +120,11 @@ static void stop(int signum) {
 	terminate_senders(&net_data, NUM_SENDER_THREADS);
 
 	//write/flush output file if necessary
-	printf("Writing output.\n");
+	printf("Writing output...\n");
 	write_to_file(net_data.logdata);
 
 	// Free resources.
+	printf("Freeing data and exiting...\n");
 	free_data();
 
 	//exit directly from signal handler
