@@ -6,6 +6,7 @@
 #include "data.h"
 #include "error.h"
 #include "fifo.h"
+#include "layers.h"
 #include "log.h"
 #include "mqueue.h"
 #include "parser.h"
@@ -134,7 +135,7 @@ int main(int argc, char** argv) {
 	signal(SIGTERM, stop);
 	signal(SIGINT, stop);
 
-	// 1. Parse arguments, membership file and initialize data structures
+	// Starts threads, but threads wait before sending messages.
 	int res = init_data(argc, argv);
 	if (res) {
 		free_data();
@@ -150,8 +151,12 @@ int main(int argc, char** argv) {
 	}
 
 	// Broadcast messages
-	printf("Broadcasting messages.\n");
-
+	printf("Broadcasting messages...\n");
+	for (int i = 1; i <= net_data.num_msg; ++i) {
+		if (!send_fifo(&net_data, i)) {
+			fprintf(stderr, "Error: main: could not broadcast message %d\n", i);
+		}
+	}
 
 	// Wait until stopped
 	while (1) {
