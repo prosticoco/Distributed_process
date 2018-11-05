@@ -10,6 +10,7 @@
 
 // initializes a queue with an arbitrary restriction on the maximum number of elements
 int init_queue(msg_queue_t* queue, size_t size) {
+    fflush(stdout);
     int error = pthread_mutex_init(&(queue->queue_mutex),NULL);
     if(error){
         return ERROR_MUTEX;

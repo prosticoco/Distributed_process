@@ -22,19 +22,27 @@
 
 
 /* ----- GLOBAL DATA ----- */
+msg_queue_t main_queue;
+ack_table_t ack_table;
+pl_delivered_t delivered_pl;
+urb_table_t urb_table;
+pending_t pending_table;
+next_t next_table;
+log_data_t log_data;
+
 net_data_t net_data = {
 	.address_book = NULL,
 	.num_msg = 0,
 	.num_proc = 0,
 	.self_pid = 0,
 	.senders = NULL,
-	.pl_acks = NULL,
-	.pl_delivered = NULL,
-	.pending = NULL,
-	.next = NULL,
-	.urb_table = NULL,
-	.task_q = NULL,
-	.logdata = NULL
+	.pl_acks = &ack_table,
+	.pl_delivered = &delivered_pl,
+	.pending = &pending_table,
+	.next = &next_table,
+	.urb_table = &urb_table,
+	.task_q = &main_queue,
+	.logdata = &log_data
 };
 
 static int wait_for_start = 1;
