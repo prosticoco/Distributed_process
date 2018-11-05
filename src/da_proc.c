@@ -71,6 +71,12 @@ static int init_data(int argc, char** argv) {
 		return res;
 	}
 
+	printf("PID %zu: Initializing deliver table...\n", net_data.self_pid);
+	res = init_deliver_pl(net_data.pl_delivered, ORIG_TABLE_SIZE, net_data.num_proc);
+	if (res) {
+		return res;
+	}
+
 	printf("PID %zu: Initializing URB table...\n", net_data.self_pid);
 	res = init_urb_table(net_data.urb_table, ORIG_TABLE_SIZE, net_data.num_proc);
 	if (res) {
@@ -121,6 +127,7 @@ static void free_data(void) {
 	free_pending(net_data.pending);
 	free_next(net_data.next);
 	free_log_data(net_data.logdata);
+	free_delivered(net_data.pl_delivered);
 }
 
 static void start(int signum) {
