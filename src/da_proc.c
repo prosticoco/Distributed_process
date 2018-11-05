@@ -85,7 +85,8 @@ static int init_data(int argc, char** argv) {
 
 	printf("PID %zu: Initializing message log...\n", net_data.self_pid);
 	res = sprintf(net_data.log_filename, LOG_FILENAME, net_data.self_pid);
-	if (res) {
+	printf("res: %d\n", res);
+	if (res < 0) {
 		return res;
 	}
 	res = init_log_data(net_data.logdata, MSG_BUF_MAX_SIZE, net_data.log_filename);
@@ -109,13 +110,27 @@ static int init_data(int argc, char** argv) {
 }
 
 static void free_data(void) {
-	free_addr_book(net_data.address_book);
-	free_queue(net_data.task_q);
-	free_ack_table(net_data.pl_acks);
-	free_urb_table(net_data.urb_table);
-	free_pending(net_data.pending);
-	free_next(net_data.next);
-	free_log_data(net_data.logdata);
+	if (net_data.address_book) {
+		free_addr_book(net_data.address_book);
+	}
+	if (net_data.task_q) {
+		free_queue(net_data.task_q);
+	}
+	if (net_data.pl_acks) {
+		free_ack_table(net_data.pl_acks);
+	}
+	if (net_data.urb_table) {
+		free_urb_table(net_data.urb_table);
+	}
+	if (net_data.pending) {
+		free_pending(net_data.pending);
+	}
+	if (net_data.next) {
+		free_next(net_data.next);
+	}
+	if (net_data.logdata) {
+		free_log_data(net_data.logdata);
+	}
 }
 
 static void start(int signum) {
