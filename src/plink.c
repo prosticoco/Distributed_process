@@ -143,7 +143,7 @@ int send_pl(unsigned int pid, int socket_fd, net_data_t* data, msg_t msg) {
     return 0;
 }
 
-int deliver_pl(net_data_t* data, size_t thread_idx, msg_t msg){
+int deliver_pl(net_data_t* data, msg_t msg){
     int error = 0;
     //IF ACK add ack to acklist. basta.
     if (msg.mtype == ACK_NO) {
@@ -158,7 +158,7 @@ int deliver_pl(net_data_t* data, size_t thread_idx, msg_t msg){
         ack.mid = msg.mid;
         ack.mtype = ACK_NO;
         ack.sender = data->self_pid;
-        error = send_fl(data, thread_idx, msg.sender, ack);
+        error = send_fl(data, data->receiver_fd, msg.sender, ack);
         if (error < 0) {
             return error;
         }
