@@ -62,6 +62,7 @@ kill -CONT "${da_proc_id[1]}" # resume process 1
 # leave some time for the correct processes to broadcast all messages
 sleep $time_to_finish
 
+
 # stop all processes
 for i in `seq 1 5`
 do

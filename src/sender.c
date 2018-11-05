@@ -25,7 +25,7 @@ static void *sender_f(void* params) {
     // Set own cancelability state to asynchronous to allow for
     // (hopefully) immediate cancellation upon pthread_cancel.
     int dump;
-    if (!pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &dump)) {
+    if (pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &dump)) {
         pthread_exit((void *) ERROR_THREAD);
     }
 
@@ -34,7 +34,6 @@ static void *sender_f(void* params) {
         while (dequeue(msg_queue, &msg_task)) {
             usleep(EMPTY_QUEUE_WAIT);
         }
-
         int res = send_pl(msg_task.pid_dest, args->socket_fd, data, msg_task.msg);
         if (res) {
             pthread_exit((void *) ERROR_SEND);
