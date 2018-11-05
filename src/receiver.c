@@ -9,6 +9,7 @@
 #include "layers.h"
 #include "mqueue.h"
 #include "receiver.h"
+#include "addrbook.h"
 
 void *receiver_f(void* params){
     msg_t next_message;
@@ -37,6 +38,31 @@ int process_msg(net_data_t* data, msg_t msg){
     return error;
 }
 
+
+// code that initialize (and spawns !) the receiver thread which acts like a server
 int init_receiver(net_data_t* data){
+    int error = pthread_mutex_init(&(data->rec_mutex),NULL);
+    if(error){
+        return ERROR_MUTEX;
+    }
+    int rec_socket_fd;
+    struct sockaddr_in receiver_addr;
+    error = get_addr(data->address_book,data->self_pid,&receiver_addr);
+    if(error){
+        return error;
+    }
+    rec_socket_fd = socket(AF_INET,SOCK_DGRAM,0);
+    if(rec_socket_fd < 0){
+        return ERROR_SOCKET;
+    }
+    data->receiver_fd = rec_socket_fd;
+    error = bind(rec_socket_fd,(const struct sockaddr*)&receiver_addr,sizeof(receiver_addr));
+    if(error < 0){
+        return ERROR_BIND;
+    }
+    error = pthread_create(&(data->receiver),NULL,receiver_f,data);
+    if(error){
+        return ERROR_THREAD;
+    }
     return 0;
 }

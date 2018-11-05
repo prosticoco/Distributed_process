@@ -148,5 +148,7 @@ typedef struct net_data {
     log_data_t* logdata;
     // log file name
     char log_filename[14];
+    // mutex for the receiver
+    pthread_mutex_t rec_mutex;
 } net_data_t;
 
