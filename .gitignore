@@ -36,5 +36,8 @@ tests
 # Test file
 tests.c
 
+# Generated automatically by the test script
+membership
+
 # vscode settings
 .vscode/

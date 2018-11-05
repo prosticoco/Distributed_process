@@ -13,16 +13,6 @@
 
 
 /**
- * @brief Thread termination callback. Releases any held lock and exits.
- * 
- * @param params 
- * @return void* 
- */
-static void *sender_terminate(void* params) {
-    // WARNING: can only call 'safe' function, check man 7 signal
-}
-
-/**
  * @brief Callback function for sender threads.
  * 
  * @param params Function parameters.
@@ -123,9 +113,11 @@ int init_senders(net_data_t* data, size_t num_senders) {
  */
 void terminate_senders(net_data_t* data, size_t num_senders) {
     for (size_t i = 0; i < num_senders; ++i) {
-        // send signal to all threads
+        // Cancel all threads.
+        pthread_cancel(data->senders[i].thread);
     }
     for (size_t i = 0; i < num_senders; ++i) {
-
+        // Wait for all threads to actually terminate.
+        pthread_join(data->senders[i].thread, NULL);
     }
 }
