@@ -17,7 +17,7 @@ int send_beb(net_data_t* data, urb_msg_t msg) {
         
         if(i != self){
             msg_t message;
-            message.mid = (num_proc * (msg.seen_id)  + self-1);
+            message.mid = (num_proc * (msg.seen_id))  + self - 1;
             message.mtype = 0;
             message.sender = self;
             message.urb_msg = msg;

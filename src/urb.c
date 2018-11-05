@@ -132,19 +132,23 @@ int deliver_urb(net_data_t* data, urb_msg_t msg){
     
     int error;
     if(!is_seen_urb(data->urb_table,msg.seen_id)){
+        if(msg.fifo_msg.original_sender == 3 && msg.fifo_msg.sequence_num == 1){
+           printf("Got message snr 1 from origin 3, no seen = %u\n",msg.no_seen); 
+        }
         error = add_seen_urb(data->urb_table,msg.seen_id);
         if(error){
             printf("URB : Error in add_seen_urb\n");
             return error;
         }
-        msg.no_seen += 1;
-        error = send_beb(data,msg);
+        urb_msg_t new_msg = msg;
+        new_msg.no_seen = msg.no_seen + 1;
+        error = send_beb(data,new_msg);
         if(error){
             printf("URB : Error in send babe\n");
             return error;
         }
     }
-    if((msg.no_seen > (data->num_proc) / 2) &&
+    if((msg.no_seen > ((data->num_proc) / 2)) &&
      !is_delivered_urb(data->urb_table,msg.seen_id)){
          error = add_delivered_urb(data->urb_table,msg.seen_id);
          if(error){

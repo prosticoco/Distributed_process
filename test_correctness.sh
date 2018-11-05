@@ -8,7 +8,7 @@
 
 # time to wait for correct processes to broadcast all messages (in seconds)
 # (should be adapted to the number of messages to send)
-time_to_finish=20
+time_to_finish=5
 
 init_time=2
 
@@ -28,7 +28,7 @@ echo "5
 # start 5 processes, each broadcasting 100 messages
 for i in `seq 1 5`
 do
-    ./da_proc $i membership 100 &
+    ./da_proc $i membership 3 &
     da_proc_id[$i]=$!
 done
 
@@ -39,8 +39,6 @@ sleep $init_time
 # example:
 kill -STOP "${da_proc_id[3]}" # pause process 3
 sleep 1
-
-echo "---------------------------------------------crashing process 2"
 kill -TERM "${da_proc_id[2]}" # crash process 2
 da_proc_id[2]=""
 kill -CONT "${da_proc_id[3]}" # resume process 3
@@ -55,7 +53,6 @@ done
 
 # do some more nasty stuff
 # example:
-echo "--------------------------------------------crashing process 4"
 kill -TERM "${da_proc_id[4]}" # crash process 4
 da_proc_id[4]=""
 kill -STOP "${da_proc_id[1]}" # pause process 1
@@ -63,7 +60,9 @@ sleep 0.5
 kill -CONT "${da_proc_id[1]}" # resume process 1
 
 # leave some time for the correct processes to broadcast all messages
+echo "Sleepy time"
 sleep $time_to_finish
+echo "Waky Waky"
 
 
 # stop all processes

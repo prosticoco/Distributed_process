@@ -8,7 +8,7 @@
 #include "data.h"
 
 #define MAX_SIZE 1024*8
-#define THRESHOLD 50
+#define THRESHOLD 3
 #define ACK_NO 1
 
 pthread_mutex_t ack_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -143,7 +143,7 @@ int send_pl(unsigned int pid, int socket_fd, net_data_t* data, msg_t msg) {
             printf("Error while sending in send_pl\n");
             return ERROR_SEND;
         }
-        usleep(2000);
+        usleep(200);
     }
     return 0;
 }

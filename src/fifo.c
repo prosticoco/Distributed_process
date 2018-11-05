@@ -86,7 +86,7 @@ int get_next(next_t* next, unsigned int pid){
     if(pid > next->no_process){
         return ERROR_TABLE;
     }
-    return next->entries[pid -1];
+    return next->entries[pid -1] +1;
 }
 
 int incr_next(next_t* next,unsigned int pid){
@@ -117,21 +117,30 @@ int send_fifo(net_data_t* data, int m){
 
 
 int deliver_fifo(net_data_t* data, fifo_msg_t msg){
-    //printf("PID : %zu Deliver fifo called\n",data->self_pid);
-    unsigned int seen_id = (data->address_book->num_proc-1) * msg.sequence_num + msg.original_sender-1;
+    unsigned int seen_id = (data->num_proc) * (msg.sequence_num-1) + msg.original_sender-1;
     int error;
     error = add_pending(data->pending, seen_id,1);
     if(error <0){
+        printf("Error adding to pending set, FIFO deliver\n");
         return error;
     }
     unsigned int next_idx;
+    // PRINT FOR DEBUGGING
+    if(data->self_pid == 1){
+        //printf("PID : %zu **MESSAGE WITH SEQUENCE NUM 1**\n",data->self_pid);
+        //printf("sequence = %u \n",msg.sequence_num);
+    }
     next_idx = get_next(data->next,msg.original_sender);
-    while(get_pending(data->pending, (data->address_book->num_proc-1) * next_idx + msg.original_sender-1) == 1){
+    size_t i = 0;
+    while(get_pending(data->pending, (data->num_proc) * (next_idx-1) + msg.original_sender-1) == 1){
+        if(data->self_pid == 1){
+            printf(" i : %zu\n",i);
+        }
         error = incr_next(data->next,msg.original_sender);
         if(error <0){
             return error;
         }
-        error = add_pending(data->pending,(data->address_book->num_proc) * next_idx + msg.original_sender, 0);
+        error = add_pending(data->pending,(data->num_proc) * (next_idx-1) + msg.original_sender -1, 0);
         if(error<0){
             return error;
         }
@@ -141,6 +150,7 @@ int deliver_fifo(net_data_t* data, fifo_msg_t msg){
             return error;
         }
         next_idx = next_idx+1;
+        i++;
         
     }
     return 0;
