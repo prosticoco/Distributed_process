@@ -25,6 +25,7 @@ da_proc: $(OBJ)
 .PHONY: clean
 clean:
 	rm -f $(ODIR)/*.o da_proc
+	rm -f tests
 
-tests:
-	$(CC) $(CFLAGS) -o tests tests.c
+tests: test/test.c
+	$(CC) $(CFLAGS) -o tests test/test.c -pthread
