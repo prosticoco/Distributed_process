@@ -186,12 +186,11 @@ int main(int argc, char** argv) {
 
 	// Broadcast messages
 	printf("Broadcasting messages...\n");
-	for (int i = 1; i <= net_data.num_msg; ++i) {
-		if (!send_fifo(&net_data, i)) {
-			fprintf(stderr, "Error: main: could not broadcast message %d\n", i);
-		}
+	res = send_fifo(&net_data,net_data.num_msg);
+	if(res){
+		printf("Failed Fifo Broadcast\n");
+		return res;
 	}
-
 	// Wait until stopped
 	while (1) {
 		struct timespec sleep_time;

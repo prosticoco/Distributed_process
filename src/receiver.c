@@ -81,8 +81,8 @@ int terminate_receiver(net_data_t* data){
     pthread_mutex_lock(&(data->logdata->loglok));
     error = pthread_cancel(data->receiver);
     if(error){
-        fprintf(stderr,"Could not cancel Receiver\n");
-        printf("Error message %s",strerror(error));
+        fprintf(stderr,"Could not cancel Receiver of pid : %zu \n",data->self_pid);
+        printf("Error message %s \n",strerror(error));
         return ERROR_THREAD;
     }
     pthread_join(data->receiver,NULL);
