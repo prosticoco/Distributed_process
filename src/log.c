@@ -15,7 +15,7 @@ int init_log_data(log_data_t* logdata,size_t buf_max_size,char* filename){
     if(logdata->buffer == NULL){
         return ERROR_MEMORY;
     }
-    logdata->file = fopen(filename,"a+b");
+    logdata->file = fopen(filename,"wb");
     if(logdata->file == NULL){
         return ERROR_IO;
     }

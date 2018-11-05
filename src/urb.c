@@ -96,6 +96,7 @@ int free_urb_table(urb_table_t* table){
  * @return int 
  */
 int send_urb(net_data_t* data, fifo_msg_t msg){
+    
     // compute the URB's unique id
     unsigned int seen_id = (data->num_proc)*(msg.sequence_num -1) + msg.original_sender -1;
     // add the message to the seen messages

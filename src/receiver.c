@@ -14,7 +14,7 @@
 
 void *receiver_f(void* params){
     int dump;
-    if (!pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &dump)) {
+    if (pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &dump)) {
         pthread_exit((void *) ERROR_THREAD);
     }
     msg_t next_message;
