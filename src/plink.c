@@ -16,6 +16,7 @@ pthread_mutex_t ack_mutex = PTHREAD_MUTEX_INITIALIZER;
 int init_table_uid(uid_table_t* table, unsigned int no_msgs, unsigned int no_process){
     table->entries = calloc(no_msgs*no_process*no_process,sizeof(unsigned int));
     if(table->entries == NULL){
+        printf("Error Allocating ACK Table\n");
         return ERROR_MEMORY;
     }
     table->no_msgs = no_msgs;
@@ -33,7 +34,6 @@ int table_read_entry(uid_table_t* table,mid_t mid){
 
 int table_write_entry(uid_table_t* table,mid_t mid,unsigned int value){
     unsigned int new_size;
-    
     if(mid > MAX_SIZE){
         return ERROR_TABLE;
     }
@@ -42,6 +42,7 @@ int table_write_entry(uid_table_t* table,mid_t mid,unsigned int value){
         new_size = table->total_entries * 2;
         table->entries = realloc(table->entries,sizeof(unsigned int)*new_size);
         if(table->entries == NULL){
+            printf("realloc did not work \n");
             return ERROR_MEMORY;
         }        
         memset(&(table->entries[old_size]),0,new_size - old_size);
@@ -129,6 +130,7 @@ int send_pl(unsigned int pid, int socket_fd, net_data_t* data, msg_t msg) {
             task.msg = msg;
             error = enqueue(data->task_q, &task);
             if(error < 0){
+                printf("Error enqueuing send_pl\n");
                 return error;     
             }
             return 0;
@@ -136,6 +138,7 @@ int send_pl(unsigned int pid, int socket_fd, net_data_t* data, msg_t msg) {
         error = send_fl(data, socket_fd, pid, msg);
         i+= 1;
         if (error < 0){
+            printf("Error while sending in send_pl\n");
             return ERROR_SEND;
         }
         usleep(2000);
@@ -149,6 +152,7 @@ int deliver_pl(net_data_t* data, msg_t msg){
     if (msg.mtype == ACK_NO) {
         error = set_ack(data->pl_acks, msg.mid); 
         if (error < 0) {
+            printf("Error while setting ACK Error num %d\n",error);
             return error;
         }
     }else{
@@ -160,15 +164,19 @@ int deliver_pl(net_data_t* data, msg_t msg){
         ack.sender = data->self_pid;
         error = send_fl(data, data->receiver_fd, msg.sender, ack);
         if (error < 0) {
+            printf("Error send_fl in deliver_pl\n");
             return error;
         }
         if(!is_delivered(data->pl_delivered,msg.mid)){
+            printf("PID %zu , call set_deliv with mid : %u to table with total entries %u\n",data->self_pid,msg.mid,data->pl_delivered->table.total_entries);
             error = set_delivered(data->pl_delivered,msg.mid);
             if(error){
+                printf("Error set_delivery\n");
                 return error;
             }
             error = deliver_beb(data, msg.urb_msg);
             if(error < 0){
+                printf("Error deliver beb in deliver pl\n");
                 return error;
             }
         }     
