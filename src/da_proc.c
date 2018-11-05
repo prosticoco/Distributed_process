@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "data.h"
 #include "error.h"
@@ -112,6 +113,7 @@ static void free_data(void) {
 	if (net_data.address_book) {
 		free_addr_book(net_data.address_book);
 	}
+	
 	free_queue(net_data.task_q);
 	free_ack_table(net_data.pl_acks);
 	free_urb_table(net_data.urb_table);
@@ -120,6 +122,7 @@ static void free_data(void) {
 	free_log_data(net_data.logdata);
 	free_delivered(net_data.pl_delivered);
 	free_ack_urb(net_data.urbacks);
+	
 }
 
 static void start(int signum) {

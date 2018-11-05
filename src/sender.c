@@ -119,4 +119,5 @@ void terminate_senders(net_data_t* data, size_t num_senders) {
         // Wait for all threads to actually terminate.
         pthread_join(data->senders[i].thread, NULL);
     }
+    
 }

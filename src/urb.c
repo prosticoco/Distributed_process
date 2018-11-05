@@ -100,10 +100,17 @@ int send_urb(net_data_t* data, fifo_msg_t msg){
     
     // compute the URB's unique id
     unsigned int seen_id = (data->num_proc)*(msg.sequence_num -1) + msg.original_sender -1;
+
+    mid_t mid = (data->num_proc)*seen_id + data->self_pid -1;
     // add the message to the seen messages
     int error = add_seen_urb(data->urb_table,seen_id);
     if(error){
         printf("Error in add:seen URB SEND\n");
+        return error;
+    }
+    error = set_ack_urb(data->urbacks,mid);
+    if(error){
+        printf("Error setting acks urb \n");
         return error;
     }
     error = log_urb_broadcast(data,msg);
@@ -112,8 +119,8 @@ int send_urb(net_data_t* data, fifo_msg_t msg){
     }
     urb_msg_t new_msg;
     new_msg.fifo_msg = msg;
-    new_msg.no_seen = 1;
     new_msg.seen_id = seen_id;
+    new_msg.mid = mid;
     error = send_beb(data,new_msg);
     if(error){
         printf("URB SEND error in send babe\n");
@@ -130,8 +137,12 @@ int send_urb(net_data_t* data, fifo_msg_t msg){
  * @return int 
  */
 int deliver_urb(net_data_t* data, urb_msg_t msg){
-    
     int error;
+    error = set_ack_urb(data->urbacks,msg.mid);
+    if(error){
+        printf("Error setting acks\n");
+        return error;
+    }
     if(!is_seen_urb(data->urb_table,msg.seen_id)){
         
         error = add_seen_urb(data->urb_table,msg.seen_id);
@@ -140,14 +151,21 @@ int deliver_urb(net_data_t* data, urb_msg_t msg){
             return error;
         }
         urb_msg_t new_msg = msg;
-        new_msg.no_seen = msg.no_seen + 1;
+        new_msg.mid = (data->num_proc)*msg.seen_id + data->self_pid -1;
+        error = set_ack_urb(data->urbacks,new_msg.mid);
+        if(error){
+            return error;
+        }
         error = send_beb(data,new_msg);
         if(error){
             printf("URB : Error in send babe\n");
             return error;
         }
     }
-    if((msg.no_seen > ((data->num_proc) / 2)) &&
+    if(data->self_pid == 5){
+        printf("message received from %u sequence num = %u\n",msg.fifo_msg.original_sender,msg.fifo_msg.sequence_num);
+    }
+    if(can_deliver(data->urbacks,msg.seen_id) &&
      !is_delivered_urb(data->urb_table,msg.seen_id)){
          error = add_delivered_urb(data->urb_table,msg.seen_id);
          if(error){
@@ -208,11 +226,11 @@ int can_deliver(urb_ack_table_t* delivered,unsigned int seen_id){
         return 0;
     }
     size_t counter = 0;
-    for(int i = seen_id; i < (seen_id + no_proc); i++){
+    for(int i = seen_id*no_proc; i < (seen_id*no_proc + no_proc); i++){
         if(delivered->table.entries[i] == 1){
             counter += 1;
         }
-    }
+    } 
     if(counter > (no_proc / 2)){
         return 1;
     }
