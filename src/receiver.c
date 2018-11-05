@@ -3,6 +3,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "data.h"
 #include "error.h"
@@ -49,6 +50,7 @@ int init_receiver(net_data_t* data){
     if(error){
         return ERROR_MUTEX;
     }
+    
     int rec_socket_fd;
     struct sockaddr_in receiver_addr;
     error = get_addr(data->address_book,data->self_pid,&receiver_addr);
@@ -68,6 +70,9 @@ int init_receiver(net_data_t* data){
     if(error){
         return ERROR_THREAD;
     }
+    printf(" \n");
+    printf("Thread creation succeeded for PID : %u\n",data->self_pid);
+    printf(" \n");
     return 0;
 }
 
@@ -76,7 +81,8 @@ int terminate_receiver(net_data_t* data){
     pthread_mutex_lock(&(data->logdata->loglok));
     error = pthread_cancel(data->receiver);
     if(error){
-        fprintf(stderr,"Could not cancel Receiver\n");
+        fprintf(stderr,"Could not cancel Receiver of pid : %zu \n",data->self_pid);
+        printf("Error message %s \n",strerror(error));
         return ERROR_THREAD;
     }
     pthread_join(data->receiver,NULL);

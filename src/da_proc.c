@@ -20,7 +20,6 @@
 #define MSG_BUF_MAX_SIZE 1024
 #define LOG_FILENAME "da_proc_%zu.out"
 
-
 /* ----- GLOBAL DATA ----- */
 msg_queue_t main_queue;
 ack_table_t ack_table;
@@ -29,6 +28,7 @@ urb_table_t urb_table;
 pending_t pending_table;
 next_t next_table;
 log_data_t log_data;
+char filename[14];
 
 net_data_t net_data = {
 	.address_book = NULL,
@@ -85,10 +85,11 @@ static int init_data(int argc, char** argv) {
 
 	printf("PID %zu: Initializing message log...\n", net_data.self_pid);
 	res = sprintf(net_data.log_filename, LOG_FILENAME, net_data.self_pid);
-	printf("res: %d\n", res);
 	if (res < 0) {
 		return res;
 	}
+	printf("calling log function\n");
+	fflush(stdout);
 	res = init_log_data(net_data.logdata, MSG_BUF_MAX_SIZE, net_data.log_filename);
 	if (res) {
 		return res;
@@ -173,12 +174,11 @@ int main(int argc, char** argv) {
 
 	// Broadcast messages
 	printf("Broadcasting messages...\n");
-	for (int i = 1; i <= net_data.num_msg; ++i) {
-		if (!send_fifo(&net_data, i)) {
-			fprintf(stderr, "Error: main: could not broadcast message %d\n", i);
-		}
+	res = send_fifo(&net_data,net_data.num_msg);
+	if(res){
+		printf("Failed Fifo Broadcast\n");
+		return res;
 	}
-
 	// Wait until stopped
 	while (1) {
 		struct timespec sleep_time;
