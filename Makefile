@@ -26,6 +26,7 @@ da_proc: $(OBJ)
 clean:
 	rm -f $(ODIR)/*.o da_proc
 	rm -f tests
+	rm -f *.out
 
 tests: test/test.c
 	$(CC) $(CFLAGS) -o tests test/test.c -pthread
