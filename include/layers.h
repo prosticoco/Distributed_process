@@ -37,7 +37,7 @@ int send_pl(unsigned int pid, int socket_fd, net_data_t* data, msg_t msg);
  * @param msg 
  * @return int 
  */
-int deliver_pl(net_data_t* data, size_t thread_idx, msg_t msg);
+int deliver_pl(net_data_t* data, msg_t msg);
 
 /**
  * @brief 
