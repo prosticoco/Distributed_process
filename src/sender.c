@@ -43,7 +43,7 @@ static void *sender_f(void* params) {
     return NULL;
 }
 
-
+//setup a sockets for each sender thread
 static int setup_sockets(net_data_t* data, size_t num_senders) {
     // Allocate senders.
     data->senders = calloc(num_senders, sizeof(sender_thread_t));
@@ -65,6 +65,7 @@ static int setup_sockets(net_data_t* data, size_t num_senders) {
     return 0;
 }
 
+//setup sender threads
 static int setup_threads(net_data_t* data, size_t num_senders) {
     for (size_t i = 0; i < num_senders; ++i) {
         pthread_t* thread = &(data->senders[i].thread);

@@ -12,6 +12,11 @@
 #include "receiver.h"
 #include "addrbook.h"
 
+/**
+ * @brief Callback function for receiver thread.
+ * 
+ * @param params Function parameters.
+ */
 void *receiver_f(void* params){
     int dump;
     if (pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &dump)) {
@@ -38,17 +43,8 @@ void *receiver_f(void* params){
     return NULL;
 }
 
+//receiver starts delivering
 int process_msg(net_data_t* data, msg_t msg){
-    /**
-        if(data->self_pid == 5 && msg.mtype == 0){
-            printf("\n");
-            printf("-----PREPARING TO PROCESS-----\n");
-            printf("msg is from original %u\n",msg.urb_msg.fifo_msg.original_sender);
-            printf("sent directly by %u\n",msg.sender);
-            printf("Sequence num : %u\n",msg.urb_msg.fifo_msg.sequence_num);
-            printf("\n");
-        }    
-        */
     int error = deliver_fl(data,msg);
     return error;
 }
@@ -83,6 +79,7 @@ int init_receiver(net_data_t* data){
     return 0;
 }
 
+//terminates receiver
 int terminate_receiver(net_data_t* data){
     int error;
     pthread_mutex_lock(&(data->logdata->loglok));
