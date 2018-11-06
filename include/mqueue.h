@@ -20,5 +20,4 @@ int dequeue(msg_queue_t* queue, queue_task_t* elem);
 // use at the end to free the memory used by the queue
 int free_queue(msg_queue_t* queue);
 
-
 int realloc_queue(msg_queue_t* queue);
