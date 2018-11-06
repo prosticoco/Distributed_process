@@ -7,7 +7,7 @@
 
 #define EMPTY_QUEUE -1
 
-
+//TASK QUEUE that sender threads process
 
 // initializes a queue with an arbitrary restriction on the maximum number of elements
 int init_queue(msg_queue_t* queue, size_t size) {
