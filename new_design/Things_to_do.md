@@ -66,10 +66,12 @@ ex: process 1 has 2 past tables 1 for 4 and 1 for 5
 it saves seq_nr of past message(s) received from the process in question
 
 LCB_send(m):
-    for msg in range(m):
-        if(past_4.contains(seq_nr(msg)) && past_5.contains(seq_nr(msg))):
+    msg 0 can always be send
+    for msg in range(1,m):
+        if(past_4.contains(seq_nr(msg)-1) && past_5.contains(seq_nr(msg)-1)):
             urb_send(msg)
         else:
             wait()
-
+LCB_deliver(msg):
+    same as fifo just if sender_id is in locality, add seq_nr(msg) to table
 
