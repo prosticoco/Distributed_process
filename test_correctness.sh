@@ -39,8 +39,8 @@ sleep $init_time
 # example:
 kill -STOP "${da_proc_id[3]}" # pause process 3
 sleep 1
-kill -TERM "${da_proc_id[2]}" # crash process 2
-da_proc_id[2]=""
+#kill -TERM "${da_proc_id[2]}" # crash process 2
+#da_proc_id[2]=""
 kill -CONT "${da_proc_id[3]}" # resume process 3
 
 # start broadcasting
@@ -53,8 +53,8 @@ done
 
 # do some more nasty stuff
 # example:
-kill -TERM "${da_proc_id[4]}" # crash process 4
-da_proc_id[4]=""
+#kill -TERM "${da_proc_id[4]}" # crash process 4
+#da_proc_id[4]=""
 
 kill -STOP "${da_proc_id[1]}" # pause process 1
 sleep 0.5
