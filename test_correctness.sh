@@ -70,6 +70,7 @@ sleep $time_to_finish
 for i in `seq 1 5`
 do
     if [ -n "${da_proc_id[$i]}" ]; then
+    echo "killing process i"
 	kill -TERM "${da_proc_id[$i]}"
     fi
 done
@@ -83,6 +84,6 @@ do
 done
 
 # check logs for correctness
-./check_output.sh 1 3 5
+./check_output.sh 1 2 3 4 5
 
 echo "Correctness test done."
