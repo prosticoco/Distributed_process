@@ -5,7 +5,6 @@
 
 #include "addrbook.h"
 
-
 typedef unsigned int mid_t;
 
 
@@ -123,6 +122,30 @@ typedef struct{
     pthread_mutex_t loglok;
 }log_data_t;
 
+// structures related to Localized causal broadcast
+
+
+// the dependencies structure to be initialized at parsing step
+typedef struct dependencies {
+    int* lin_matrix;
+    size_t num_proc;
+} dependencies_t;
+
+// the vector clock structure to be sent over the causal broadcast messages
+typedef struct vec_clock {
+    unsigned int num_proc;
+    unsigned int vector[];
+} vec_clock_t;
+
+// message structure for lcb
+typedef struct lcb_msg {
+    vec_clock_t vec_clock;
+} lcb_msg_t;
+// the pending structure for implementing localized causal broadcast
+typedef struct lcb_pending {
+
+} lcb_pending_t;
+
 typedef struct net_data {  
     // rlist of process addresses
     addr_book_t* address_book;
@@ -158,29 +181,7 @@ typedef struct net_data {
     char log_filename[14];
     // mutex for the receiver
     pthread_mutex_t rec_mutex;
+    // Localized Causal Broadcast dependency matrix
+    dependencies_t* dependency_matrix;
 } net_data_t;
-
-// structures related to Localized causal broadcast
-
-
-// the dependencies structure to be initialized at parsing step
-typedef struct dependencies {
-    int* lin_matrix;
-    size_t num_proc;
-} dependencies_t;
-
-// the vector clock structure to be sent over the causal broadcast messages
-typedef struct vec_clock {
-    unsigned int num_proc;
-    unsigned int vector[];
-} vec_clock_t;
-
-// message structure for lcb
-typedef struct lcb_msg {
-    vec_clock_t vec_clock;
-} lcb_msg_t;
-// the pending structure for implementing localized causal broadcast
-typedef struct lcb_pending {
-
-} lcb_pending_t;
 
