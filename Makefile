@@ -22,7 +22,8 @@ da_proc: $(OBJ)
 
 # Debug target
 debug:
-	$(MAKE) $(MAKEFILE) DEBUG="-g"
+	@echo "Building with debugging mode."
+	@$(MAKE) $(MAKEFILE) DEBUG="-g"
 
 .PHONY: clean
 clean:
