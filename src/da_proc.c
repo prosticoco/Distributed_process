@@ -111,10 +111,8 @@ static int init_data(int argc, char** argv) {
 }
 
 static void free_data(void) {
-	if (net_data.address_book) {
-		free_addr_book(net_data.address_book);
-	}
-	
+	free_addr_book(net_data.address_book);
+	free_dependencies(net_data.dependency_matrix);
 	free_queue(net_data.task_q);
 	free_ack_table(net_data.pl_acks);
 	free_urb_table(net_data.urb_table);
