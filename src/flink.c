@@ -32,7 +32,7 @@ int send_fl(net_data_t* data, int socket_fd, unsigned int dest_pid, msg_t msg) {
         return error;
     }
     // sends a message to the corresponding address pointed by data
-    error = sendto(socket_fd,(const char*) &msg, sizeof(msg_t),
+    error = sendto(socket_fd,(const char*) &msg, sizeof(msg),
                     MSG_DONTWAIT,
                     (const struct sockaddr *) &address,
                     sizeof(struct sockaddr_in));

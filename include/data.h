@@ -160,3 +160,27 @@ typedef struct net_data {
     pthread_mutex_t rec_mutex;
 } net_data_t;
 
+// structures related to Localized causal broadcast
+
+
+// the dependencies structure to be initialized at parsing step
+typedef struct{
+    unsigned int ** matrix;
+    unsigned int num_proc;
+}dependencies_t;
+
+// the vector clock structure to be sent over the causal broadcast messages
+typedef struct{
+    unsigned int num_proc;
+    unsigned int vector[];
+}vec_clock_t;
+
+// message structure for lcb
+typedef struct{
+    vec_clock_t;
+}lcb_msg_t;
+// the pending structure for implementing localized causal broadcast
+typedef struct{
+
+}lcb_pending_t;
+
