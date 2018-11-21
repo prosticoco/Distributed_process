@@ -4,6 +4,14 @@
 #include "dependencies.h"
 #include "error.h"
 
+static inline int matrix_index(size_t* index, size_t from, size_t to, size_t num_proc) {
+    if (from > num_proc || to > num_proc) {
+        return 1;
+    }
+    *index = (from - 1) * num_proc + to - 1;
+    return 0;
+}
+
 /**
  * @brief Allocate new dependency matrix, with given number of processes.
  * 
@@ -56,8 +64,10 @@ int set_dependency(dependencies_t* dependencies, size_t from, size_t to) {
     if (NULL == dependencies) {
         return ERROR_MEMORY;
     }
-
-    const size_t index = (from - 1) * dependencies->num_proc + to - 1;
+    size_t index;
+    if (0 != matrix_index(&index, from, to, dependencies->num_proc)) {
+        return ERROR_ARGS;
+    }
     dependencies->lin_matrix[index] = 1;
     return 0;
 }
@@ -74,7 +84,9 @@ int get_dependency(dependencies_t* dependencies, size_t from, size_t to) {
     if (NULL == dependencies) {
         return ERROR_MEMORY;
     }
-
-    const size_t index = (from - 1) * dependencies->num_proc + to - 1;
+    size_t index;
+    if (0 != matrix_index(&index, from, to, dependencies->num_proc)) {
+        return ERROR_ARGS;
+    }
     return dependencies->lin_matrix[index];
 }
