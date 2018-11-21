@@ -164,10 +164,10 @@ typedef struct net_data {
 
 
 // the dependencies structure to be initialized at parsing step
-typedef struct{
-    unsigned int ** matrix;
-    unsigned int num_proc;
-}dependencies_t;
+typedef struct {
+    int* lin_matrix;
+    size_t num_proc;
+} dependencies_t;
 
 // the vector clock structure to be sent over the causal broadcast messages
 typedef struct{
