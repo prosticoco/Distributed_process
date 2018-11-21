@@ -4,7 +4,8 @@
 
 /**
  * @brief Fill global data structure and allocate underlying address book
- *        using arguments and membership file.
+ *        using arguments and membership file. Warning: if the function fails
+ *        the user should clean up the net_data_t structure himself.
  * 
  * @param argc argc from main.
  * @param argv argv from main.
