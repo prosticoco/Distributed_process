@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "dependencies.h"
 #include "parser.h"
 #include "error.h"
 
@@ -108,6 +109,48 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
         if (add_entry(data->address_book, pid, addr)) {
             fprintf(stderr, "Error: parsing: could not add entry to address book\n");
             return cleanup(membership_file, ERROR_FILE);
+        }
+
+        line_counter++;
+    }
+
+    // ----- FILL DEPENDENCY MATRIX -----
+    data->dependency_matrix = alloc_dependencies(data->num_proc);
+    if (data->dependency_matrix == NULL) {
+        fprintf(stderr, "Error: parsing: dependency matrix allocation failed\n");
+        return cleanup(membership_file, ERROR_MEMORY);
+    }
+
+    line_counter = 0;
+    while (fgets(line, sizeof(line), membership_file) && line_counter < num_proc) {
+        // Get line pid, the "source" process whose dependencies follow on this line
+        const char* source_pid_str = strtok(line, " ");
+        if (source_pid_str == NULL) {
+            // TODO: clean up address book or not ?
+            fprintf(stderr, "Error: parsing: invalid line format, invalid pid\n");
+            return cleanup(membership_file, ERROR_FILE);
+        }
+        size_t source_pid = (size_t) atoi(source_pid_str);
+        if (source_pid == 0) {
+            fprintf(stderr, "Error: parsing: invalid line format, invalid pid\n");
+            return cleanup(membership_file, ERROR_FILE);
+        }
+
+        // Get all dependencies on this line
+        // TODO: what to do if we encounter a line with no dependency ?
+        char* dep_pid_str;
+        while (NULL != (dep_pid_str = strtok(NULL, " "))) {
+            size_t dep_pid = (size_t) atoi(dep_pid_str);
+            if (dep_pid == 0) {
+                fprintf(stderr, "Error: parsing: invalid line format, invalid pid\n");
+                return cleanup(membership_file, ERROR_FILE);
+            }
+
+            int res = set_dependency(data->dependency_matrix, source_pid, dep_pid);
+            if (res) {
+                fprintf(stderr, "Error: parsing: could not add dependency\n");
+                return cleanup(membership_file, res);
+            }
         }
 
         line_counter++;
