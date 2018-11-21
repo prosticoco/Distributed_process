@@ -5,7 +5,7 @@
 #include "error.h"
 
 static inline int matrix_index(size_t* index, size_t from, size_t to, size_t num_proc) {
-    if (from > num_proc || to > num_proc) {
+    if (from < 1 || to < 1 || from > num_proc || to > num_proc) {
         return 1;
     }
     *index = (from - 1) * num_proc + to - 1;
