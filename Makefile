@@ -5,7 +5,7 @@ SDIR = src
 # Oh dear
 ODIR = src/obj
 CC = gcc
-CFLAGS = -Wall -I$(IDIR) -g
+CFLAGS = -Wall -I$(IDIR)
 
 _DEPS = addrbook.h data.h dependencies.h error.h fifo.h log.h layers.h mqueue.h parser.h plink.h receiver.h sender.h urb.h
 DEPS = $(patsubst %, $(IDIR)/%, $(_DEPS))
@@ -15,10 +15,14 @@ OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
 # Recompile C files automatically if header files change
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	@mkdir -p $(ODIR)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS) $(DEBUG)
 
 da_proc: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LDLIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(DEBUG) $(LDLIBS)
+
+# Debug target
+debug:
+	$(MAKE) $(MAKEFILE) DEBUG="-g"
 
 .PHONY: clean
 clean:
