@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "data.h"
+#include "dependencies.h"
 #include "error.h"
 #include "fifo.h"
 #include "layers.h"
