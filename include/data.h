@@ -164,23 +164,23 @@ typedef struct net_data {
 
 
 // the dependencies structure to be initialized at parsing step
-typedef struct {
+typedef struct dependencies {
     int* lin_matrix;
     size_t num_proc;
 } dependencies_t;
 
 // the vector clock structure to be sent over the causal broadcast messages
-typedef struct{
+typedef struct vec_clock {
     unsigned int num_proc;
     unsigned int vector[];
-}vec_clock_t;
+} vec_clock_t;
 
 // message structure for lcb
-typedef struct{
-    vec_clock_t;
-}lcb_msg_t;
+typedef struct lcb_msg {
+    vec_clock_t vec_clock;
+} lcb_msg_t;
 // the pending structure for implementing localized causal broadcast
-typedef struct{
+typedef struct lcb_pending {
 
-}lcb_pending_t;
+} lcb_pending_t;
 
