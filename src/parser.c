@@ -32,7 +32,7 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
     }
 
     // ----- GET CURRENT PROCESS ID -----
-    size_t self_pid = (size_t) atoi(argv[1]);
+    const size_t self_pid = (size_t) atoi(argv[1]);
     if (self_pid == 0) {
         fprintf(stderr, "Error: parsing: invalid process number\n");
         return cleanup(NULL, ERROR_ARGS);
@@ -40,7 +40,7 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
     data->self_pid = self_pid;
 
     // ----- GET NUMBER OF MESSAGES TO SEND -----
-    int num_msg = atoi(argv[3]);
+    const int num_msg = atoi(argv[3]);
     if (num_msg == 0) {
         fprintf(stderr, "Error: parsing: invalid number of messages to send\n");
         return cleanup(NULL, ERROR_ARGS);
@@ -60,7 +60,7 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
         fprintf(stderr, "Error: parsing: could not read membership file\n");
         return cleanup(membership_file, ERROR_FILE);
     }
-    size_t num_proc = (size_t) atoi(line);
+    const size_t num_proc = (size_t) atoi(line);
     if (num_proc == 0) {
         fprintf(stderr, "Error: parsing: invalid total process number\n");
         return cleanup(membership_file, ERROR_FILE);
@@ -85,7 +85,7 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
             return cleanup(membership_file, ERROR_FILE);
         }
 
-        size_t pid = (size_t) atoi(pid_str);
+        const size_t pid = (size_t) atoi(pid_str);
         if (pid == 0) {
             fprintf(stderr, "Error: parsing: invalid line format\n");
             return cleanup(membership_file, ERROR_FILE);
@@ -98,7 +98,7 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
             return cleanup(membership_file, ERROR_FILE);
         }
 
-        uint16_t port = htons((uint16_t) atoi(port_str));
+        const uint16_t port = htons((uint16_t) atoi(port_str));
 
         struct sockaddr_in addr;
         addr.sin_family = AF_INET;
@@ -130,7 +130,7 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
             fprintf(stderr, "Error: parsing: invalid line format, invalid pid\n");
             return cleanup(membership_file, ERROR_FILE);
         }
-        size_t source_pid = (size_t) atoi(source_pid_str);
+        const size_t source_pid = (size_t) atoi(source_pid_str);
         if (source_pid == 0) {
             fprintf(stderr, "Error: parsing: invalid line format, invalid pid\n");
             return cleanup(membership_file, ERROR_FILE);
@@ -140,13 +140,13 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
         // TODO: what to do if we encounter a line with no dependency ?
         char* dep_pid_str;
         while (NULL != (dep_pid_str = strtok(NULL, " "))) {
-            size_t dep_pid = (size_t) atoi(dep_pid_str);
+            const size_t dep_pid = (size_t) atoi(dep_pid_str);
             if (dep_pid == 0) {
                 fprintf(stderr, "Error: parsing: invalid line format, invalid pid\n");
                 return cleanup(membership_file, ERROR_FILE);
             }
 
-            int res = set_dependency(data->dependency_matrix, source_pid, dep_pid);
+            const int res = set_dependency(data->dependency_matrix, source_pid, dep_pid);
             if (res) {
                 fprintf(stderr, "Error: parsing: could not add dependency\n");
                 return cleanup(membership_file, res);
