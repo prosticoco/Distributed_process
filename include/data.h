@@ -134,7 +134,7 @@ typedef struct dependencies {
 // the vector clock structure to be sent over the causal broadcast messages
 typedef struct vec_clock {
     unsigned int num_proc;
-    unsigned int vector[];
+    unsigned int* vector;
 } vec_clock_t;
 
 // message structure for lcb
