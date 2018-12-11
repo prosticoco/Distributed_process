@@ -141,10 +141,23 @@ typedef struct vec_clock {
 typedef struct lcb_msg {
     vec_clock_t vec_clock;
 } lcb_msg_t;
+
+typedef struct vec_node {
+    vec_clock_t clock;
+    struct vec_node* next;
+}vec_node_t;
+
+typedef struct vec_list {
+    size_t size;
+    struct vec_node* head;
+    struct vec_node* tail;   
+} vec_list_t;
 // the pending structure for implementing localized causal broadcast
 typedef struct lcb_pending {
 
 } lcb_pending_t;
+
+
 
 typedef struct net_data {  
     // rlist of process addresses
