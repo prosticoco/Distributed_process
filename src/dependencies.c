@@ -19,7 +19,7 @@ static int depends_on(dependencies_t* dependencies, size_t from, size_t to) {
     }
 
     dependency_list_t* from_list = get_dependencies(dependencies, from);
-    if (NULL == from_list->pid_list) {
+    if (NULL == from_list || NULL == from_list->pid_list) {
         return ERROR_MEMORY;
     }
 
@@ -94,20 +94,20 @@ dependencies_t* alloc_reverse_dependencies(dependencies_t* reference) {
             if (0 > dep_test) {
                 free_dependencies(dependencies);
                 return NULL;
-            } else if (0 < dep_test) {
+            }
+            if (0 < dep_test) {
                 tmp_pids[dep_cntr] = to;
                 dep_cntr++;
             }
         }
         // Copy the pids we found to the dependency object we are building.
         dependency_list_t* from_list = get_dependencies(dependencies, from);
-        size_t bytes_to_copy = dep_cntr * sizeof(size_t);
         if (NULL == from_list) {
             free_dependencies(dependencies);
             return NULL;
         }
-        from_list->pid_list = malloc(bytes_to_copy);
-        if (NULL == from_list->pid_list || NULL == memcpy(from_list->pid_list, tmp_pids, bytes_to_copy)) {
+        from_list->pid_list = calloc(dep_cntr, sizeof(size_t));
+        if (NULL == from_list->pid_list || NULL == memcpy(from_list->pid_list, tmp_pids, dep_cntr * sizeof(size_t))) {
             free_dependencies(dependencies);
             return NULL;
         }
