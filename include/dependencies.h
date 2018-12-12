@@ -6,7 +6,7 @@
  * @brief Allocate new dependency matrix, with given number of processes.
  * 
  * @param num_proc Number of processes.
- * @return dependencies_t* Pointer to allocated dependency matrix, NULL in case of failure.
+ * @return dependencies_t* Pointer to allocated dependency matrix, with empty dependency lists, NULL in case of failure.
  */
 dependencies_t* alloc_dependencies(size_t num_proc);
 
@@ -21,7 +21,7 @@ dependencies_t* alloc_reverse_dependencies(dependencies_t* reference);
 /**
  * @brief Free resources of a dependency matrix.
  * 
- * @param dependencies The dependency matrix to free.
+ * @param dependencies A valid dependency object to free.
  */
 void free_dependencies(dependencies_t* dependencies);
 
@@ -30,7 +30,7 @@ void free_dependencies(dependencies_t* dependencies);
  * 
  * @param dependencies The dependencies_t object to modify.
  * @param from The pid for which to set the dependency list.
- * @param pid_list The dependency list.
+ * @param pid_list The dependency list. Its values are *copied* to a newly allocated list.
  * @param pid_list_len The length of the dependency list.
  * @return int 0 in case of success, non-zero otherwise.
  */
@@ -41,6 +41,9 @@ int set_dependencies(dependencies_t* dependencies, size_t from, size_t* pid_list
  * 
  * @param dependencies The dependencies_t object to access.
  * @param from The pid for which to get the dependency list.
- * @return size_t* List of dependencies.
+ * @return size_t* List of dependencies, or NULL in case of failure.
+ *                 /!\ Points *directly* to the inner local list of the
+ *                 dependency object, so may change between calls if the
+ *                 object is modified with set_dependencies().
  */
 dependency_list_t* get_dependencies(dependencies_t* dependencies, size_t from);
