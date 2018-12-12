@@ -186,7 +186,7 @@ int set_dependencies(dependencies_t* dependencies, size_t from, size_t* pid_list
  *                 object is modified with set_dependencies().
  */
 dependency_list_t* get_dependencies(dependencies_t* dependencies, size_t from) {
-    if (NULL == dependencies || from >= dependencies->num_proc) {
+    if (NULL == dependencies || NULL == dependencies->dep_lists || from >= dependencies->num_proc) {
         return NULL;
     }
     return &(dependencies->dep_lists[from]);
