@@ -53,7 +53,14 @@ typedef struct{
 /** every urb message needs the original message that is in beb_msg
  *  and the pid of the original sender and the current sender
  */
+
+// message structure for lcb
+typedef struct lcb_msg {
+    vec_clock_t vec_clock;
+} lcb_msg_t;
+
 typedef struct{
+    lcb_msg_t lcb_msg;
     fifo_msg_t fifo_msg;
     unsigned int seen_id;
     mid_t mid;
@@ -144,10 +151,7 @@ typedef struct vec_clock {
     unsigned int* vector;
 } vec_clock_t;
 
-// message structure for lcb
-typedef struct lcb_msg {
-    vec_clock_t vec_clock;
-} lcb_msg_t;
+
 
 typedef struct vec_node {
     vec_clock_t clock;
