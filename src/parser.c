@@ -139,18 +139,22 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
         // Get all dependencies on this line
         // TODO: what to do if we encounter a line with no dependency ?
         char* dep_pid_str;
+        size_t dep_pid_buf[num_proc];
+        size_t dep_cntr = 0;
         while (NULL != (dep_pid_str = strtok(NULL, " "))) {
             const size_t dep_pid = (size_t) atoi(dep_pid_str);
-            if (dep_pid == 0) {
+            if (0 == dep_pid) {
                 fprintf(stderr, "Error: parsing: invalid line format, invalid pid\n");
                 return cleanup(membership_file, ERROR_FILE);
             }
-
-            const int res = set_dependency(data->dependency_matrix, source_pid, dep_pid);
-            if (res) {
-                fprintf(stderr, "Error: parsing: could not add dependency\n");
-                return cleanup(membership_file, res);
-            }
+            dep_pid_buf[dep_cntr] = dep_pid;
+            dep_cntr++;
+        }
+        // Store these dependencies in the dependency object.
+        int res = set_dependencies(data->dependency_matrix, source_pid, dep_pid_buf, dep_cntr);
+        if (res) {
+            fprintf(stderr, "Error: parsing: could not store dependencies\n");
+            return cleanup(membership_file, res);
         }
 
         line_counter++;
