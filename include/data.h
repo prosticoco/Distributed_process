@@ -55,6 +55,12 @@ typedef struct{
  */
 
 // message structure for lcb
+// the vector clock structure to be sent over the causal broadcast messages
+typedef struct vec_clock {
+    unsigned int num_proc;
+    unsigned int* vector;
+} vec_clock_t;
+
 typedef struct lcb_msg {
     vec_clock_t vec_clock;
 } lcb_msg_t;
@@ -144,14 +150,6 @@ typedef struct dependencies {
     // Number of lists
     size_t num_proc;
 } dependencies_t;
-
-// the vector clock structure to be sent over the causal broadcast messages
-typedef struct vec_clock {
-    unsigned int num_proc;
-    unsigned int* vector;
-} vec_clock_t;
-
-
 
 typedef struct vec_node {
     vec_clock_t clock;
