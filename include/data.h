@@ -141,17 +141,32 @@ typedef struct dependencies {
 // the vector clock structure to be sent over the causal broadcast messages
 typedef struct vec_clock {
     unsigned int num_proc;
-    unsigned int vector[];
+    unsigned int* vector;
 } vec_clock_t;
 
 // message structure for lcb
 typedef struct lcb_msg {
     vec_clock_t vec_clock;
 } lcb_msg_t;
+
+typedef struct vec_node {
+    vec_clock_t clock;
+    struct vec_node* next;
+    struct vec_node* previous;
+}vec_node_t;
+
+typedef struct vec_list {
+    size_t num_elems;
+    struct vec_node* head;
+    struct vec_node* tail;   
+} vec_list_t;
 // the pending structure for implementing localized causal broadcast
 typedef struct lcb_pending {
-
+    size_t num_proc;
+    vec_list_t* lists;
 } lcb_pending_t;
+
+
 
 typedef struct net_data {  
     // rlist of process addresses

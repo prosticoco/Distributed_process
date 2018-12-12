@@ -19,7 +19,8 @@ typedef enum {
   ERROR_MUTEX,
   ERROR_FILE,
   ERROR_ARGS,
-  ERROR_TABLE
+  ERROR_TABLE,
+  ERROR_POINTER
 } error_codes;
 
 
