@@ -126,8 +126,15 @@ typedef struct{
 
 
 // the dependencies structure to be initialized at parsing step
+typedef struct dependency_list {
+    size_t* pid_list;
+    size_t list_len;
+} dependency_list_t;
+
 typedef struct dependencies {
-    int* lin_matrix;
+    // Lists of dependencies
+    dependency_list_t* dep_lists;
+    // Number of lists
     size_t num_proc;
 } dependencies_t;
 

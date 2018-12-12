@@ -11,6 +11,14 @@
 dependencies_t* alloc_dependencies(size_t num_proc);
 
 /**
+ * @brief Allocate new dependency matrix, which is the reverse of the one given.
+ * 
+ * @param reference The dependency matrix to reverse.
+ * @return dependencies_t* New dependency matrix, reverse of the given one.
+ */
+dependencies_t* alloc_reverse_dependencies(dependencies_t* reference);
+
+/**
  * @brief Free resources of a dependency matrix.
  * 
  * @param dependencies The dependency matrix to free.
@@ -18,21 +26,21 @@ dependencies_t* alloc_dependencies(size_t num_proc);
 void free_dependencies(dependencies_t* dependencies);
 
 /**
- * @brief Add dependency of one process to another.
+ * @brief Set the dependencies for a given pid to a given list of pid's.
  * 
- * @param dependencies The dependency matrix to operate on.
- * @param from The process who depends on another process.
- * @param to The process which is a dependency of the `from` process.
+ * @param dependencies The dependencies_t object to modify.
+ * @param from The pid for which to set the dependency list.
+ * @param pid_list The dependency list.
+ * @param pid_list_len The length of the dependency list.
  * @return int 0 in case of success, non-zero otherwise.
  */
-int set_dependency(dependencies_t* dependencies, size_t from, size_t to);
+int set_dependencies(dependencies_t* dependencies, size_t from, size_t* pid_list, size_t pid_list_len);
 
 /**
- * @brief Check dependency of one process to another.
+ * @brief Get the list of dependencies for a given pid.
  * 
- * @param dependencies The dependency matrix to operate on.
- * @param from The process who may depend on another process.
- * @param to The process which may be a dependency of the `from` process.
- * @return int 1 if `from` depends on `to`, 0 if not.
+ * @param dependencies The dependencies_t object to access.
+ * @param from The pid for which to get the dependency list.
+ * @return size_t* List of dependencies.
  */
-int get_dependency(dependencies_t* dependencies, size_t from, size_t to);
+dependency_list_t* get_dependencies(dependencies_t* dependencies, size_t from);
