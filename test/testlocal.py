@@ -4,9 +4,12 @@ import os
 
 # creating dictionary of dependencies
 depend = {}
-with open("depend") as f:
+with open("membership") as f:
     i = 1
+    for _ in range(6):
+        next(f)
     for line in f:
+        print(line)
         key = i
         val = [int(l) for l in line.split()]
         depend[key] = val
