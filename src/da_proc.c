@@ -8,6 +8,7 @@
 #include "dependencies.h"
 #include "error.h"
 #include "fifo.h"
+#include "causal.h"
 #include "layers.h"
 #include "log.h"
 #include "mqueue.h"
@@ -82,6 +83,7 @@ static int init_data(int argc, char** argv) {
 		return res;
 	}
 	res = init_pending(net_data.pending, ORIG_TABLE_SIZE, net_data.num_proc);
+	// TODO: change that call the one for LCB instead of FIFO B
 	res += init_next(net_data.next, net_data.num_proc);
 	if (res) {
 		return res;
@@ -116,12 +118,12 @@ static void free_data(void) {
 	free_queue(net_data.task_q);
 	free_ack_table(net_data.pl_acks);
 	free_urb_table(net_data.urb_table);
+	// TODO: change that call the one for LCB instead of FIFO B
 	free_pending(net_data.pending);
 	free_next(net_data.next);
 	free_log_data(net_data.logdata);
 	free_delivered(net_data.pl_delivered);
-	free_ack_urb(net_data.urbacks);
-	
+	free_ack_urb(net_data.urbacks);	
 }
 
 static void start(int signum) {
@@ -176,9 +178,9 @@ int main(int argc, char** argv) {
 
 	// Broadcast messages
 	printf("Broadcasting messages...\n");
-	res = send_fifo(&net_data,net_data.num_msg);
-	if(res){
-		printf("Failed Fifo Broadcast\n");
+	res = send_LCB(&net_data, net_data.num_msg);
+	if (res) {
+		printf("Failed Localized Causal Broadcast.\n");
 		return res;
 	}
 	// Wait until stopped
