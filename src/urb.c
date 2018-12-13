@@ -190,7 +190,7 @@ int deliver_urb(net_data_t* data, urb_msg_t msg){
              printf("URB : Error in add_delivered\n");
              return error;
          }
-         deliver_fifo(data,msg.fifo_msg);
+         deliver_LCB(data, msg.lcb_msg);
     }
     return 0;
 }
