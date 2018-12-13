@@ -1,7 +1,5 @@
 
-#include "data.h"
-#include "error.h"
-#include "pending.h"
+#include "layerzero.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -34,6 +32,19 @@ int deserialize(msg_t * msg,char* buffer,size_t num_proc){
     msg->urb_msg.mid = ptr[4];
     msg->urb_msg.seen_id = ptr[5];
     error = alloc_vector(&(msg->urb_msg.lcb_msg.vec_clock),num_proc,&(ptr[6]));
-    
+    if(error){
+        return error;
+    }
+    return 0;
+}
 
+int print_message(msg_t msg){
+    printf("=====MESSAGE=====\n");
+    printf(" mid = %u \n  ackid = %u\n sender = %u \n mtype = %u\n",msg.mid,msg.ackid,msg.sender,msg.mtype);
+    printf(" urb mid = %u\n seenid = %u\n",msg.urb_msg.mid,msg.urb_msg.seen_id);
+    printf("Vector clock \n");
+    for(int i = 0 ; i < msg.urb_msg.lcb_msg.vec_clock.num_proc ; i++){
+        printf("vec %d = %u \n",msg.urb_msg.lcb_msg.vec_clock.vector[i]);
+    }
+    return 0;
 }
