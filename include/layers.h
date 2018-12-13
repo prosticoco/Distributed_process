@@ -81,11 +81,11 @@ int send_urb(net_data_t* data, fifo_msg_t msg);
 int deliver_urb(net_data_t* data, urb_msg_t msg);
 
 /**
- * @brief 
+ * @brief FIFO broadcasts
  * 
- * @param data 
- * @param msg 
- * @return int 
+ * @param data we need about our proc
+ * @param m sequence of messages to broadcast (1...m)
+ * @return int 0 if successful, error value else
  */
 int send_fifo(net_data_t* data, int m);
 
@@ -97,6 +97,24 @@ int send_fifo(net_data_t* data, int m);
  * @return int 
  */
 int deliver_fifo(net_data_t* data, fifo_msg_t msg);
+
+/**
+ * @brief Send with localized causal broadcast, a given number of messages.
+ * 
+ * @param data The process local network data.
+ * @param m The number of messages to send.
+ * @return int 0 on case of success, non-zero otherwise.
+ */
+int send_LCB(net_data_t* data, int m);
+
+/**
+ * @brief Deliver a message with localized causal broadcast.
+ * 
+ * @param data The process local network data.
+ * @param msg The message to deliver.
+ * @return int 0 in case of success, non-zero otherwise.
+ */
+int deliver_LCB(net_data_t* data, lcb_msg_t msg);
 
 // method will write that a message was delivered to the log-buffer
 // method is defined in fifo.c
