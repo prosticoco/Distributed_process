@@ -13,7 +13,7 @@ _DEPS = addrbook.h data.h dependencies.h error.h causal.h log.h layers.h layerze
 DEPS = $(patsubst %, $(IDIR)/%, $(_DEPS))
 _SRCOBJ = addrbook.o beb.o da_proc.o dependencies.o causal.o flink.o layerzero.o log.o mqueue.o parser.o pending.o plink.o receiver.o sender.o urb.o
 SRCOBJ = $(patsubst %, $(SRCODIR)/%, $(_SRCOBJ))
-_TESTOBJ = layer_zero_test.o test_dependencies.o
+_TESTOBJ = layer_zero_test.o test_adri.o test_dependencies.o
 TESTOBJ = $(patsubst %, $(TESTODIR)/%, $(_TESTOBJ))
 
 .PHONY: clean debug
@@ -39,7 +39,10 @@ layer_zero_test: $(TESTOBJ) $(SRCOBJ)
 test_dependencies: $(TESTOBJ) $(SRCOBJ)
 	$(CC) -o $@ $(TESTODIR)/$@.o $(filter-out $(SRCODIR)/da_proc.o, $(SRCOBJ)) $(CFLAGS) $(DEBUG) $(LDLIBS)
 
-tests: layer_zero_test test_dependencies
+test_adri: $(TESTOBJ) $(SRCOBJ)
+	$(CC) -o $@ $(TESTODIR)/$@.o $(filter-out $(SRCODIR)/da_proc.o, $(SRCOBJ)) $(CFLAGS) $(DEBUG) $(LDLIBS)
+
+tests: layer_zero_test test_adri test_dependencies
 
 # Debug target
 debug:
@@ -49,5 +52,5 @@ debug:
 clean:
 	rm -rf $(SRCODIR)
 	rm -rf $(TESTODIR)
-	rm -f layer_zero_test test_dependencies da_proc
+	rm -f layer_zero_test test_adri test_dependencies da_proc
 	rm -f *.out
