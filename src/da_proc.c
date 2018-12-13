@@ -8,6 +8,7 @@
 #include "dependencies.h"
 #include "error.h"
 #include "fifo.h"
+#include "causal.h"
 #include "layers.h"
 #include "log.h"
 #include "mqueue.h"
@@ -176,9 +177,9 @@ int main(int argc, char** argv) {
 
 	// Broadcast messages
 	printf("Broadcasting messages...\n");
-	res = send_fifo(&net_data,net_data.num_msg);
-	if(res){
-		printf("Failed Fifo Broadcast\n");
+	res = send_LCB(&net_data, net_data.num_msg);
+	if (res) {
+		printf("Failed Localized Causal Broadcast.\n");
 		return res;
 	}
 	// Wait until stopped
