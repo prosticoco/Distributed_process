@@ -19,8 +19,13 @@ static int depends_on(dependencies_t* dependencies, size_t from, size_t to) {
     }
 
     dependency_list_t* from_list = get_dependencies(dependencies, from);
-    if (NULL == from_list || NULL == from_list->pid_list) {
+    // BUG: from_list->pid_list == NULL
+    if (NULL == from_list) {
         return ERROR_MEMORY;
+    }
+    // This means the process from has no dependency, so we return 0.
+    if (NULL == from_list->pid_list) {
+        return 0;
     }
 
     for (size_t i = 0; i < from_list->list_len; ++i) {
@@ -147,7 +152,7 @@ void free_dependencies(dependencies_t* dependencies) {
  * @brief Set the dependencies for a given pid to a given list of pid's.
  * 
  * @param dependencies The dependencies_t object to modify.
- * @param from The pid for which to set the dependency list.
+ * @param from The pid for which to set the dependency list. Starts at 0.
  * @param pid_list The dependency list. Its values are *copied* to a newly allocated list.
  * @param pid_list_len The length of the dependency list.
  * @return int 0 in case of success, non-zero otherwise.
@@ -164,14 +169,16 @@ int set_dependencies(dependencies_t* dependencies, size_t from, size_t* pid_list
         return ERROR_MEMORY;
     }
 
-    list->pid_list = realloc(list->pid_list, pid_list_len * sizeof(size_t));
-    if (NULL == list->pid_list) {
-        return ERROR_MEMORY;
+    if (pid_list_len > 0) {
+        list->pid_list = realloc(list->pid_list, pid_list_len * sizeof(size_t));
+        if (NULL == list->pid_list) {
+            return ERROR_MEMORY;
+        }
+        if (NULL == memcpy(list->pid_list, pid_list, pid_list_len * sizeof(size_t))) {
+            return ERROR_MEMORY;
+        }
     }
-    if (NULL == memcpy(list->pid_list, pid_list, pid_list_len * sizeof(size_t))) {
-        return ERROR_MEMORY;
-    }
-
+    list->list_len = pid_list_len;
     return 0;
 }
 
