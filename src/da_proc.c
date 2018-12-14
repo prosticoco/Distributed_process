@@ -178,7 +178,7 @@ int main(int argc, char** argv) {
 
 	// Broadcast messages
 	printf("Broadcasting messages...\n");
-	res = send_LCB(&net_data, net_data.num_msg);
+	res = send_lcb(&net_data, net_data.num_msg);
 	if (res) {
 		printf("Failed Localized Causal Broadcast.\n");
 		return res;
