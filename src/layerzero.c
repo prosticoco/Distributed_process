@@ -108,7 +108,7 @@ int print_message(msg_t msg){
     printf(" urb mid = %u\n seenid = %u\n",msg.urb_msg.mid,msg.urb_msg.seen_id);
     printf("Vector clock \n");
     for(int i = 0 ; i < msg.urb_msg.lcb_msg.vec_clock.num_proc ; i++){
-        printf("vec %d = %u \n",msg.urb_msg.lcb_msg.vec_clock.vector[i]);
+        printf("vec %d = %u \n",i,msg.urb_msg.lcb_msg.vec_clock.vector[i]);
     }
     return 0;
 }

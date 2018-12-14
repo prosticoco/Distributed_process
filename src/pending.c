@@ -13,7 +13,7 @@ int alloc_vector(vec_clock_t* clocky,unsigned int num_proc,unsigned int* values)
     if(clocky->vector == NULL){
         return ERROR_MEMORY;
     }
-    memcpy(clocky->vector,values,num_proc);
+    memcpy(clocky->vector,values,num_proc*sizeof(unsigned int));
     return 0;
 }
 
@@ -117,7 +117,7 @@ int init_pending_lcb(lcb_pending_t* pending,size_t num_proc){
 
 int destroy_pending_lcb(lcb_pending_t* pending){
     if(pending == NULL || pending->lists == NULL){
-        ERROR_MEMORY;
+       return ERROR_MEMORY;
     }
     free(pending->lists);
     pending->num_proc = 0;
