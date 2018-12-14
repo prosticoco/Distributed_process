@@ -196,5 +196,5 @@ dependency_list_t* get_dependencies(dependencies_t* dependencies, size_t from) {
     if (NULL == dependencies || NULL == dependencies->dep_lists || from >= dependencies->num_proc) {
         return NULL;
     }
-    return &(dependencies->dep_lists[from]);
+    return &(dependencies->dep_lists[from-1]);
 }
