@@ -27,13 +27,17 @@ int send_lcb(net_data_t* data, int m){
             printf("Error sending via urb : in send lcb \n");
             return error;
         }
-
-
     }
 }
 
 
 int deliver_lcb(net_data_t* data, lcb_msg_t msg){
+    int error;
+    if(test_vec_clock(data,&(msg.vec_clock),msg.original_sender)){
+
+    }else{
+        error = add_pending_lcb(data->lcb_pending,msg.original_sender,msg.vec_clock);
+    }
 
 }
 

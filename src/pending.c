@@ -124,7 +124,7 @@ int destroy_pending_lcb(lcb_pending_t* pending){
     return 0;
 }
 
-int add_pending_lcb(lcb_pending_t* pending,unsigned int pid,vec_clock_t clock){
+int add_pending_lcb(lcb_pending_t* pending,unsigned int pid,vec_clock_t clocky){
     int error;
     if(pending == NULL || pending->lists == NULL){
         return ERROR_POINTER;
@@ -132,7 +132,7 @@ int add_pending_lcb(lcb_pending_t* pending,unsigned int pid,vec_clock_t clock){
     if(pid > pending->num_proc){
         return ERROR_PID;
     }
-    error = add_veclist(clock,&(pending->lists[pid -1]));
+    error = add_veclist(clocky,&(pending->lists[pid -1]));
     if(error){
         return error;
     }
@@ -183,12 +183,14 @@ int get_vec_clock_copy(net_data_t* data, vec_clock_t* clocky){
 int test_vec_clock(net_data_t* data,vec_clock_t* vector,unsigned int pid){
     dependency_list_t* dep = get_dependencies(data->dependencies,pid);
     int is_bigger = 1;
+    pthread_mutex_lock(&(data->vector_clock->mutex));
     for(int i = 0; i < dep->list_len; i++){
         unsigned int curr_proc = dep->pid_list[i];
         if(vector->vector[curr_proc -1] > data->vector_clock->vector[curr_proc -1]){
             is_bigger = 0;
         }
     }
+    pthread_mutex_unlock(&(data->vector_clock->mutex));
     return is_bigger;
 }
 

@@ -26,3 +26,7 @@ int init_vector_mutex(vec_clock_t* clocky,unsigned int num_proc);
 int update_vec_clock(net_data_t* data, unsigned int pid);
 
 int get_vec_clock_copy(net_data_t* data, vec_clock_t* clocky);
+
+int test_vec_clock(net_data_t* data,vec_clock_t* vector,unsigned int pid);
+
+int find_pending(net_data_t* data);
