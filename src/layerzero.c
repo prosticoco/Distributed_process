@@ -5,7 +5,15 @@
 
 
 size_t message_size(size_t num_proc){
-    return sizeof(unsigned int)*6 + sizeof(unsigned int)*num_proc;
+    return sizeof(unsigned int)*7 + sizeof(unsigned int)*num_proc;
+}
+
+size_t num_fields(size_t num_proc){
+    return 7 + num_proc;
+}
+
+size_t num_static(){
+    return 7;
 }
 
 int serialize(msg_t* msg, char** buffer,size_t num_proc){
@@ -14,14 +22,16 @@ int serialize(msg_t* msg, char** buffer,size_t num_proc){
     if(*buffer == NULL){
         return ERROR_MEMORY;
     }
-    unsigned int temp[6 + num_proc];
+    size_t numfields = num_fields(num_proc);
+    unsigned int temp[numfields];
     temp[0] = msg->mid;
     temp[1] = msg->ackid;
     temp[2] = msg->sender;
     temp[3] = msg->mtype;
     temp[4] = msg->urb_msg.mid;
     temp[5] = msg->urb_msg.seen_id;
-    memcpy(&(temp[6]),msg->urb_msg.lcb_msg.vec_clock.vector,sizeof(unsigned int)*num_proc);
+    temp[6] = msg->urb_msg.lcb_msg.original_sender;
+    memcpy(&(temp[num_static()]),msg->urb_msg.lcb_msg.vec_clock.vector,sizeof(unsigned int)*num_proc);
     memcpy(*buffer,temp,msg_size);
     return 0;
 }
@@ -38,7 +48,8 @@ int deserialize(msg_t * msg,char* buffer,size_t num_proc){
     msg->mtype = ptr[3];
     msg->urb_msg.mid = ptr[4];
     msg->urb_msg.seen_id = ptr[5];
-    error = alloc_vector(&(msg->urb_msg.lcb_msg.vec_clock),num_proc,&(ptr[6]));
+    msg->urb_msg.lcb_msg.original_sender = ptr[6];
+    error = alloc_vector(&(msg->urb_msg.lcb_msg.vec_clock),num_proc,&(ptr[num_static()]));
     if(error){
         return error;
     }

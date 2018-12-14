@@ -105,7 +105,7 @@ int deliver_fifo(net_data_t* data, fifo_msg_t msg);
  * @param m The number of messages to send.
  * @return int 0 on case of success, non-zero otherwise.
  */
-int send_LCB(net_data_t* data, int m);
+int send_lcb(net_data_t* data, int m);
 
 /**
  * @brief Deliver a message with localized causal broadcast.
@@ -114,7 +114,7 @@ int send_LCB(net_data_t* data, int m);
  * @param msg The message to deliver.
  * @return int 0 in case of success, non-zero otherwise.
  */
-int deliver_LCB(net_data_t* data, lcb_msg_t msg);
+int deliver_lcb(net_data_t* data, lcb_msg_t msg);
 
 // method will write that a message was delivered to the log-buffer
 // method is defined in fifo.c

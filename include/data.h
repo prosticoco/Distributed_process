@@ -63,6 +63,7 @@ typedef struct vec_clock {
 
 typedef struct lcb_msg {
     vec_clock_t vec_clock;
+    unsigned int original_sender;
 } lcb_msg_t;
 
 typedef struct{
@@ -209,5 +210,9 @@ typedef struct net_data {
     dependencies_t* dependency_matrix;
     // reverse dependency list for pending checking
     dependencies_t* reverse_dependency;
+    // pending set for lcb layer
+    lcb_pending_t* lcb_pending;
+    // vector clock of current process
+    vec_clock_t* vector_clock;
 } net_data_t;
 
