@@ -59,6 +59,7 @@ typedef struct{
 typedef struct vec_clock {
     unsigned int num_proc;
     unsigned int* vector;
+    pthread_mutex_t mutex;
 } vec_clock_t;
 
 typedef struct lcb_msg {
