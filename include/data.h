@@ -208,9 +208,9 @@ typedef struct net_data {
     // mutex for the receiver
     pthread_mutex_t rec_mutex;
     // Localized Causal Broadcast dependency matrix
-    dependencies_t* dependency_matrix;
+    dependencies_t* dependencies;
     // reverse dependency list for pending checking
-    dependencies_t* reverse_dependency;
+    dependencies_t* reverse_dependencies;
     // pending set for lcb layer
     lcb_pending_t* lcb_pending;
     // vector clock of current process
