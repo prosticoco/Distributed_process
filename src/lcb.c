@@ -1,36 +1,39 @@
 
-#include "data.h"
+#include "lcb.h"
 #include "layers.h"
 #include "pending.h"
-#include "dependencies.h"
 
 
-
-
-
-int update_vec_clock(net_data_t* data, unsigned int pid){
-    if(pid > data->num_proc){
-        return ERROR_PID;
-    }
-    data->vector_clock->vector[pid-1] += 1;
-    return 0;
-}
-
-
-
-int test_vec_clock(net_data_t* data,vec_clock_t* vector,unsigned int pid){
-    dependency_list_t* dep = get_dependencies(data->dependency_matrix,pid);
-    int is_bigger = 1;
-    for(int i = 0; i < dep->list_len; i++){
-        unsigned int curr_proc = dep->pid_list[i];
-        if(vector->vector[curr_proc -1] > data->vector_clock->vector[curr_proc -1]){
-            is_bigger = 0;
+int send_lcb(net_data_t* data, int m){
+    int error;
+    fifo_msg_t fifo_msg;
+    lcb_msg_t lcb_msg;
+    for(int i = 1 ; i <m + 1; i++){
+        error = get_vec_clock_copy(data,&(lcb_msg.vec_clock));
+        if(error){
+            printf("Error getting copy of vec_clock in send_lcb \n");
+            return error;
         }
+        error = update_vec_clock(data,data->self_pid);
+        if(error){
+            printf("Error updating self vec clock in send_lcb\n");
+            return error;
+        }
+        fifo_msg.original_sender = data->self_pid;
+        fifo_msg.sequence_num = i;
+        lcb_msg.original_sender = data->self_pid;
+        error = send_urb(data,fifo_msg,lcb_msg);
+        if(error){
+            printf("Error sending via urb : in send lcb \n");
+            return error;
+        }
+
+
     }
-    return is_bigger;
 }
 
-int find_pending(net_data_t* data){
 
+int deliver_lcb(net_data_t* data, lcb_msg_t msg){
 
 }
+

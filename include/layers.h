@@ -69,7 +69,7 @@ int deliver_beb(net_data_t* data, urb_msg_t msg);
  * @param msg 
  * @return int 
  */
-int send_urb(net_data_t* data, fifo_msg_t msg);
+int send_urb(net_data_t* data, fifo_msg_t msg,lcb_msg_t lcbmsg);
 
 /**
  * @brief 

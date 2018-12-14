@@ -1,5 +1,6 @@
 #include "data.h"
 #include "error.h"
+#include "dependencies.h"
 
 
 int alloc_vector(vec_clock_t* clocky,unsigned int num_proc,unsigned int* values);
@@ -19,3 +20,9 @@ int init_pending_lcb(lcb_pending_t* pending,size_t num_proc);
 int destroy_pending_lcb(lcb_pending_t* pending);
 
 int add_pending_lcb(lcb_pending_t* pending,unsigned int pid,vec_clock_t clock);
+
+int init_vector_mutex(vec_clock_t* clocky,unsigned int num_proc);
+
+int update_vec_clock(net_data_t* data, unsigned int pid);
+
+int get_vec_clock_copy(net_data_t* data, vec_clock_t* clocky);

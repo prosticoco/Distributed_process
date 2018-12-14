@@ -115,7 +115,7 @@ int free_ack_urb(urb_ack_table_t* delivered){
 
 
 //urb broadcast, calculates message id, wraps fifo message in a urb message and invokes beb
-int send_urb(net_data_t* data, fifo_msg_t msg){
+int send_urb(net_data_t* data, fifo_msg_t msg,lcb_msg_t lcbmsg){
     
     // compute the URB's unique id
     unsigned int seen_id = (data->num_proc)*(msg.sequence_num -1) + msg.original_sender -1;
@@ -141,6 +141,7 @@ int send_urb(net_data_t* data, fifo_msg_t msg){
     new_msg.fifo_msg = msg;
     new_msg.seen_id = seen_id;
     new_msg.mid = mid;
+    new_msg.lcb_msg = lcbmsg;
     error = send_beb(data,new_msg);
     if(error){
         printf("URB SEND error in send babe\n");
