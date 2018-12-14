@@ -9,7 +9,7 @@
  * @param m The number of messages to send.
  * @return int 0 on case of success, non-zero otherwise.
  */
-int send_LCB(net_data_t* data, int m) {
+int send_lcb(net_data_t* data, int m) {
     // TODO
     return 0;
 }
@@ -21,7 +21,7 @@ int send_LCB(net_data_t* data, int m) {
  * @param msg The message to deliver.
  * @return int 0 in case of success, non-zero otherwise.
  */
-int deliver_LCB(net_data_t* data, lcb_msg_t msg) {
+int deliver_lcb(net_data_t* data, lcb_msg_t msg) {
     // TODO
     return 0;
 }

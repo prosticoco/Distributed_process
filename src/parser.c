@@ -115,8 +115,8 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
     }
 
     // ----- FILL DEPENDENCY MATRIX -----
-    data->dependency_matrix = alloc_dependencies(data->num_proc);
-    if (data->dependency_matrix == NULL) {
+    data->dependencies = alloc_dependencies(data->num_proc);
+    if (data->dependencies == NULL) {
         fprintf(stderr, "Error: parsing: dependency matrix allocation failed\n");
         return cleanup(membership_file, ERROR_MEMORY);
     }
@@ -151,13 +151,19 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
             dep_cntr++;
         }
         // Store these dependencies in the dependency object.
-        int res = set_dependencies(data->dependency_matrix, source_pid, dep_pid_buf, dep_cntr);
+        int res = set_dependencies(data->dependencies, source_pid, dep_pid_buf, dep_cntr);
         if (res) {
             fprintf(stderr, "Error: parsing: could not store dependencies\n");
             return cleanup(membership_file, res);
         }
 
         line_counter++;
+    }
+
+    data->reverse_dependencies = alloc_reverse_dependencies(data->dependencies);
+    if (NULL == data->reverse_dependencies) {
+        fprintf(stderr, "Error: parsing: could not create reverse dependency object.\n");
+        return cleanup(membership_file, ERROR_MEMORY);
     }
 
     return cleanup(membership_file, 0);
