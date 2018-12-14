@@ -207,5 +207,7 @@ typedef struct net_data {
     pthread_mutex_t rec_mutex;
     // Localized Causal Broadcast dependency matrix
     dependencies_t* dependency_matrix;
+    // reverse dependency list for pending checking
+    dependencies_t* reverse_dependency;
 } net_data_t;
 
