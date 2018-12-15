@@ -130,7 +130,7 @@ dependencies_t* alloc_reverse_dependencies(dependencies_t* reference) {
 void free_dependencies(dependencies_t* dependencies) {
     // Nothing to do if dependencies is NULL.
     if (NULL == dependencies) {
-        fprintf(stderr, "Warning: dependencies: attempting to free a NULL dependency object.");
+        fprintf(stderr, "Warning: dependencies: attempting to free a NULL dependency object.\n");
         return;
     }
     // Free all dependency lists of the object.
@@ -193,7 +193,7 @@ int set_dependencies(dependencies_t* dependencies, size_t from, size_t* pid_list
  *                 object is modified with set_dependencies().
  */
 dependency_list_t* get_dependencies(dependencies_t* dependencies, size_t from) {
-    if (NULL == dependencies || NULL == dependencies->dep_lists || from >= dependencies->num_proc) {
+    if (NULL == dependencies || NULL == dependencies->dep_lists || from > dependencies->num_proc) {
         return NULL;
     }
     return &(dependencies->dep_lists[from-1]);
