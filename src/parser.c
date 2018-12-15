@@ -9,6 +9,8 @@
 #include "parser.h"
 #include "error.h"
 
+#define LINE_MAX_LENGTH 32
+
 static int cleanup(FILE* file, int result) {
     if (file != NULL) {
         fclose(file);
@@ -55,7 +57,7 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
     }
 
     // ----- GET TOTAL NUMBER OF PROCESSES -----
-    char line[32];
+    char line[LINE_MAX_LENGTH];
     if (!fgets(line, sizeof(line), membership_file)) {
         fprintf(stderr, "Error: parsing: could not read membership file\n");
         return cleanup(membership_file, ERROR_FILE);
@@ -75,7 +77,7 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
     }
 
     size_t line_counter = 0;
-    while (fgets(line, sizeof(line), membership_file) && line_counter < num_proc) {
+    while (line_counter < num_proc && fgets(line, LINE_MAX_LENGTH, membership_file)) {
         // Get line process uid, address and port
         const char* pid_str = strtok(line, " ");
         const char* ipv4_str = strtok(NULL, " ");
@@ -122,17 +124,18 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
     }
 
     line_counter = 0;
-    while (fgets(line, sizeof(line), membership_file) && line_counter < num_proc) {
+    while (line_counter < num_proc && fgets(line, sizeof(line), membership_file)) {
         // Get line pid, the "source" process whose dependencies follow on this line
+        fprintf(stderr, "P%zu: Parsing line '%s'\n", data->self_pid, line);
         const char* source_pid_str = strtok(line, " ");
         if (source_pid_str == NULL) {
             // TODO: clean up address book or not ?
-            fprintf(stderr, "Error: parsing: invalid line format, invalid pid\n");
+            fprintf(stderr, "Error: parsing: invalid line format, no pid\n");
             return cleanup(membership_file, ERROR_FILE);
         }
         const size_t source_pid = (size_t) atoi(source_pid_str);
         if (source_pid == 0) {
-            fprintf(stderr, "Error: parsing: invalid line format, invalid pid\n");
+            fprintf(stderr, "Error: parsing: invalid line format, invalid pid (str found: %s)\n", source_pid_str);
             return cleanup(membership_file, ERROR_FILE);
         }
 
@@ -144,16 +147,22 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
         while (NULL != (dep_pid_str = strtok(NULL, " "))) {
             const size_t dep_pid = (size_t) atoi(dep_pid_str);
             if (0 == dep_pid) {
-                fprintf(stderr, "Error: parsing: invalid line format, invalid pid\n");
+                // This can happen if the line has a trailing whitespace, or several whitespaces clustered.
+                // This is not an error.
+                if (0 == strncmp("\n", dep_pid_str, LINE_MAX_LENGTH)) {
+                    continue;
+                }
+                fprintf(stderr, "Error: parsing: invalid line format, invalid pid (str found: %s)\n", dep_pid_str);
                 return cleanup(membership_file, ERROR_FILE);
             }
             dep_pid_buf[dep_cntr] = dep_pid;
             dep_cntr++;
         }
         // Store these dependencies in the dependency object.
+        // BUG: we call the function with source-pid too high
         int res = set_dependencies(data->dependencies, source_pid, dep_pid_buf, dep_cntr);
-        if (res) {
-            fprintf(stderr, "Error: parsing: could not store dependencies\n");
+        if (0 != res) {
+            fprintf(stderr, "P%zu: Error: parsing: could not store dependencies\n", data->self_pid);
             return cleanup(membership_file, res);
         }
 
