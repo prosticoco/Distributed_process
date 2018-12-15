@@ -29,6 +29,7 @@ int send_beb(net_data_t* data, urb_msg_t msg) {
             queue_task_t task;
             task.pid_dest = i;
             task.msg = message;
+
             res = enqueue(data->task_q, &task);
             if(res){
                 return res;

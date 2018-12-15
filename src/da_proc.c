@@ -20,7 +20,7 @@
 #include "pending.h"
 
 #define QUEUE_LEN 200
-#define NUM_SENDER_THREADS 10
+#define NUM_SENDER_THREADS 1
 #define MSG_BUF_MAX_SIZE 1024
 #define LOG_FILENAME "da_proc_%zu.out"
 #define ORIG_TABLE_SIZE 150
@@ -35,6 +35,7 @@ next_t next_table;
 log_data_t log_data;
 urb_ack_table_t urbacks;
 lcb_pending_t lcb_pending;
+vec_clock_t vec_clock;
 char filename[14];
 
 
@@ -52,7 +53,8 @@ net_data_t net_data = {
 	.task_q = &main_queue,
 	.logdata = &log_data,
 	.urbacks = &urbacks,
-	.lcb_pending = &lcb_pending
+	.lcb_pending = &lcb_pending,
+	.vector_clock = &vec_clock
 };
 
 static int wait_for_start = 1;
@@ -102,6 +104,11 @@ static int init_data(int argc, char** argv) {
 		printf("Error initializing pending lcb \n");
 		return res;
 	}
+	res = init_vector_mutex(net_data.vector_clock,net_data.num_proc);
+	if(res < 0){
+		printf("Error initializing vector clock \n");
+		return res;
+	}
 	res = sprintf(net_data.log_filename, LOG_FILENAME, net_data.self_pid);
 	if (res < 0) {
 		return res;
@@ -122,7 +129,6 @@ static int init_data(int argc, char** argv) {
 		return res;
 	}
 	
-
 	return res;
 }
 

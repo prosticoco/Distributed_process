@@ -20,6 +20,8 @@ size_t num_static(){
 }
 
 int serialize(msg_t* msg, char** buffer,size_t num_proc){
+    
+    
     size_t msg_size = message_size(num_proc);
     *buffer = malloc(msg_size);
     if(*buffer == NULL){
@@ -31,11 +33,15 @@ int serialize(msg_t* msg, char** buffer,size_t num_proc){
     temp[1] = msg->ackid;
     temp[2] = msg->sender;
     temp[3] = msg->mtype;
-    temp[4] = msg->urb_msg.mid;
-    temp[5] = msg->urb_msg.seen_id;
-    temp[6] = msg->urb_msg.lcb_msg.original_sender;
-    memcpy(&(temp[num_static()]),msg->urb_msg.lcb_msg.vec_clock.vector,sizeof(unsigned int)*num_proc);
-    memcpy(*buffer,temp,msg_size);
+    if(msg->mtype == 1){
+        memcpy(*buffer,temp,msg_size);
+    }else{
+        temp[4] = msg->urb_msg.mid;
+        temp[5] = msg->urb_msg.seen_id;
+        temp[6] = msg->urb_msg.lcb_msg.original_sender;
+        memcpy(&(temp[num_static()]),msg->urb_msg.lcb_msg.vec_clock.vector,sizeof(unsigned int)*num_proc);
+        memcpy(*buffer,temp,msg_size);
+    }
     return 0;
 }
 
@@ -45,17 +51,23 @@ int deserialize(msg_t * msg,char* buffer,size_t num_proc){
     }
     int error;
     unsigned int* ptr = (unsigned int*) buffer;
+    
     msg->mid = ptr[0];
     msg->ackid = ptr[1];
     msg->sender = ptr[2];
     msg->mtype = ptr[3];
-    msg->urb_msg.mid = ptr[4];
-    msg->urb_msg.seen_id = ptr[5];
-    msg->urb_msg.lcb_msg.original_sender = ptr[6];
-    error = alloc_vector(&(msg->urb_msg.lcb_msg.vec_clock),num_proc,&(ptr[num_static()]));
-    if(error){
-        return error;
-    }
+    if(msg->mtype == 1){
+        return 0;
+    }else{
+        msg->urb_msg.mid = ptr[4];
+        msg->urb_msg.seen_id = ptr[5];
+        msg->urb_msg.lcb_msg.original_sender = ptr[6];
+        error = alloc_vector(&(msg->urb_msg.lcb_msg.vec_clock),num_proc,&(ptr[num_static()]));
+        if(error){
+            return error;
+        }
+        
+    } 
     return 0;
 }
 
@@ -84,11 +96,16 @@ int send_message(net_data_t* data,int socket_fd,unsigned int dest_pid,msg_t msg)
     if(buffer != NULL){
         free(buffer);
     }
-    error = destroy_vector(&(msg.urb_msg.lcb_msg.vec_clock));
-    if(error){
-        printf("Destroying temporary vector clock failed \n");
-        return error;
+    /**
+    if(msg.mtype == 0){
+        error = destroy_vector(&(msg.urb_msg.lcb_msg.vec_clock));
+        if(error){
+            printf("Destroying temporary vector clock failed \n");
+            return error;
+        }
     }
+    */
+    
     return 0;
 }
 
@@ -112,6 +129,7 @@ int receive_msg(net_data_t* data,char* buffer, msg_t* next_message){
         printf("Deserialization error \n");
         return error;
     }
+    
     return 0;
 }
 

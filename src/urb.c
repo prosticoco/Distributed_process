@@ -143,6 +143,7 @@ int send_urb(net_data_t* data, fifo_msg_t msg,lcb_msg_t lcbmsg){
     new_msg.seen_id = seen_id;
     new_msg.mid = mid;
     new_msg.lcb_msg = lcbmsg;
+
     error = send_beb(data,new_msg);
     if(error){
         printf("URB SEND error in send babe\n");
@@ -153,6 +154,11 @@ int send_urb(net_data_t* data, fifo_msg_t msg,lcb_msg_t lcbmsg){
 
 //urb deliver, called by beb broadcast, calls fifo broadcast if it is able to deliver
 int deliver_urb(net_data_t* data, urb_msg_t msg){
+    printf("deliver urb\n");
+    //printf("proc num %zu gonna beb msg \n",data->self_pid);
+      //  for(int j = 0 ; j < data->num_proc; j++){
+        //printf("Vector [%d] = %u \n",j,msg.lcb_msg.vec_clock.vector[j]);
+        //}
     int error;
     //set that we got our own message
     error = set_ack_urb(data->urbacks,msg.mid);
@@ -176,6 +182,7 @@ int deliver_urb(net_data_t* data, urb_msg_t msg){
             return error;
         }
         //rebroadcast
+        
         error = send_beb(data,new_msg);
         if(error){
             printf("URB : Error in send babe\n");

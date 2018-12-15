@@ -18,20 +18,14 @@ sudo tc qdisc change dev lo root netem delay 50ms 200ms loss 10% 25% reorder 25%
 # compile (should output: da_proc)
 make
 
-echo "5
+echo "2
 1 127.0.0.1 11001
 2 127.0.0.1 11002
-3 127.0.0.1 11003
-4 127.0.0.1 11004
-5 127.0.0.1 11005
-1 2 3
-2 
-3
-4
-5" > membership
+1 2
+2" > membership
 
 # start 5 processes, each broadcasting 100 messages
-for i in `seq 1 5`
+for i in `seq 1 2`
 do
     ./da_proc $i membership 2 &
     da_proc_id[$i]=$!
@@ -40,30 +34,17 @@ done
 # leave some time for process initialization
 sleep $init_time
 
-# do some nasty stuff like process crashes and delays
-# example:
-kill -STOP "${da_proc_id[3]}" # pause process 3
-sleep 1
-#kill -TERM "${da_proc_id[2]}" # crash process 2
-#da_proc_id[2]=""
-kill -CONT "${da_proc_id[3]}" # resume process 3
+
 
 # start broadcasting
-for i in `seq 1 5`
+for i in `seq 1 2`
 do
     if [ -n "${da_proc_id[$i]}" ]; then
 	kill -USR2 "${da_proc_id[$i]}"
     fi
 done
 
-# do some more nasty stuff
-# example:
-#kill -TERM "${da_proc_id[4]}" # crash process 4
-#da_proc_id[4]=""
 
-kill -STOP "${da_proc_id[1]}" # pause process 1
-sleep 0.5
-kill -CONT "${da_proc_id[1]}" # resume process 1
 
 # leave some time for the correct processes to broadcast all messages
 
@@ -72,7 +53,7 @@ sleep $time_to_finish
 
 
 # stop all processes
-for i in `seq 1 5`
+for i in `seq 1 2`
 do
     if [ -n "${da_proc_id[$i]}" ]; then
     echo "killing process i"
@@ -81,14 +62,10 @@ do
 done
 
 # wait until all processes stop
-for i in `seq 1 5`
+for i in `seq 1 2`
 do
     if [ -n "${da_proc_id[$i]}" ]; then
 	    wait "${da_proc_id[$i]}"
     fi
 done
 
-# check logs for correctness
-./check_output.sh 1 2 3 4 5
-
-echo "Correctness test done."

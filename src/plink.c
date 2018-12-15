@@ -6,6 +6,7 @@
 #include "layers.h"
 #include "mqueue.h"
 #include "data.h"
+#include "pending.h"
 
 #define MAX_SIZE 1024*8
 #define THRESHOLD 10
@@ -162,7 +163,10 @@ int send_pl(unsigned int pid, int socket_fd, net_data_t* data, msg_t msg) {
             return ERROR_SEND;
         }
         usleep(200);
-    }    
+    }
+    //printf("+\n");
+    //error = destroy_vector(&(msg.urb_msg.lcb_msg.vec_clock)); 
+    //printf("-\n");  
     return 0;
 }
 
@@ -177,6 +181,7 @@ int send_pl(unsigned int pid, int socket_fd, net_data_t* data, msg_t msg) {
  * If not, we set it as delivered and we deliver the message i.e. call the next (upper) layer: beb
  */
 int deliver_pl(net_data_t* data, msg_t msg){
+
     int error = 0;
     if (msg.mtype == ACK_NO) {
         error = set_ack(data->pl_acks, msg.ackid); 
