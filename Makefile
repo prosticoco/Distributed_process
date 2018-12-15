@@ -11,7 +11,7 @@ CFLAGS = -Wall -I$(IDIR)
 
 _DEPS = addrbook.h data.h dependencies.h error.h causal.h log.h layers.h layerzero.h mqueue.h parser.h pending.h plink.h receiver.h sender.h urb.h
 DEPS = $(patsubst %, $(IDIR)/%, $(_DEPS))
-_SRCOBJ = addrbook.o beb.o da_proc.o dependencies.o causal.o flink.o layerzero.o log.o mqueue.o parser.o pending.o plink.o receiver.o sender.o urb.o
+_SRCOBJ = addrbook.o beb.o da_proc.o dependencies.o causal.o flink.o layerzero.o log.o mqueue.o parser.o pending.o plink.o receiver.o sender.o urb.o lcb.o
 SRCOBJ = $(patsubst %, $(SRCODIR)/%, $(_SRCOBJ))
 _TESTOBJ = layer_zero_test.o test_adri.o test_dependencies.o
 TESTOBJ = $(patsubst %, $(TESTODIR)/%, $(_TESTOBJ))

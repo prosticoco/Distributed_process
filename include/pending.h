@@ -1,6 +1,7 @@
 #include "data.h"
 #include "error.h"
 #include "dependencies.h"
+#include "layers.h"
 
 
 int alloc_vector(vec_clock_t* clocky,unsigned int num_proc,unsigned int* values);

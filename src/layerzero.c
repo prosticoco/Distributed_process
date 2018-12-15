@@ -4,6 +4,7 @@
 
 #include "layers.h"
 #include "error.h"
+#include "pending.h"
 
 
 size_t message_size(size_t num_proc){

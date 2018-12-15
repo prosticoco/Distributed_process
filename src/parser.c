@@ -166,7 +166,6 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
         fprintf(stderr, "Error: parsing: could not create reverse dependency object.\n");
         return cleanup(membership_file, ERROR_MEMORY);
     }
-
-    return cleanup(membership_file, 0);
     */
+    return cleanup(membership_file, 0);
 }

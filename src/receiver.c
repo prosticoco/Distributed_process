@@ -31,7 +31,7 @@ void *receiver_f(void* params){
         error = receive_msg(data,buffer,&next_message);
         if(error){
             printf("error while receiving message in receiver thread \n");
-            return error;
+            exit(error);
         }
         error = process_msg(data,next_message);
         if (error < 0) {

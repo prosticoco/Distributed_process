@@ -134,8 +134,8 @@ static void free_data(void) {
 	free_ack_table(net_data.pl_acks);
 	free_urb_table(net_data.urb_table);
 	// TODO: change that call the one for LCB instead of FIFO B
-	free_pending(net_data.pending);
-	free_next(net_data.next);
+	//free_pending(net_data.pending);
+	//free_next(net_data.next);
 	free_log_data(net_data.logdata);
 	free_delivered(net_data.pl_delivered);
 	free_ack_urb(net_data.urbacks);	
