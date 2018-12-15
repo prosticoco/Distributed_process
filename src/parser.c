@@ -126,7 +126,6 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
     line_counter = 0;
     while (line_counter < num_proc && fgets(line, sizeof(line), membership_file)) {
         // Get line pid, the "source" process whose dependencies follow on this line
-        fprintf(stderr, "P%zu: Parsing line '%s'\n", data->self_pid, line);
         const char* source_pid_str = strtok(line, " ");
         if (source_pid_str == NULL) {
             // TODO: clean up address book or not ?
