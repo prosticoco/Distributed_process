@@ -4,6 +4,7 @@
 #include "mqueue.h"
 #include "layers.h"
 #include "urb.h"
+#include "pending.h"
 
 //BEB broadcast
 /* for every message we want to broadcast
@@ -29,13 +30,17 @@ int send_beb(net_data_t* data, urb_msg_t msg) {
             queue_task_t task;
             task.pid_dest = i;
             task.msg = message;
-
+            res = alloc_vector(&(task.msg.urb_msg.lcb_msg.vec_clock),data->num_proc,message.urb_msg.lcb_msg.vec_clock.vector);
+            if(res){
+                printf("Error allocating new vector \n");
+            }
             res = enqueue(data->task_q, &task);
             if(res){
                 return res;
             }
-        }
+        }    
     }
+    free(msg.lcb_msg.vec_clock.vector);
     return 0;
 }
 

@@ -11,6 +11,7 @@
 #include "mqueue.h"
 #include "receiver.h"
 #include "addrbook.h"
+#include "pending.h"
 
 /**
  * @brief Callback function for receiver thread.
@@ -38,6 +39,13 @@ void *receiver_f(void* params){
             fprintf(stderr, "ERROR while processing msg  %d\n", error);
             exit(error);
         }
+        if(next_message.urb_msg.lcb_msg.vec_clock.vector != NULL){
+            //printf("Receiver : pointer value to free : %p \n",next_message.urb_msg.lcb_msg.vec_clock.vector);
+            free(next_message.urb_msg.lcb_msg.vec_clock.vector);
+            next_message.urb_msg.lcb_msg.vec_clock.vector = NULL;
+        }
+        
+        
     }
     return NULL;
 }

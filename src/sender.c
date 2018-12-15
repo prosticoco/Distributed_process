@@ -8,6 +8,7 @@
 #include "layers.h"
 #include "mqueue.h"
 #include "sender.h"
+#include "pending.h"
 
 #define EMPTY_QUEUE_WAIT 10000
 
@@ -35,8 +36,13 @@ static void *sender_f(void* params) {
             usleep(EMPTY_QUEUE_WAIT);
         }
         int res = send_pl(msg_task.pid_dest, args->socket_fd, data, msg_task.msg);
-        if (res) {
+        if (res < 0) {
             pthread_exit((void *) ERROR_SEND);
+        }
+        if(msg_task.msg.urb_msg.lcb_msg.vec_clock.vector != NULL && res == 0){
+            //printf("Sender pid : %zu : Pointer value to free : %p \n",data->self_pid,msg_task.msg.urb_msg.lcb_msg.vec_clock.vector);
+            free(msg_task.msg.urb_msg.lcb_msg.vec_clock.vector);
+            msg_task.msg.urb_msg.lcb_msg.vec_clock.vector = NULL;
         }
     }
 

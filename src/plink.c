@@ -12,6 +12,7 @@
 #define THRESHOLD 10
 #define ACK_NO 1
 
+
 /**
  * @brief PERFECT LINK LAYER USING FAIR LOSS
  * for every message received we resend an ack to tell the sender we got their message
@@ -154,7 +155,7 @@ int send_pl(unsigned int pid, int socket_fd, net_data_t* data, msg_t msg) {
                 printf("Error enqueuing send_pl\n");
                 return error;     
             }
-            return 0;
+            return BACK_TO_QUEUE;
         }
         error = send_fl(data, socket_fd, pid, msg);
         i+= 1;
@@ -164,9 +165,6 @@ int send_pl(unsigned int pid, int socket_fd, net_data_t* data, msg_t msg) {
         }
         usleep(200);
     }
-    //printf("+\n");
-    //error = destroy_vector(&(msg.urb_msg.lcb_msg.vec_clock)); 
-    //printf("-\n");  
     return 0;
 }
 

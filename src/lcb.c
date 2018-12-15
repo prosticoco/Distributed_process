@@ -9,25 +9,17 @@ int send_lcb(net_data_t* data, int m){
     int error;
     fifo_msg_t fifo_msg;
     lcb_msg_t lcb_msg;
-    unsigned int seq;
     for(int i = 1 ; i < m + 1; i++){
         error = get_vec_clock_copy(data,&(lcb_msg.vec_clock));
         if(error){
             printf("Error getting copy of vec_clock in send_lcb \n");
             return error;
         }
-        //printf("proc num %zu gonna send msg %d \n",data->self_pid,i);
-        //for(int j = 0 ; j < data->num_proc; j++){
-        //    printf("Vector [%d] = %u \n",j,lcb_msg.vec_clock.vector[j]);
-        //}
-        error = update_vec_clock(data,data->self_pid,&seq);
-        if(error){
-            printf("Error updating self vec clock in send_lcb\n");
-            return error;
-        }
         fifo_msg.original_sender = data->self_pid;
         fifo_msg.sequence_num = i;
         lcb_msg.original_sender = data->self_pid;
+        // update the value of our sequence number
+        lcb_msg.vec_clock.vector[data->self_pid-1] = i-1;     
         error = send_urb(data,fifo_msg,lcb_msg);
         if(error){
             printf("Error sending via urb : in send lcb \n");
@@ -39,11 +31,9 @@ int send_lcb(net_data_t* data, int m){
 
 
 int deliver_lcb(net_data_t* data, lcb_msg_t msg){
-    printf("deliver lcb \n");
     int error;
     unsigned int seq;
     if(test_vec_clock(data,&(msg.vec_clock),msg.original_sender)){
-        printf("the test has passed ! \n");
         error = update_vec_clock(data,msg.original_sender,&seq);
         if(error){
             printf("Error updating vector clock in deliver lcb \n");
@@ -63,21 +53,12 @@ int deliver_lcb(net_data_t* data, lcb_msg_t msg){
             return error;
         }
     }else{
-        printf("Test not passed \n");
         error = add_pending_lcb(data->lcb_pending,msg.original_sender,msg.vec_clock);
         if(error){
             printf("Error while adding vector to pending set \n");
             return error;
         }
     }
-    printf("lcb passed \n");
-    //error = destroy_vector(&(msg.vec_clock));
-    /**
-    if(error){
-        printf("error while destroying vector clock in deliver lcb \n");
-        return error;
-    }
-    */
     return 0;
 }
 

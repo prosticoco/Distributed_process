@@ -135,17 +135,19 @@ static int init_data(int argc, char** argv) {
 static void free_data(void) {
 	free_addr_book(net_data.address_book);
 	free_dependencies(net_data.dependencies);
-	free_dependencies(net_data.reverse_dependencies);
+	//free_dependencies(net_data.reverse_dependencies);
 	free_queue(net_data.task_q);
 	free_ack_table(net_data.pl_acks);
 	free_urb_table(net_data.urb_table);
 	// TODO: change that call the one for LCB instead of FIFO B
 	//free_pending(net_data.pending);
 	//free_next(net_data.next);
+	
 	free_log_data(net_data.logdata);
 	free_delivered(net_data.pl_delivered);
 	free_ack_urb(net_data.urbacks);	
 	destroy_pending_lcb(net_data.lcb_pending);
+	destroy_vector(net_data.vector_clock);
 }
 
 static void start(int signum) {
@@ -158,16 +160,13 @@ static void stop(int signum) {
 	signal(SIGINT, SIG_DFL);
 
 	//immediately stop network packet processing
-	printf("Immediately stopping network packet processing.\n");
 	terminate_senders(&net_data, NUM_SENDER_THREADS);
 	terminate_receiver(&net_data);
 
 	//write/flush output file if necessary
-	printf("Writing output...\n");
 	write_to_file(net_data.logdata);
 
 	// Free resources.
-	printf("Freeing data and exiting...\n");
 	free_data();
 
 	//exit directly from signal handler

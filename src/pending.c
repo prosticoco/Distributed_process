@@ -183,23 +183,16 @@ int get_vec_clock_copy(net_data_t* data, vec_clock_t* clocky){
 
 
 int test_vec_clock(net_data_t* data,vec_clock_t* vector,unsigned int pid){
-    printf("testing vector \n");
     dependency_list_t* dep = get_dependencies(data->dependencies,pid);
     int is_bigger = 1;
     pthread_mutex_lock(&(data->vector_clock->mutex));
-    printf("before for look in testing \n");
-    if(dep == NULL){
-        printf("pédé tes nul \n");
-    }
     for(int i = 0; i < dep->list_len; i++){
         unsigned int curr_proc = dep->pid_list[i];
-        printf("current process is %u \n",curr_proc);
         if(vector->vector[curr_proc -1] > data->vector_clock->vector[curr_proc -1]){
             is_bigger = 0;
         }
     }
     pthread_mutex_unlock(&(data->vector_clock->mutex));
-    printf("done testing vector \n");
     return is_bigger;
 }
 

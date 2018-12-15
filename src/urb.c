@@ -7,6 +7,7 @@
 #include "layers.h"
 #include "log.h"
 #include "plink.h"
+#include "pending.h"
 
 #define MAX_SIZE_URB 1024*8
 
@@ -154,11 +155,6 @@ int send_urb(net_data_t* data, fifo_msg_t msg,lcb_msg_t lcbmsg){
 
 //urb deliver, called by beb broadcast, calls fifo broadcast if it is able to deliver
 int deliver_urb(net_data_t* data, urb_msg_t msg){
-    printf("deliver urb\n");
-    //printf("proc num %zu gonna beb msg \n",data->self_pid);
-      //  for(int j = 0 ; j < data->num_proc; j++){
-        //printf("Vector [%d] = %u \n",j,msg.lcb_msg.vec_clock.vector[j]);
-        //}
     int error;
     //set that we got our own message
     error = set_ack_urb(data->urbacks,msg.mid);
@@ -177,6 +173,11 @@ int deliver_urb(net_data_t* data, urb_msg_t msg){
         urb_msg_t new_msg = msg;
         new_msg.mid = (data->num_proc)*msg.seen_id + data->self_pid -1;
         //set that we got this message
+        error = alloc_vector(&(new_msg.lcb_msg.vec_clock),data->num_proc,msg.lcb_msg.vec_clock.vector);
+        if(error){
+            printf("Error while allocating vector \n");
+            return error;
+        }
         error = set_ack_urb(data->urbacks,new_msg.mid);
         if(error){
             return error;

@@ -5,6 +5,9 @@
 
 #include "addrbook.h"
 
+
+#define BACK_TO_QUEUE 42
+
 typedef unsigned int mid_t;
 
 
