@@ -6,6 +6,7 @@
 
 #include "log.h"
 #include "error.h"
+#include "layers.h"
 
 
 
@@ -61,6 +62,23 @@ int free_log_data(log_data_t* logdata){
     }
     if (logdata->file != NULL) {
         fclose(logdata->file);
+    }
+    return 0;
+}
+
+//Method to log the delivery
+int log_deliver(net_data_t* data,fifo_msg_t msg){
+    unsigned int snr = msg.sequence_num;
+    unsigned int pid = msg.original_sender;
+    char line[LINE_MAX_LENGTH];
+    int error = sprintf(line,"d %u %u\n",pid,snr);
+    if(error < 0){
+        return ERROR_IO;
+    }
+    size_t size = strlen(line);
+    error =write_log(data->logdata,line,size);
+    if(error){
+        return error;
     }
     return 0;
 }

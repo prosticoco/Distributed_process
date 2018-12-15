@@ -10,3 +10,6 @@ int write_to_file(log_data_t* logdata);
 
 int free_log_data(log_data_t* logdata);
 
+// method will write that a message was delivered to the log-buffer
+// method is defined in fifo.c
+int log_deliver(net_data_t* data,fifo_msg_t msg);

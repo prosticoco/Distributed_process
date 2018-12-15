@@ -116,10 +116,6 @@ int send_lcb(net_data_t* data, int m);
  */
 int deliver_lcb(net_data_t* data, lcb_msg_t msg);
 
-// method will write that a message was delivered to the log-buffer
-// method is defined in fifo.c
-int log_deliver(net_data_t* data,fifo_msg_t msg);
-
 // method will write that a message was urb broadcast from this current node
 // method is defined in urb.c
 int log_urb_broadcast(net_data_t* data,fifo_msg_t msg);

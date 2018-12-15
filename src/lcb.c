@@ -1,5 +1,6 @@
 
 #include "lcb.h"
+#include "log.h"
 #include "layers.h"
 #include "pending.h"
 
