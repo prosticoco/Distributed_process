@@ -23,7 +23,7 @@ int add_pending_lcb(lcb_pending_t* pending,unsigned int pid,vec_clock_t clock);
 
 int init_vector_mutex(vec_clock_t* clocky,unsigned int num_proc);
 
-int update_vec_clock(net_data_t* data, unsigned int pid);
+int update_vec_clock(net_data_t* data, unsigned int pid,unsigned int * seq);
 
 int get_vec_clock_copy(net_data_t* data, vec_clock_t* clocky);
 

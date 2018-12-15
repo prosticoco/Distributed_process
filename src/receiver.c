@@ -25,14 +25,13 @@ void *receiver_f(void* params){
     msg_t next_message;
     int error;
     net_data_t* data = (net_data_t *) params;
-    struct sockaddr_in client;
-    unsigned int length_client;
+    char buffer[message_size(data->num_proc)];    
     while (1) {
-        error = recvfrom(data->receiver_fd, (char *) &next_message, sizeof(msg_t),
-            MSG_WAITALL, (struct sockaddr *) &client, &length_client);
-        if (error < 0) {
-            fprintf(stderr,"ERROR : recvfrom return error code %d \n", error);
-            exit(ERROR_NETWORK);
+        memset(buffer,0,message_size(data->num_proc));
+        error = receive_msg(data,buffer,&next_message);
+        if(error){
+            printf("error while receiving message in receiver thread \n");
+            return error;
         }
         error = process_msg(data,next_message);
         if (error < 0) {

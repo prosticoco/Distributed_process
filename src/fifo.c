@@ -111,11 +111,12 @@ int free_next(next_t* next){
 int send_fifo(net_data_t* data, int m){
     unsigned int self = data->self_pid;
     int error;
+    lcb_msg_t lcbmsg;
     for(size_t i = 1; i < m+1; ++i){
         fifo_msg_t msg;
         msg.original_sender = self;
         msg.sequence_num = i;
-        error = send_urb(data, msg);
+        error = send_urb(data, msg,lcbmsg);
         if(error<0){
             printf("Error URBroadcasting message\n");
             return error;

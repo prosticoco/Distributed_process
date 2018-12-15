@@ -1,7 +1,9 @@
 
-#include "layerzero.h"
 #include <stdlib.h>
 #include <string.h>
+
+#include "layers.h"
+#include "error.h"
 
 
 size_t message_size(size_t num_proc){

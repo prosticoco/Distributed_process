@@ -135,6 +135,7 @@ int send_urb(net_data_t* data, fifo_msg_t msg,lcb_msg_t lcbmsg){
     //we log that we started broadcast
     error = log_urb_broadcast(data,msg);
     if(error){
+        printf("Error while logging broadcast in urb broadcast\n");
         return error;
     }
     urb_msg_t new_msg;
@@ -191,7 +192,11 @@ int deliver_urb(net_data_t* data, urb_msg_t msg){
              printf("URB : Error in add_delivered\n");
              return error;
          }
-         deliver_lcb(data, msg.lcb_msg);
+         error = deliver_lcb(data, msg.lcb_msg);
+         if(error){
+             printf("Error delivering lcb in urb deliver \n");
+             return error;
+         }
     }
     return 0;
 }

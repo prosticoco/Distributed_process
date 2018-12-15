@@ -17,6 +17,7 @@
 #include "receiver.h"
 #include "sender.h"
 #include "urb.h"
+#include "pending.h"
 
 #define QUEUE_LEN 200
 #define NUM_SENDER_THREADS 10
@@ -33,6 +34,7 @@ pending_t pending_table;
 next_t next_table;
 log_data_t log_data;
 urb_ack_table_t urbacks;
+lcb_pending_t lcb_pending;
 char filename[14];
 
 
@@ -49,7 +51,8 @@ net_data_t net_data = {
 	.urb_table = &urb_table,
 	.task_q = &main_queue,
 	.logdata = &log_data,
-	.urbacks = &urbacks
+	.urbacks = &urbacks,
+	.lcb_pending = &lcb_pending
 };
 
 static int wait_for_start = 1;
@@ -82,13 +85,23 @@ static int init_data(int argc, char** argv) {
 	if(res){
 		return res;
 	}
+	/**
+	 * FIFO LAYER METHODS, UNCOMMENT TO USE FIFO INSTEAD OF LCB
+	 * 
+	 */
+	/*
 	res = init_pending(net_data.pending, ORIG_TABLE_SIZE, net_data.num_proc);
 	// TODO: change that call the one for LCB instead of FIFO B
 	res += init_next(net_data.next, net_data.num_proc);
 	if (res) {
 		return res;
 	}
-
+	*/
+	res = init_pending_lcb(net_data.lcb_pending,net_data.num_proc);
+	if(res < 0){
+		printf("Error initializing pending lcb \n");
+		return res;
+	}
 	res = sprintf(net_data.log_filename, LOG_FILENAME, net_data.self_pid);
 	if (res < 0) {
 		return res;
@@ -108,6 +121,7 @@ static int init_data(int argc, char** argv) {
 	if (res) {
 		return res;
 	}
+	
 
 	return res;
 }
@@ -125,6 +139,7 @@ static void free_data(void) {
 	free_log_data(net_data.logdata);
 	free_delivered(net_data.pl_delivered);
 	free_ack_urb(net_data.urbacks);	
+	destroy_pending_lcb(net_data.lcb_pending);
 }
 
 static void start(int signum) {

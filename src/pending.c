@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "pending.h"
+#include "layers.h"
 
 
 
@@ -156,12 +157,13 @@ int init_vector_mutex(vec_clock_t* clocky,unsigned int num_proc){
     return 0;
 }
 
-int update_vec_clock(net_data_t* data, unsigned int pid){
+int update_vec_clock(net_data_t* data, unsigned int pid, unsigned int* seq){
     if(pid > data->num_proc){
         return ERROR_PID;
     }
     pthread_mutex_lock(&(data->vector_clock->mutex));
     data->vector_clock->vector[pid-1] += 1;
+    *seq = data->vector_clock->vector[pid-1];
     pthread_mutex_unlock(&(data->vector_clock->mutex));
     return 0;
 }
@@ -199,14 +201,20 @@ int find_pending(net_data_t* data){
     lcb_pending_t* pending = data->lcb_pending;
     unsigned int num_proc = pending->num_proc;
     int found_one = 0;
+    unsigned int seq;
     for(int i = 0 ; i < num_proc; i++){
         vec_node_t* ptr = pending->lists[i].head;
         while(ptr != NULL){
             if(test_vec_clock(data,&(ptr->clock),i+1)){
                 found_one = 1;
-                error = update_vec_clock(data,i+1);
+                error = update_vec_clock(data,i+1,&seq);
                 if(error){
                     printf("Error updating vector clock\n");
+                    return error;
+                }
+                error = log_deliver_lcb(data,i+1,seq);
+                if(error){
+                    printf("Error while log delivering in find pending \n");
                     return error;
                 }
                 ptr = ptr->next;

@@ -25,21 +25,10 @@
  */
 int send_fl(net_data_t* data, int socket_fd, unsigned int dest_pid, msg_t msg) {
     int error;
-    struct sockaddr_in address;
-    error = get_addr(data->address_book, dest_pid, &address);
-    if(error < 0){
-        printf("Error while obtaining address\n");
+    error = send_message(data,socket_fd,dest_pid,msg);
+    if(error){
+        printf("Error sending message in send_fl \n");
         return error;
-    }
-    // sends a message to the corresponding address pointed by data
-    error = sendto(socket_fd,(const char*) &msg, sizeof(msg),
-                    MSG_DONTWAIT,
-                    (const struct sockaddr *) &address,
-                    sizeof(struct sockaddr_in));
-    // handles any error due to sendto
-    if (error < 0) {
-        printf("Error while trying to send\n");
-        return ERROR_SEND;
     }
     return 0;
 }

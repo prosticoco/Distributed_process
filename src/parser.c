@@ -159,7 +159,8 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
 
         line_counter++;
     }
-
+    // NO NEED FOR NOW
+    /*
     data->reverse_dependencies = alloc_reverse_dependencies(data->dependencies);
     if (NULL == data->reverse_dependencies) {
         fprintf(stderr, "Error: parsing: could not create reverse dependency object.\n");
@@ -167,4 +168,5 @@ int parse_membership_args(int argc, char** argv, net_data_t* data) {
     }
 
     return cleanup(membership_file, 0);
+    */
 }
