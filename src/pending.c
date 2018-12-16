@@ -81,6 +81,7 @@ int remove_veclist(vec_node_t* node,vec_list_t* list){
     if(error){
         return error;
     }
+    printf("removing a node \n");
     free(node);
     return 0;
 }
