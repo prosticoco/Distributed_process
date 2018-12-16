@@ -20,7 +20,7 @@
 #include "pending.h"
 
 #define QUEUE_LEN 200
-#define NUM_SENDER_THREADS 1
+#define NUM_SENDER_THREADS 10
 #define MSG_BUF_MAX_SIZE 1024
 #define LOG_FILENAME "da_proc_%zu.out"
 #define ORIG_TABLE_SIZE 150
