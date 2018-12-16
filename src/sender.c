@@ -40,7 +40,6 @@ static void *sender_f(void* params) {
             pthread_exit((void *) ERROR_SEND);
         }
         if(msg_task.msg.urb_msg.lcb_msg.vec_clock.vector != NULL && res == 0){
-            //printf("Sender pid : %zu : Pointer value to free : %p \n",data->self_pid,msg_task.msg.urb_msg.lcb_msg.vec_clock.vector);
             free(msg_task.msg.urb_msg.lcb_msg.vec_clock.vector);
             msg_task.msg.urb_msg.lcb_msg.vec_clock.vector = NULL;
         }

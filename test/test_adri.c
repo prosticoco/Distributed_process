@@ -86,7 +86,7 @@ int receive_test(int receiver_fd,char* buffer, msg_t* next_message, size_t num_p
     error = recvfrom(receiver_fd,(char*) buffer,msg_size,
                      MSG_WAITALL,(struct sockaddr *) &client,&length_client);
     if(error < 0){
-        printf("message reception error \n");
+        printf("message reception error  \n");
         return ERROR_NETWORK;
     }
     error = deserialize(next_message,buffer,num_proc);

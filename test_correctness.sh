@@ -24,16 +24,16 @@ echo "5
 3 127.0.0.1 11003
 4 127.0.0.1 11004
 5 127.0.0.1 11005
-1 2 3
-2 
-3
-4
-5" > membership
+1 2 3 4 5
+2 3 4 5 1
+3 4 5 1 2
+4 5 1 2 3
+5 1 2 3 4" > membership
 
 # start 5 processes, each broadcasting 100 messages
 for i in `seq 1 5`
 do
-    ./da_proc $i membership 100 &
+    ./da_proc $i membership 5 &
     da_proc_id[$i]=$!
 done
 
@@ -56,6 +56,7 @@ do
     fi
 done
 
+sleep 1
 # do some more nasty stuff
 # example:
 kill -TERM "${da_proc_id[4]}" # crash process 4
