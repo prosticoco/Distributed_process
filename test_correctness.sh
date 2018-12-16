@@ -24,16 +24,16 @@ echo "5
 3 127.0.0.1 11003
 4 127.0.0.1 11004
 5 127.0.0.1 11005
-1 2 3 4 5
-2 3 4 5 1
-3 4 5 1 2
-4 5 1 2 3
-5 1 2 3 4" > membership
+1 4 5
+2 1 3 4 
+3 1
+4 3 5
+5 " > membership
 
 # start 5 processes, each broadcasting 100 messages
 for i in `seq 1 5`
 do
-    ./da_proc $i membership 5 &
+    ./da_proc $i membership 100 &
     da_proc_id[$i]=$!
 done
 
