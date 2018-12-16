@@ -64,13 +64,11 @@ int enqueue(msg_queue_t* queue, queue_task_t* elem) {
     if (queue->no_elem == queue->qsize) {
         error = realloc_queue(queue);
         if(error){
-            pthread_mutex_unlock(&(queue->queue_mutex));
             return error;
         }
     }
     // check valid pointers
     if (queue->elems == NULL) {
-        pthread_mutex_unlock(&(queue->queue_mutex));
         return ERROR_MEMORY;
     }
     // insert element at the back of the queue
@@ -102,26 +100,9 @@ int dequeue(msg_queue_t* queue, queue_task_t* elem) {
     return 0;
 }
 
-int free_vectors_in_queue(msg_queue_t* queue){
-    queue_task_t elem;
-    while(dequeue(queue,&elem) != -1){
-        if(elem.msg.urb_msg.lcb_msg.vec_clock.vector != NULL){
-            free(elem.msg.urb_msg.lcb_msg.vec_clock.vector);
-            elem.msg.urb_msg.lcb_msg.vec_clock.vector = NULL;
-        }
-    }
-    return 0;
-}
-
 // use at the end to free the memory used by the queue
 int free_queue(msg_queue_t* queue) {
     free(queue->elems);
     queue->elems = NULL;
     return 0;
-}
-
-int free_queue_and_vectors(msg_queue_t* queue){
-    free_vectors_in_queue(queue);
-    free_queue(queue);
-    return 0 ; 
 }
