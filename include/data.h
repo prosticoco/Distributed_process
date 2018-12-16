@@ -5,17 +5,28 @@
 
 #include "addrbook.h"
 
-
+//put message to queue end value
 #define BACK_TO_QUEUE 42
 
+//message id
 typedef unsigned int mid_t;
 
-
+/**
+ * @brief URB layer structure 
+ * urb table entry is a tuple of bool 
+ * to know if message is seen and 
+ * if it is delivered
+ */
 typedef struct {
     unsigned int seen;
     unsigned int delivered;
 } urb_entry_t;
 
+/**
+ * @brief URB layer structure
+ * table of urb entries where 
+ * indices represent the urb message id
+ */
 typedef struct{
     urb_entry_t* values;
     unsigned int no_msgs;
@@ -23,6 +34,11 @@ typedef struct{
     unsigned int total_entries;
 }urb_table_t;
 
+/**
+ * @brief FIFO layer struct for
+ * table of messages that are pending
+ * to be delivered 
+ */
 typedef struct{
     unsigned int* bol;
     unsigned int no_msgs;
@@ -30,11 +46,21 @@ typedef struct{
     unsigned int total_entries;
 } pending_t;
 
+/**
+ * @brief FIFO layer struct to
+ * know which message from which process
+ * has to be delivered next 
+ */
 typedef struct{
     unsigned int no_process;
     unsigned int* entries;
 }next_t;
 
+/**
+ * @brief abstract structure
+ * to use for ack table at PLINK layer 
+ * and at URB layer
+ */
 typedef struct {
     unsigned int no_msgs;
     unsigned int no_process;
@@ -42,20 +68,31 @@ typedef struct {
     unsigned int* entries;
 } uid_table_t;
 
+/**
+ * @brief PLINK layer struct
+ * table of the acks we received
+ * receiver thread writes while
+ * sender threads read it so 
+ * we use a mutex lock on it
+ */
 typedef struct {
     pthread_mutex_t table_mutex;
     uid_table_t table;
 } ack_table_t;
 
-
+/**
+ * @brief FIFO message wrapper
+ * lowest level wrapper that takes 
+ * the message seq number and the original
+ * sender as uints and passes to the level 
+ * underneath
+ */
 typedef struct{
     unsigned int sequence_num;
     unsigned int original_sender;
 } fifo_msg_t;
 
-/** every urb message needs the original message that is in beb_msg
- *  and the pid of the original sender and the current sender
- */
+
 
 // message structure for lcb
 // the vector clock structure to be sent over the causal broadcast messages
@@ -70,6 +107,14 @@ typedef struct lcb_msg {
     unsigned int original_sender;
 } lcb_msg_t;
 
+/**
+ * @brief URB layer message wrapper
+ * for fifo AND lcb since these 2 are 
+ * theoreticaly at the same layer height
+ * Adds message id and seen id that are
+ * derived from current sender process and 
+ * fifo/lcb message information
+ */
 typedef struct{
     lcb_msg_t lcb_msg;
     fifo_msg_t fifo_msg;
@@ -77,7 +122,15 @@ typedef struct{
     mid_t mid;
 } urb_msg_t;
 
-
+/**
+ * @brief PLINK message wrapper
+ * wraps URB message
+ * ackid id of the corresponding ack
+ * for ack table
+ * sender is current sender
+ * mtype is message type to know 
+ * if ack or normal message
+ */
 typedef struct {
     urb_msg_t urb_msg;
     mid_t mid;
@@ -106,15 +159,24 @@ typedef struct {
     unsigned int back;
     // pointer to the elements of the queue
     queue_task_t* elems;
-
     pthread_mutex_t queue_mutex;
-
 } msg_queue_t;
 
+/**
+ * @brief PLINK layer struct
+ * to keep track of messages that 
+ * have been delivered so it 
+ * does not happen again 
+ */
 typedef struct {
     uid_table_t table;
 } pl_delivered_t;
 
+/**
+ * @brief URB layer struct
+ * just as PLINK ack table
+ * to keep track of urb layer acks
+ */
 typedef struct{
     uid_table_t table;
 } urb_ack_table_t;
@@ -127,11 +189,20 @@ typedef struct {
     struct net_data* data;
 } sender_thread_arg_t;
 
+/**
+ * @brief SENDER THREAD STRUCT
+ * thing that sends stuff
+ */
 typedef struct {
     pthread_t thread;
     sender_thread_arg_t args;
 } sender_thread_t;
 
+/**
+ * @brief buffer for log
+ * so that we dont open and 
+ * close log files too often
+ */
 typedef struct{
     size_t buf_max_size;
     size_t buf_current_size;
@@ -174,7 +245,13 @@ typedef struct lcb_pending {
 } lcb_pending_t;
 
 
-
+/**
+ * @brief an equivalent 
+ * of a handbook that every process
+ * has so that it can have all 
+ * the information about itself 
+ * easily accessible 
+ */
 typedef struct net_data {  
     // rlist of process addresses
     addr_book_t* address_book;
