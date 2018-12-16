@@ -181,7 +181,19 @@ int receive_msg(net_data_t* data,char* buffer, msg_t* next_message);
  */
 size_t message_size(size_t num_proc);
 
+/**
+ * @brief computes the number of unsigned ints a message contains
+ * 
+ * @param num_proc the number of processes
+ * @return size_t the number of unsigned ints a message contains
+ */
 size_t num_fields(size_t num_proc);
 
+/**
+ * @brief returns a positive integer containing the number of unsigned ints
+ * int a message which are not part of the vector clock (for serialization purposes)
+ * 
+ * @return size_t 
+ */
 size_t num_static();
 

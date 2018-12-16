@@ -1,5 +1,9 @@
 #pragma once
 
+/**
+ * @brief Enum containing all the error codes we use.
+ * 
+ */
 typedef enum {
 
   ERROR_MEMORY = -128,
